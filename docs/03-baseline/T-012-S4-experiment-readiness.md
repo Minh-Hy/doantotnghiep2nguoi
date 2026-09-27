@@ -46,3 +46,5 @@ Không đưa ảnh mặt, danh tính, bbox theo người hoặc embedding vào G
 Hai nguồn trên **chưa giải quyết điều kiện chạy X-012-A**. Tập cuối cần có claim theo transaction, người mục tiêu/không có mục tiêu trong khung, distractor, thời gian quan sát và quyền sử dụng rõ. Nếu nguồn công khai chỉ cung cấp tracking/face ID, cần dữ liệu do nhóm thu hợp lệ hoặc một protocol bổ sung có nhãn độc lập; kết quả proxy phải báo riêng, không suy hiệu năng tại phòng thi.
 
 **Bước thực hiện khi đủ dữ liệu:** lập manifest và hướng dẫn gán nhãn → kiểm quyền/nhãn và phân bố ca → khóa split/metric/target → chạy A0 trước trên cùng tập → chạy candidate khả thi → báo cả ba nhánh và lỗi theo ca → review evidence trước quyết định kỹ thuật. Nếu dữ liệu S4 không có, ghi rõ `not runnable`; tiếp tục E1/E2/E3/M1 trong đúng phạm vi riêng của chúng.
+
+[Hợp đồng nhãn X-012-A](T-012-X-012-A-label-contract.md) định nghĩa tối thiểu claim–actor–target, các trạng thái `visible / absent-from-window / undeterminable`, đơn vị attempt, mẫu số và cổng chạy. Đây là chuẩn bị để nhóm kiểm dữ liệu trước thí nghiệm, không phải manifest đã thu hoặc run S4.
