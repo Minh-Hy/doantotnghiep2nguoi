@@ -106,11 +106,16 @@ def analyze(frames: list[list[Box]]) -> dict[str, object]:
         "target-annotated-at-end": Counter(),
         "target-not-annotated-at-end": Counter(),
         "multi-face-at-start": Counter(),
+        "face-count-at-start/1": Counter(),
+        "face-count-at-start/2": Counter(),
+        "face-count-at-start/3+": Counter(),
     }
     for start in range(0, len(frames) - WINDOW + 1, WINDOW):
         end = start + WINDOW - 1
         for target in frames[start]:
             groups = ["all"]
+            face_count = len(frames[start])
+            groups.append(f"face-count-at-start/{face_count if face_count < 3 else '3+'}")
             end_ids = {box.identity for box in frames[end]}
             groups.append(
                 "target-annotated-at-end"
@@ -134,6 +139,9 @@ def analyze(frames: list[list[Box]]) -> dict[str, object]:
             total = sum(counter[f"{candidate}/{label}"] for label in OUTCOMES)
             if total != counter["denominator"]:
                 raise AssertionError(f"{group}: outcomes do not reconcile for {candidate}")
+    for key in counts["all"]:
+        if sum(counts[f"face-count-at-start/{label}"][key] for label in ("1", "2", "3+")) != counts["all"][key]:
+            raise AssertionError(f"face-count groups do not reconcile for {key}")
     return {
         group: {key: counter[key] for key in ["denominator"] + [
             f"{candidate}/{label}"
