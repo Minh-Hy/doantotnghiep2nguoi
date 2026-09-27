@@ -24,3 +24,9 @@
 ## Bổ sung đối chiếu và chuẩn bị run (2026-09-27)
 
 [Bảng trace T-008→T-011](../03-baseline/T-011-T008-T009-T010-trace-review.md) dùng nội dung T-008 PR #3 commit `c235b80` làm mốc theo chỉ đạo Quốc An, không sửa T-008. T-010 đã thêm [quy tắc chấm E1](https://github.com/quocanwyf/doantotnghiep2nguoi/blob/codex/T-010-experiment-protocol/docs/03-baseline/T-010-E1-scoring-protocol.md) và [catalog fixture E3](https://github.com/quocanwyf/doantotnghiep2nguoi/blob/codex/T-010-experiment-protocol/docs/03-baseline/T-010-E3-fixture-contract.md). T-011 chưa có AP/recall detector hay pass/fail workflow. Môi trường tiến trình cục bộ đang trả lỗi `helper_unknown_error: setup refresh had errors`, nên chưa thể preflight evaluator/wrapper hoặc chạy run E1; ghi giới hạn này thay vì tự điền kết quả.
+
+## Bổ sung mã E1 chưa chạy (2026-09-27)
+
+- [Evaluator](../03-baseline/T-011-E1-widerface-data-gate.md) tại scripts/t011_widerface_evaluate.py kiểm SHA/ZIP/manifest/GT, có `--preflight-only`, chấm AP nội bộ đúng T-010 và chỉ xuất summary tổng hợp. [Prediction runner](../../scripts/t011_widerface_predict.py) có adapter YuNet, BlazeFace, SCRFD với config v1; file raw prediction phải nằm trong `artifacts/` hoặc ngoài Git.
+- Test mới: tests/test_t011_widerface_evaluator.py và tests/test_t011_widerface_predict_adapter.py (box tổng hợp). **Chưa thực thi**, vì tiến trình cục bộ và Node runtime đều thất bại ở bước khởi tạo. Không ghi test pass, AP, recall hay latency detector trước khi chạy thật.
+- Khi môi trường phục hồi: chạy test → GT preflight → từng adapter preflight → full prediction cho cả 3 candidate → cùng evaluator → report run có hash/config/thiết bị/giới hạn. Nếu GT ngoài biên hoặc adapter lỗi, dừng và sửa protocol bằng revision trước khi xem AP.
