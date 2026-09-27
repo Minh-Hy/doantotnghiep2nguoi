@@ -42,3 +42,15 @@ Các tài sản ngoài Git đang cần cho T-011 được ghi bên dưới.
 - Trạng thái: Chưa gửi; không đưa checkpoint/weight vào Git.
 - Vị trí lưu: thư mục tạm ngoài Git của máy chạy; đường dẫn máy cụ thể gửi riêng nếu cần.
 - Ngày cập nhật: 2026-09-26.
+
+## A-003 — InsightFace buffalo_l pack, chỉ dùng encoder R50 (T-011 E2)
+
+- Task liên quan: T-009, T-010, T-011.
+- Mục đích và cách dùng: đối chứng encoder R50@WebFace600K trên cùng detector SCRFD-500MF và cặp XQLFW với MobileFaceNet; không dùng detector SCRFD-10GF hoặc các module khác trong pack để so encoder.
+- Nguồn: [InsightFace model zoo](https://github.com/deepinsight/insightface/blob/master/model_zoo/README.md), [release model-zoo](https://github.com/deepinsight/insightface/releases/tag/model-zoo), asset buffalo_l.zip. Model được tác giả giới hạn cho nghiên cứu phi thương mại.
+- Tên, dung lượng: buffalo_l.zip 288.621.354 byte; bên trong w600k_r50.onnx 174.383.860 byte. Đã kiểm ZIP CRC và chạy thử R50 trên ảnh XQLFW.
+- SHA-256: archive 80FFE37D8A5940D59A7384C201A2A38D4741F2F3C51EEF46EBB28218A7B0CA2F; w600k_r50.onnx 4C06341C33C2CA1F86781DAB0E829F88AD5B64BE9FBA56E56BC9EBDEFC619E43.
+- Người giữ và người cần nhận: bản cục bộ trên máy chạy T-011; Minh Hy có thể tải lại từ release chính thức và đối chiếu hash.
+- Trạng thái: Chưa gửi; không đưa pack hoặc ONNX vào Git.
+- Vị trí lưu: thư mục tạm ngoài Git của máy chạy; đường dẫn máy cụ thể gửi riêng nếu cần.
+- Ngày cập nhật: 2026-09-26.
