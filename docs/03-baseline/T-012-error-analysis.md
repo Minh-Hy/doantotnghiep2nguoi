@@ -63,6 +63,8 @@ X-012-A là câu hỏi tiếp theo được chọn **để thiết kế**, nhưn
 
 **Phạm vi dữ liệu đã chốt 27/09:** Quốc An chỉ dùng dữ liệu có sẵn, không thu mới. [Audit LTFT](T-012-S4-ltft-label-audit.md) tìm được nhãn nhiều mặt/track cho ChokePoint S5, có thể chuẩn bị phép thử proxy giữ đúng track. Nguồn này thiếu liên kết claim–actor và lượt check-in, nên proxy không thay được X-012-A nghiệp vụ; cần ghi tên, metric và giới hạn riêng.
 
+**Evidence proxy box-only, không phải X-012-A:** [protocol đã khóa trước run](T-012-S4-box-only-proxy-protocol.md) và [báo cáo 1.024 cửa sổ–ID](runs/T-012-S4-ltft-box-proxy.md) so `P0-static` với `P1-sequential` trên cùng nhãn LTFT. P0 đúng/sai/unresolved `446/143/435`, P1 `758/38/228`. Vì box mục tiêu ban đầu được **cấp từ ground truth**, kết quả chỉ nói về liên kết hình học sau khởi tạo; không biết hệ thống chọn đúng người khai báo hồ sơ. Video nguồn còn lệch nhãn, và không có split danh tính/miền cửa phòng, nên không chốt rule S4 hay model cuối.
+
 ### Thiết kế chẩn đoán X-012-B trước khi xem slice
 
 [Script T-012](../../scripts/t012_widerface_error_slices.py) phát lại đúng quy tắc ghép GT của [evaluator T-011](../../scripts/t011_widerface_evaluate.py): prediction score giảm dần trong từng ảnh, clip box về biên, chọn GT valid có IoU lớn nhất và `IoU > 0,5`, một GT chỉ ghép một lần. Vì ảnh độc lập, thứ tự score toàn tập của AP và thứ tự trong từng ảnh cho cùng tập GT được ghép. Không xuất prediction theo ảnh.
