@@ -1,6 +1,6 @@
 # T-012 — Protocol đề xuất: proxy S4 chỉ dùng bbox LTFT
 
-**Trạng thái:** kiểm khả thi từ annotation, **chưa chạy so sánh candidate**, chưa khóa metric/acceptance cho ứng dụng. Quốc An chốt chỉ dùng dữ liệu có sẵn. [Audit LTFT](T-012-S4-ltft-label-audit.md) phát hiện video Zenodo không khớp nhãn LTFT, nên protocol này **không dùng frame ảnh** và không giả định đã giải quyết sai khác đó.
+**Trạng thái:** protocol thăm dò **khóa trước run box-only**; chưa có kết quả candidate hay tiêu chí chấp nhận cho ứng dụng. Quốc An chốt chỉ dùng dữ liệu có sẵn. [Audit LTFT](T-012-S4-ltft-label-audit.md) phát hiện video Zenodo không khớp nhãn LTFT, nên protocol này **không dùng frame ảnh** và không giả định đã giải quyết sai khác đó.
 
 ## Câu hỏi có thể kiểm, và điều không thể suy ra
 
@@ -19,12 +19,13 @@ Ground truth LTFT được tạo từ detection rồi kiểm thủ công/gán ID
 
 Đây là số **cặp cửa sổ–ID**, không phải 1.024 người hay 1.024 lượt check-in. Một ID có thể tạo nhiều cửa sổ; Choke1/Choke2 có thể cùng người nhưng chưa có mapping xuyên video. Số cuối không chứng minh target vắng về mặt vật lý.
 
-## Điều kiện phải khóa trước phép thử box-only
+## Protocol thăm dò khóa trước khi xem kết quả
 
 1. **Đầu vào cho candidate:** danh sách box `face=1` theo frame và box target ở frame đầu. ID ground truth chỉ dùng bởi evaluator, không đưa vào candidate; không dùng tọa độ/ID tương lai để chọn.
-2. **Đối chứng/candidate:** A0 chỉ ra kết luận khi frame xét có đúng một box; một rule hình học theo chuỗi (A2) là candidate cần đặc tả độc lập, gồm cách liên kết, xử lý mất box, cửa sổ và abstain. Không mượn threshold từ XQLFW/ChokePoint paper hoặc tune trên test. A1 cần vùng giao dịch thật nên **không biểu diễn đúng** bằng box-only; không giả vờ đã so A1.
-3. **Outcome:** `correct-track` khi box chọn tại endpoint gắn ID target; `wrong-track` khi box chọn gắn ID khác; `unresolved` khi không chọn. Báo riêng trường hợp target có/không có annotation tại endpoint, số mặt/distractor và số cửa sổ theo ID. Nếu box đầu nhiều hơn một, việc cung cấp box target là **oracle khởi tạo**, không phải khả năng app chọn người khai báo.
-4. **Split và mẫu số:** không dùng frame cùng cửa sổ ở cả dev/test. Nếu muốn khóa test theo ID, phải kiểm trùng người xuyên Choke1/Choke2; hiện chưa đủ bằng chứng. Khi chưa kiểm, chỉ mô tả exploratory với mẫu số và cluster theo ID/video, không tuyên bố independent holdout hay chọn rule cuối.
-5. **Quyền và báo cáo:** chỉ tải/đọc annotation công khai ở môi trường tạm, dẫn nguồn, không tái phân phối file nhãn/ID/bbox vì repository LTFT chưa công bố giấy phép rõ. Report được phép chứa số đếm tổng hợp, version/hash và giới hạn; không chứa ảnh, embedding hay track theo người.
+2. **Hai candidate nhận cùng đầu vào và không tune:** `P0-static` chọn box ở **frame cuối** có IoU lớn nhất với box target ở frame đầu; `P1-sequential` chọn qua từng frame, mỗi lần IoU lớn nhất với box vừa chọn trước đó. Chỉ chọn nếu IoU **lớn hơn 0** và duy nhất; nếu không có box, không giao nhau hoặc đồng hạng lớn nhất thì `unresolved`. `P1` dừng ngay khi unresolved, không tự nối lại. Mốc IoU >0 là định nghĩa overlap tối thiểu của phép thử hình học, **không phải ngưỡng triển khai**; không mượn threshold từ XQLFW/ChokePoint paper hay tối ưu bằng kết quả.
+3. **Outcome:** `correct-track` khi box chọn tại endpoint gắn ID target; `wrong-track` khi box chọn gắn ID khác; `unresolved` khi không chọn. Báo cả số đếm và mẫu số trên **mọi cửa sổ–ID ở đầu**, tách nhóm target còn/không còn annotation ở endpoint và cảnh ≥2 box ở đầu. Một ID có thể tạo nhiều cửa sổ, nên không gán khoảng tin cậy độc lập theo cửa sổ. Nếu box đầu nhiều hơn một, việc cung cấp box target là **oracle khởi tạo**, không phải khả năng app chọn người khai báo. A0 cần quyết định chọn người ban đầu và A1 cần vùng giao dịch thật; **không** diễn giải `P0/P1` thành phép so A0/A1/A2 nghiệp vụ.
+4. **Split và mẫu số:** toàn bộ cửa sổ 16 frame không chồng lặp trong hai file được dùng cho **một phân tích thăm dò mô tả**, không có dev/test và không chọn winner triển khai. Không điều chỉnh candidate sau khi xem kết quả rồi báo lại cùng dữ liệu như test khóa. Nếu sau này cần locked test theo ID, phải kiểm trùng người xuyên Choke1/Choke2 trước; hiện chưa có mapping để tuyên bố independent holdout.
+5. **Gate dữ liệu:** SHA-256 hai file phải khớp [audit](T-012-S4-ltft-label-audit.md); header bằng số frame; chỉ số frame tuần tự; mỗi dòng đúng `2 + 7 × số detection`; `face` thuộc `{0,1}`; box `face=1` có tọa độ hữu hạn, width/height dương và ID duy nhất trong frame. Lệch gate thì dừng, không bỏ dòng có lỗi rồi vẫn báo tỷ lệ.
+6. **Quyền và báo cáo:** chỉ tải/đọc annotation công khai ở môi trường tạm, dẫn nguồn, không tái phân phối file nhãn/ID/bbox vì repository LTFT chưa công bố giấy phép rõ. Report chỉ chứa số đếm tổng hợp, version/hash, điều kiện máy nếu có đo thời gian, và giới hạn; không chứa ảnh, embedding hay track theo người.
 
-**Điều kiện dừng:** thiếu quy tắc candidate được khóa trước khi xem test, split đáng tin, hoặc quyền dùng phù hợp thì chỉ giữ kiểm khả thi này. Nếu phép thử box-only chạy được, đặt tên và báo cáo riêng; nó không thay [X-012-A nghiệp vụ](T-012-X-012-A-label-contract.md), vốn cần claim–actor độc lập.
+**Điều kiện dừng:** thiếu file đúng hash, gate cấu trúc sai hoặc quyền dùng phù hợp thì chỉ giữ kiểm khả thi này. Nếu phép thử box-only chạy được, đặt tên và báo cáo riêng; nó không thay [X-012-A nghiệp vụ](T-012-X-012-A-label-contract.md), vốn cần claim–actor độc lập.
