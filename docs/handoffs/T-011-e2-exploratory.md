@@ -34,3 +34,7 @@
 ## Bổ sung GT/image preflight trên WIDER thật (2026-09-27)
 
 [GitHub Actions run 36294105147](https://github.com/quocanwyf/doantotnghiep2nguoi/actions/runs/36294105147) tải WIDER validation và annotation đúng SHA-256 vào bộ nhớ tạm, chạy evaluator `--preflight-only` với Python 3.12.14, NumPy 2.2.6 và OpenCV headless 5.0.0.93. Kết quả: 3.226 ảnh, 39.708 dòng box, 39.112 valid GT, 585 ignored GT, 11 dòng box không dương, **0 GT ngoài biên ảnh**; hash/CRC/manifest/giải mã qua. Workflow không lưu ảnh hoặc nhãn thô thành artifact. Đây chỉ là cổng dữ liệu; preflight của YuNet/BlazeFace/SCRFD và AP/recall/latency E1 chưa chạy.
+
+## Bổ sung preflight ba detector (2026-09-27)
+
+[Run 36294608464](https://github.com/quocanwyf/doantotnghiep2nguoi/actions/runs/36294608464) chạy qua GT/image gate và API/coordinate preflight trên cùng 8 ảnh đầu manifest: YuNet 10.419 box, BlazeFace full-range 2.126 box, SCRFD-500MF 20.866 box ở cấu hình score thấp đã đặt trước. Tất cả weight được đối chiếu SHA-256; số box chỉ xác nhận adapter chạy và cảnh báo dung lượng output, **không phải AP/recall hay căn cứ chọn model**. Run 36294478001 đã phát hiện hash nội bộ `det_500m.onnx` bị chép sai một ký tự dù `buffalo_sc.zip` đúng hash; T-010 và T-011 đã đính chính trước khi chấm. Chưa chạy full 3.226 ảnh; cần thống nhất một gói OpenCV, kiểm chi phí lưu/chấm prediction lớn và report điều kiện đo.
