@@ -65,7 +65,7 @@ jobs:
               assert len(matches) == 1
               content = source.read(matches[0])
           assert hashlib.sha256(content).hexdigest() == "5e4447f50245bbd7966bd6c0fa52938c61474a04ec7def48753668a9d8b4ea3a"
-          (root / "model").write_bytes(content)
+          (root / "det_500m.onnx").write_bytes(content)
           print("Pinned SCRFD detector extracted and hashed")
           PY
       - name: Validate GT and image manifest
@@ -76,9 +76,14 @@ jobs:
             --preflight-only
       - name: Produce candidate predictions outside Git
         run: |
+          if [ "${{ matrix.candidate }}" = "scrfd" ]; then
+            MODEL_PATH="${RUNNER_TEMP}/t011-e1/det_500m.onnx"
+          else
+            MODEL_PATH="${RUNNER_TEMP}/t011-e1/model"
+          fi
           python scripts/t011_widerface_predict.py \
             --candidate "${{ matrix.candidate }}" \
-            --model "${RUNNER_TEMP}/t011-e1/model" \
+            --model "${MODEL_PATH}" \
             --images "${RUNNER_TEMP}/t011-e1/WIDER_val.zip" \
             --annotations "${RUNNER_TEMP}/t011-e1/wider_face_split.zip" \
             --output "${RUNNER_TEMP}/t011-e1/predictions.json"
