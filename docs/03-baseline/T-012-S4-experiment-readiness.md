@@ -1,6 +1,6 @@
 # T-012 — Điều kiện chuẩn bị phép thử S4 chọn người mục tiêu
 
-**Trạng thái:** kế hoạch nghiên cứu X-012-A, **chưa chạy experiment** và chưa chọn cách triển khai. Nguồn câu hỏi là [T-012 error analysis](T-012-error-analysis.md): E2 chỉ chấm 4.215/6.000 cặp XQLFW; [phân tích ba nhánh](runs/T-012-E2-three-outcome-analysis.md) giữ 1.785 cặp còn lại ở `unresolved`. Số cặp ảnh web không thay thế số lượt ở cửa phòng.
+**Trạng thái:** kế hoạch nghiên cứu X-012-A, **chưa chạy experiment** và chưa chọn cách triển khai. Nguồn câu hỏi là [T-012 error analysis](T-012-error-analysis.md): E2 pair-fold chỉ chấm 4.215/6.000 cặp XQLFW; [phân tích ba nhánh](runs/T-012-E2-three-outcome-analysis.md) giữ 1.785 cặp còn lại ở `unresolved`. [Split danh tính custom](runs/T-011-E2-xqlfw-identity-disjoint.md) chấm 3.138 cặp trong 4.516 cặp đủ điều kiện chia nhóm trước detection; 1.484 impostor nối nhóm bị loại bởi thiết kế split, không thuộc unresolved của detector. Số cặp ảnh web không thay thế số lượt ở cửa phòng.
 
 ## 1. Quyết định cần bằng chứng
 
@@ -35,6 +35,6 @@ Không đưa ảnh mặt, danh tính, bbox theo người hoặc embedding vào G
 | Nhãn người mục tiêu ở mức transaction | Chưa có trong T-011/XQLFW | **Chưa thể chấm X-012-A** hoặc khẳng định A1/A2 an toàn hơn A0 |
 | Dữ liệu chuỗi và quyền dùng phù hợp | Chưa được ghi nhận | A2 chỉ là candidate có điều kiện; không tạo kết quả giả |
 | Policy/authority và target chấp nhận | Generic T-008 là mốc tạm; giá trị kỳ thi chưa chốt | Có thể thiết kế protocol, chưa thể tuyên bố đạt yêu cầu triển khai |
-| Baseline có thể giữ nguyên | A0/T-011 và số đếm E2 đã có | Có đối chứng để tránh đổi nhiều yếu tố cùng lúc |
+| Baseline có thể giữ nguyên | A0/T-011 và số đếm E2 pair-fold/custom split đã có, nhưng chưa có nhãn target ở mức transaction | Có đối chứng kỹ thuật để chuẩn bị; vẫn phải chạy A0 trên cùng tập transaction mới để so A1/A2 |
 
 **Bước thực hiện khi đủ dữ liệu:** lập manifest và hướng dẫn gán nhãn → kiểm quyền/nhãn và phân bố ca → khóa split/metric/target → chạy A0 trước trên cùng tập → chạy candidate khả thi → báo cả ba nhánh và lỗi theo ca → review evidence trước quyết định kỹ thuật. Nếu dữ liệu S4 không có, ghi rõ `not runnable`; tiếp tục E1/E2/E3/M1 trong đúng phạm vi riêng của chúng.

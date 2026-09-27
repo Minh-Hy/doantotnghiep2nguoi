@@ -1,7 +1,7 @@
 # Trạng thái dự án
 
 - Cập nhật: 2026-09-27
-- Giai đoạn: phạm vi bài toán 01 đã được nhóm chọn; khảo sát 02 đã chọn hướng; baseline nghiên cứu T-011 đã có E1/E2/M1 tham chiếu trong PR #7, T-012 đang phân tích lỗi.
+- Giai đoạn: phạm vi bài toán 01 đã được nhóm chọn; khảo sát 02 đã chọn hướng; baseline nghiên cứu T-011 có E1/E2/M1 tham chiếu trong PR #7; phân tích lỗi T-012 hoàn tất phạm vi hiện tại trong PR #8.
 - Thành viên: Quốc An (TV-A), Minh Hy (TV-B).
 
 ## Đã làm và đã chọn
@@ -15,6 +15,7 @@
 - T-008 [PR #3](https://github.com/quocanwyf/doantotnghiep2nguoi/pull/3) được Quốc An xác nhận **đủ xác định bài toán cho nghiên cứu**; các góp ý chi tiết của Minh Hy về policy/case/authority/correction được giữ để xử lý khi xây app và trước khi chấm E3 theo một profile nghiệp vụ cụ thể. Chúng không chặn E1/E2/T-012 hiện tại.
 - T-009 [PR #5](https://github.com/quocanwyf/doantotnghiep2nguoi/pull/5) kiểm ứng viên dữ liệu/weight; T-010 [PR #6](https://github.com/quocanwyf/doantotnghiep2nguoi/pull/6) đặt protocol E1/E2/E3/M1. Hai PR này là đầu vào nghiên cứu, không tự động là quyết định model/dataset cuối.
 - T-011 [PR #7](https://github.com/quocanwyf/doantotnghiep2nguoi/pull/7) có [mốc baseline nghiên cứu](../03-baseline/T-011-baseline-summary.md): E1 ba detector trên 3.226 ảnh WIDER, E2 MBF/R50 trên 4.215 cặp XQLFW hợp lệ và phép kiểm ngưỡng tách danh tính custom trên 3.138 cặp hợp lệ, M1 timing detection trên cùng CPU runner. Các kết quả chỉ có giá trị trong protocol/cấu hình đã ghi, chưa là lựa chọn triển khai. Theo phạm vi Quốc An xác nhận 27/09, chi tiết E3/app và phép đo thiết bị đích để giai đoạn sau; không gọi là đã kiểm đạt.
+- T-012 [PR #8](https://github.com/quocanwyf/doantotnghiep2nguoi/pull/8) đối chiếu lỗi E1 theo cỡ mặt, ba outcome E2, phép kiểm split tách danh tính và M1 tham chiếu. [Phân tích lỗi](../03-baseline/T-012-error-analysis.md) ưu tiên câu hỏi S4 chọn đúng người mục tiêu/giữ trạng thái chưa kết luận, đồng thời nêu điều kiện dữ liệu và phép thử tiếp. Đây là quyết định về **câu hỏi nghiên cứu kế tiếp**, chưa chọn rule/model triển khai.
 
 ## Chưa có bằng chứng để chốt kỹ thuật cuối
 
@@ -22,8 +23,8 @@ T-005 **hoàn thiện phần phân tích/survey**. Quốc An xác nhận T-008 �
 
 ## Bước tiếp theo theo thứ tự
 
-1. **Tiếp tục T-012:** phân tích lỗi E1/E2 theo stage và domain gap, bao gồm phép kiểm tách danh tính mới; chọn câu hỏi/thí nghiệm tiếp theo từ rủi ro đã quan sát. PR #7 là mốc nghiên cứu cho bước này, không cần đợi review chi tiết T-008 để làm tiếp.
-2. **Bằng chứng triển khai còn thiếu:** dữ liệu có nhãn người mục tiêu và camera gần miền cửa phòng, test xác minh chính, thiết bị/điều kiện vận hành chung; E3/app logic theo policy sau. Không lấy thời gian GitHub runner làm kết luận triển khai.
-3. **Experiment rồi mới chốt kỹ thuật:** từ uncertainty và rủi ro đã đo, đặt giả thuyết, điều kiện kiểm và acceptance criteria trước experiment; dùng kết quả đó để cân nhắc candidate/configuration, threshold và kiến trúc app.
+1. **Chuẩn bị X-012-A:** tìm tập giao dịch/camera được phép dùng có nhãn người mục tiêu hoặc không có mục tiêu; khóa cách gán nhãn, split, ba outcome và mức rủi ro được chấp nhận trước khi thử A0/A1/A2. Nếu chưa có nhãn, giữ thí nghiệm ở trạng thái chưa chạy.
+2. **Bằng chứng triển khai còn thiếu:** main test xác minh gần miền cửa phòng, thiết bị đích để đo encoder/attempt, E3/app logic theo policy sau và As-Is thực địa nếu muốn tuyên bố giảm công sức. Không lấy timing GitHub runner làm kết luận triển khai.
+3. **Experiment rồi mới chốt kỹ thuật:** từ uncertainty và rủi ro T-012, đặt điều kiện kiểm và acceptance criteria trước experiment; dùng kết quả đó để cân nhắc candidate/configuration, threshold và kiến trúc app.
 
 **Task, người phụ trách và trạng thái chi tiết:** [Google Sheet chung](https://docs.google.com/spreadsheets/d/14BQCQ_LbGkZS15Grfi4AZNWBX15h479XjoyQvP9jHcU/edit?gid=0#gid=0). Trang này tóm tắt tiến độ và việc kế tiếp, không sao chép bảng task.
