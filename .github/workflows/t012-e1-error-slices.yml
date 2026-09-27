@@ -118,6 +118,13 @@ jobs:
             --images "${RUNNER_TEMP}/t012-e1/WIDER_val.zip" \
             --annotations "${RUNNER_TEMP}/t012-e1/wider_face_split.zip" \
             --output "${RUNNER_TEMP}/t012-e1/predictions.json"
+      - name: Re-evaluate original T-011 AP and print aggregate
+        run: |
+          python scripts/t011_widerface_evaluate.py \
+            --images "${RUNNER_TEMP}/t012-e1/WIDER_val.zip" \
+            --annotations "${RUNNER_TEMP}/t012-e1/wider_face_split.zip" \
+            --predictions "${RUNNER_TEMP}/t012-e1/predictions.json" \
+            --output "${RUNNER_TEMP}/t012-e1/e1-summary.json"
       - name: Replay T-011 matching and print aggregate slices
         run: |
           python scripts/t012_widerface_error_slices.py \
@@ -133,4 +140,5 @@ jobs:
         if: always()
         run: |
           rm -f "${RUNNER_TEMP}/t012-e1/predictions.json"
+          rm -f "${RUNNER_TEMP}/t012-e1/e1-summary.json"
           rm -f "${RUNNER_TEMP}/t012-e1/summary.json"

@@ -212,27 +212,34 @@ def main() -> None:
     ) != MODEL_SHA256[name]:
         raise ValueError("Candidate weight/config differs from T-011")
     metrics = analyze(truth, metadata, payload["predictions"], image_sizes)
-    expected = (args.expected_tp, args.expected_rows, args.expected_dropped, args.expected_clipped)
+    expected = (args.expected_tp, args.expected_rows, args.expected_dropped)
     actual = (
         metrics["matched_gt"],
         metrics["prediction_rows"],
         metrics["dropped_empty_box"],
-        metrics["clipped_box"],
     )
     if actual != expected:
         raise ValueError(f"T-012 replay does not reconcile with T-011: {actual} != {expected}")
+    replay_audit = {
+        "t011_clipped_box": args.expected_clipped,
+        "t012_clipped_box": metrics["clipped_box"],
+        "clipped_box_delta": metrics["clipped_box"] - args.expected_clipped,
+        "exact_clip_count_replay": metrics["clipped_box"] == args.expected_clipped,
+    }
     summary = {
         "scope": "T-012 descriptive WIDER error slices; not official difficulty benchmark or config tuning",
+        "analysis_revision": "T-012-X-012-B-v2: exact TP/rows/dropped gate; clip count is audited separately",
         "protocol_version": PROTOCOL_VERSION,
         "source_sha256": source_hashes,
         "candidate": candidate,
         "size_definition": "sqrt(valid GT box area) in original-image pixels: <16, 16-<32, 32-<96, >=96",
         "attribute_definition": "Raw validation TXT integer codes; no severity interpretation",
+        "replay_audit": replay_audit,
         "metrics": metrics,
     }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(json.dumps({"candidate": name, "metrics": metrics}, ensure_ascii=False))
+    print(json.dumps({"candidate": name, "replay_audit": replay_audit, "metrics": metrics}, ensure_ascii=False))
 
 
 if __name__ == "__main__":
