@@ -54,3 +54,15 @@ Các tài sản ngoài Git đang cần cho T-011 được ghi bên dưới.
 - Trạng thái: Chưa gửi; không đưa pack hoặc ONNX vào Git.
 - Vị trí lưu: thư mục tạm ngoài Git của máy chạy; đường dẫn máy cụ thể gửi riêng nếu cần.
 - Ngày cập nhật: 2026-09-26.
+
+## A-004 — WIDER FACE validation và annotation (T-011 E1)
+
+- Task liên quan: T-009, T-010, T-011.
+- Mục đích và cách dùng: ảnh nguyên khung/bbox cho phép thử detection S3, không dùng làm nhãn target S4 hoặc verification 1:1.
+- Nguồn: [CUHK-CSE trên Hugging Face](https://huggingface.co/datasets/CUHK-CSE/wider_face), asset data/WIDER_val.zip và data/wider_face_split.zip; card ghi CC BY-NC-ND 4.0.
+- Tên, dung lượng: WIDER_val.zip 362.752.168 byte; wider_face_split.zip 3.591.642 byte.
+- SHA-256: ảnh F9EFBD09F28C5D2D884BE8C0EAEF3967158C866A593FC36AB0413E4B2A58A17A; nhãn C7561E4F5E7A118C249E0A5C5C902B0DE90BBF120D7DA9FA28D99041F68A8A5C.
+- Người giữ và người cần nhận: bản cục bộ trên máy chạy T-011; Minh Hy có thể tải lại từ nguồn CUHK và đối chiếu hash.
+- Trạng thái: Chưa gửi; không đưa ảnh/annotation archive vào Git.
+- Vị trí lưu: thư mục tạm ngoài Git của máy chạy.
+- Ngày cập nhật: 2026-09-27.

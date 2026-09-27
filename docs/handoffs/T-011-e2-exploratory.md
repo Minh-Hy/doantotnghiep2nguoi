@@ -16,3 +16,7 @@
 ## Bổ sung đối chứng R50 (2026-09-27)
 
 [Run E2 đối chứng](../03-baseline/runs/T-011-E2-xqlfw-mbf-vs-r50.md) dùng cùng 4.215 cặp hợp lệ, detector và pair-fold: MobileFaceNet tái lập đúng run gốc (FMR 133/2.169; FNMR 125/2.046), R50 có FMR 76/2.169 và FNMR 74/2.046. R50 được giữ làm ứng viên cho phép đo tiếp, chưa là model cuối do dữ liệu khác miền, coverage 70,25%, fold trùng identity và chưa đo chi phí trên thiết bị đích. Runner chunked ở scripts/t011_xqlfw_r50_comparison.py; buffalo_l.zip ngoài Git có hash trong external-assets. JSON aggregate cục bộ ở artifacts; checkpoint embedding tạm đã xóa sau kiểm tra.
+
+## Bổ sung cổng dữ liệu E1 (2026-09-27)
+
+[WIDER FACE validation data gate](../03-baseline/T-011-E1-widerface-data-gate.md) kiểm archive CUHK-CSE và annotation: 3.226 ảnh/nhãn khớp, 39.708 bbox, 0 ảnh lỗi giải mã; 585 nhãn invalid và 11 bbox kích thước không dương cần quy tắc ignore/chấm được khóa. Nguồn, byte, hash ở external-assets A-004. Chưa có AP/recall hoặc quyết định detector; E1 cần evaluator/adapter cùng manifest trước run.

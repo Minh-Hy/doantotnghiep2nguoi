@@ -32,3 +32,7 @@ Nguồn: [review của Minh Hy trên PR #3](https://github.com/quocanwyf/doantot
 **Chưa cho phép kết luận:** model tốt nhất, threshold triển khai, kết quả identity-disjoint, đáp ứng nghiệp vụ kỳ thi, giảm nhân sự hoặc pass/fail E3. Muốn so encoder khác phải vượt gate weight/runtime/preprocessing và dùng cùng protocol; muốn chốt kỹ thuật cuối phải có test phù hợp hơn và evidence T-012/experiment sau đó.
 
 Chuỗi: **T-008 TQ-002/003 (tạm chấp nhận) → T-009 candidate B0 → T-010 E2 pair-fold → T-011 phép đo thăm dò → T-012 phân tích lỗi/đặt câu hỏi tiếp**.
+
+## Cập nhật E1 sau review ban đầu — 2026-09-27
+
+[Cổng dữ liệu WIDER FACE validation](T-011-E1-widerface-data-gate.md) đã kiểm file thật từ CUHK-CSE: 3.226 ảnh khớp annotation, 39.708 bbox, hash/CRC và giải mã đạt. Vì có cờ invalid và bbox không dương, E1 vẫn cần khóa evaluator, quy tắc ignore/match và wrapper từng detector trước khi chấm AP/recall. Kết luận review ban đầu “thiếu archive/nhãn” được thay bằng **“data gate cơ bản đạt; benchmark E1 chưa khóa”**. Không có điểm detector trong cập nhật này.
