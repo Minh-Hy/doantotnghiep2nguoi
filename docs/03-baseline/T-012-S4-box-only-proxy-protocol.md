@@ -29,3 +29,9 @@ Ground truth LTFT được tạo từ detection rồi kiểm thủ công/gán ID
 6. **Quyền và báo cáo:** chỉ tải/đọc annotation công khai ở môi trường tạm, dẫn nguồn, không tái phân phối file nhãn/ID/bbox vì repository LTFT chưa công bố giấy phép rõ. Report chỉ chứa số đếm tổng hợp, version/hash, điều kiện máy nếu có đo thời gian, và giới hạn; không chứa ảnh, embedding hay track theo người.
 
 **Điều kiện dừng:** thiếu file đúng hash, gate cấu trúc sai hoặc quyền dùng phù hợp thì chỉ giữ kiểm khả thi này. Nếu phép thử box-only chạy được, đặt tên và báo cáo riêng; nó không thay [X-012-A nghiệp vụ](T-012-X-012-A-label-contract.md), vốn cần claim–actor độc lập.
+
+## Chẩn đoán hậu nghiệm D1 — ghi trước khi chạy phân tích đường đi
+
+Sau khi [báo cáo P0/P1](runs/T-012-S4-ltft-box-proxy.md) đã có số ở **frame cuối**, câu hỏi mới là: endpoint có che các lần P1 tạm chọn sai ID ở frame giữa không? Đây là **phân tích thăm dò sau khi xem kết quả chính**, không là phép xác nhận độc lập và không sửa rule P1, dữ liệu, cửa sổ hoặc số endpoint cũ.
+
+Với **cùng 1.024 cửa sổ–ID**, phát lại P1 và đếm: (a) từng chọn ID khác target ở ít nhất một frame `ever-wrong`; (b) sai ở endpoint; (c) từng sai nhưng endpoint đúng; (d) từng sai rồi endpoint unresolved; (e) frame đầu tiên sai xảy ra lúc ID target còn hay không còn **annotation box**. Báo riêng theo Choke1/Choke2, tổng và mẫu số. `Target không được annotation ghi nhận` không được diễn giải là người vắng/ra khỏi khung. Nếu số endpoint phát lại không khớp báo cáo cũ thì dừng chẩn đoán.
