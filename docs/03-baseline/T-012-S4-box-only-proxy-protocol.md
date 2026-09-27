@@ -35,3 +35,7 @@ Ground truth LTFT được tạo từ detection rồi kiểm thủ công/gán ID
 Sau khi [báo cáo P0/P1](runs/T-012-S4-ltft-box-proxy.md) đã có số ở **frame cuối**, câu hỏi mới là: endpoint có che các lần P1 tạm chọn sai ID ở frame giữa không? Đây là **phân tích thăm dò sau khi xem kết quả chính**, không là phép xác nhận độc lập và không sửa rule P1, dữ liệu, cửa sổ hoặc số endpoint cũ.
 
 Với **cùng 1.024 cửa sổ–ID**, phát lại P1 và đếm: (a) từng chọn ID khác target ở ít nhất một frame `ever-wrong`; (b) sai ở endpoint; (c) từng sai nhưng endpoint đúng; (d) từng sai rồi endpoint unresolved; (e) frame đầu tiên sai xảy ra lúc ID target còn hay không còn **annotation box**. Báo riêng theo Choke1/Choke2, tổng và mẫu số. `Target không được annotation ghi nhận` không được diễn giải là người vắng/ra khỏi khung. Nếu số endpoint phát lại không khớp báo cáo cũ thì dừng chẩn đoán.
+
+## Kiểm nhãn hậu nghiệm D2 — phân biệt `face=0` với không có ID
+
+Sau [D1](runs/T-012-S4-ltft-path-diagnostic.md), cả 41 lần P1 sai ID đầu tiên xảy ra ở frame không có **box `face=1`** của target. Trước khi kiểm file thô lại, khóa hai nhóm loại trừ nhau tại đúng **41 frame sai đầu**: (a) vẫn có detection mang target ID nhưng `face=0`; (b) không có detection nào mang target ID. Báo cả hai theo Choke1/Choke2 và tổng, kiểm tổng bằng 41. Không đổi rule P1, cửa sổ, nhãn hợp lệ hoặc điểm D1. Theo README LTFT, `face=0` gộp false positive và box nhiều mặt; không diễn giải nó thành một mặt target chắc chắn nhìn thấy. Đây vẫn là audit hậu nghiệm, không đo lý do vật lý khiến detector/annotation mất box.
