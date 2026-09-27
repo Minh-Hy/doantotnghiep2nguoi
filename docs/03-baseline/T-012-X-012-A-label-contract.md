@@ -6,7 +6,7 @@
 
 - **Capture session:** một buổi/camera/thiết lập ghi hình có nguồn và quyền dùng xác định.
 - **Attempt/transaction:** một lần một người đưa claim/hồ sơ để bắt đầu kiểm tra, có mốc bắt đầu–kết thúc quan sát. Đơn vị chấm chính là attempt, không phải frame, bbox hay cặp ảnh XQLFW.
-- **Claim:** hồ sơ được chọn bằng thao tác ngoài nhãn ảnh. Claim không chứng minh ai trong frame là người đã khai báo. Trong lượt có diễn viên tình nguyện, cần ghi độc lập actor nào thực hiện thao tác claim; khóa liên kết actor–claim được giữ ngoài Git.
+- **Claim:** hồ sơ được chọn bằng thao tác ngoài nhãn ảnh. Claim không chứng minh ai trong frame là người đã khai báo. Muốn chấm X-012-A nghiệp vụ, nguồn dữ liệu có sẵn phải cung cấp bằng chứng độc lập nối actor thực hiện claim với hồ sơ; không suy liên kết này từ model hay track ID.
 - **Target:** actor gắn với thao tác claim ở lượt đó, nếu người này xuất hiện trong cửa sổ camera. Nếu target vắng khỏi khung, bị che đến mức không xác định được, hoặc không thể đối chiếu claim với actor, phải ghi riêng; không lấy mặt gần/lớn nhất làm target mặc định.
 
 Một nguồn công khai chỉ có face/track ID mà không có claim và ranh giới attempt **chưa đủ để chấm X-012-A như nghiệp vụ cửa phòng**. Nó có thể dùng cho phép thử proxy tracking, với tên và kết luận riêng.
@@ -22,7 +22,7 @@ Một nguồn công khai chỉ có face/track ID mà không có claim và ranh g
 | Tình huống | một/nhiều mặt, mục tiêu bị che/ngoài khung, người nền, lượt bị ngắt, quay lại | Báo lỗi theo ca, không che rủi ro bằng một tỷ lệ chung |
 | Kiểm nhãn | người gán, người kiểm độc lập, kết quả phân xử và revision nhãn | Truy vết sửa nhãn mà không dùng output candidate làm ground truth |
 
-File ảnh/video, mapping claim–actor, bbox/track theo người và nhãn mức attempt ở kho cục bộ được kiểm soát; **không commit vào Git**. Repo chỉ có protocol, nguồn/quyền đã được phép công bố, số đếm tổng hợp và hash/phiên bản manifest nếu không làm lộ danh tính. Nếu dữ liệu thu với tình nguyện viên, quyền đồng ý và cách rút dữ liệu phải được xác nhận trước khi ghi hình; không thu dữ liệu thí sinh thật chỉ để lấp chỗ trống benchmark.
+File ảnh/video, mapping claim–actor, bbox/track theo người và nhãn mức attempt ở kho cục bộ được kiểm soát; **không commit vào Git**. Repo chỉ có protocol, nguồn/quyền đã được phép công bố, số đếm tổng hợp và hash/phiên bản manifest nếu không làm lộ danh tính. Theo quyết định phạm vi của Quốc An ngày 27/09/2026, nhóm **chỉ dùng dữ liệu có sẵn, không tổ chức thu ảnh/video mới**. Kiểm điều kiện sử dụng của từng nguồn trước khi tải/chạy.
 
 ## 3. Quy tắc nhãn và chấm cần khóa trước test
 
@@ -38,10 +38,8 @@ Trước run, kiểm: quyền/consent và nguồn; mapping claim–actor độc 
 
 Run report cần có số capture session, actor, attempt mỗi split và từng loại nhãn; số `undeterminable`/bị loại và lý do; ba outcome theo candidate trên cùng attempt; metric theo `visible`/`absent-from-window` và tình huống nhiều người; timing và điều kiện máy; sai khác/vi phạm protocol; kết luận chỉ trong miền dữ liệu đã đo. Điều kiện chấp nhận định lượng và policy vào phòng vẫn `TBD`, không lấy từ số XQLFW hoặc WIDER.
 
-## 5. Nếu nhóm tự thu dữ liệu mô phỏng
+## 5. Chỉ dùng dữ liệu có sẵn: ranh giới của phép thử proxy
 
-Đây là **phương án tạo nguồn đánh giá**, chưa phải quyết định đã thu hay yêu cầu quay thí sinh thật. Trước ghi hình, nhóm cần thống nhất quyền tham gia/sử dụng/rút dữ liệu của tình nguyện viên, nơi lưu và người được truy cập; đặt camera và cửa sổ quan sát như một thiết lập thử có thể mô tả lại. Mã claim giả lập phải do người tham gia thực hiện ở mốc được ghi độc lập với video; không dùng model để suy ai vừa thao tác.
+Nếu dữ liệu công khai có video nhiều người và face/track ID nhưng không có claim–actor theo lượt, chỉ được thiết kế **proxy giữ đúng track đã chỉ định**. Target proxy có thể được chỉ định từ nhãn công bố tại đầu cửa sổ quan sát, nhưng nhãn tương lai và ID ground truth không được đưa vào input của candidate. Kết quả proxy trả lời liệu cách liên kết qua frame có giữ đúng người giữa các distractor; nó **không** trả lời ai là người đã chọn hồ sơ thí sinh, không tính hiệu quả check-in hay quyết định vào phòng.
 
-Mỗi lượt nên được **gắn loại ca trước khi xem output**: target một mình, target cùng người nền, target rời/ngoài khung, target bị che hoặc đổi vị trí, lượt gián đoạn/quay lại. Không cần ép số lượng hay tỷ lệ ca khi chưa biết nguồn lực; report phải nêu phân bố thật để người đọc thấy ca nào thiếu. Nhóm thu chỉ nên chọn cảnh an toàn và được đồng ý; không biến mô phỏng thành tuyên bố về kỳ thi thực.
-
-Sau ghi hình, tách người/sequence giữa dev và test, gán nhãn bằng biên bản claim–actor và frame gốc, kiểm độc lập ca khó, rồi khóa manifest/nhãn trước khi chạy A0/A1/A2. Nếu quá ít người hoặc không có ca nhiều người/target vắng, ghi rõ câu hỏi nào `not runnable`; không bổ sung những frame test được chọn sau khi thấy lỗi để báo lại như test ban đầu. Phần mapping người và dữ liệu ảnh luôn ở kho cục bộ được kiểm soát, không đưa lên Git.
+Nguồn [LTFT](T-012-S4-ltft-label-audit.md) đã có nhãn mặt/ID trên chuỗi ChokePoint S5 để tiếp tục kiểm khả năng này. Trước khi chạy, cần xác nhận quyền dùng của video và annotation, cách ghép frame chính xác, nhãn mục tiêu độc lập với output candidate, cửa sổ/split/metric cố định và số ca đủ nhãn. Thiếu điều kiện nào thì ghi `not runnable` cho phép thử tương ứng; không đổi tên proxy thành X-012-A nghiệp vụ.

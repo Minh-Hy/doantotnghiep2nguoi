@@ -61,6 +61,8 @@ X-012-A là câu hỏi tiếp theo được chọn **để thiết kế**, nhưn
 
 **Điều kiện để thực sự chạy X-012-A:** [T-012 S4 experiment readiness](T-012-S4-experiment-readiness.md) xác định đơn vị transaction, nhãn mục tiêu độc lập, ca có/không có người mục tiêu, split tránh rò rỉ theo người/sequence và metric ba nhánh. Hiện chưa có tập dữ liệu/nhãn đó; kế hoạch không được trình bày như kết quả hay quyết định chọn rule S4.
 
+**Phạm vi dữ liệu đã chốt 27/09:** Quốc An chỉ dùng dữ liệu có sẵn, không thu mới. [Audit LTFT](T-012-S4-ltft-label-audit.md) tìm được nhãn nhiều mặt/track cho ChokePoint S5, có thể chuẩn bị phép thử proxy giữ đúng track. Nguồn này thiếu liên kết claim–actor và lượt check-in, nên proxy không thay được X-012-A nghiệp vụ; cần ghi tên, metric và giới hạn riêng.
+
 ### Thiết kế chẩn đoán X-012-B trước khi xem slice
 
 [Script T-012](../../scripts/t012_widerface_error_slices.py) phát lại đúng quy tắc ghép GT của [evaluator T-011](../../scripts/t011_widerface_evaluate.py): prediction score giảm dần trong từng ảnh, clip box về biên, chọn GT valid có IoU lớn nhất và `IoU > 0,5`, một GT chỉ ghép một lần. Vì ảnh độc lập, thứ tự score toàn tập của AP và thứ tự trong từng ảnh cho cùng tập GT được ghép. Không xuất prediction theo ảnh.

@@ -8,7 +8,7 @@
 
 **Câu hỏi thử:** so với A0 (chỉ tiếp tục khi đúng một mặt), A1 (người/track ổn định trong vùng giao dịch, mơ hồ thì unresolved) hoặc A2 (liên kết hình học qua các frame, nếu có sequence) có tạo thêm **kết luận đúng mục tiêu** mà không tăng **kết luận sai mục tiêu** không? A2 chỉ được thử khi dữ liệu có chuỗi thời gian và đồng bộ giao dịch. Chưa coi A1/A2 là giải pháp được chọn.
 
-## 2. Đơn vị dữ liệu và nhãn cần thu
+## 2. Đơn vị dữ liệu và nhãn cần có từ nguồn sẵn có
 
 | Thành phần | Cần có để kiểm S4 | Nếu thiếu thì kết luận nào không thể đưa ra |
 |---|---|---|
@@ -45,8 +45,10 @@ Không đưa ảnh mặt, danh tính, bbox theo người hoặc embedding vào G
 
 [Audit nhãn gốc ChokePoint](T-012-S4-chokepoint-label-audit.md) đã kiểm archive thật: 72 XML, **không có S5**, và 0/176.916 frame XML có hơn một `person`. Vì vậy ngay cả phép thử proxy S4 nhiều người cũng chưa thể chạy bằng **gói nhãn gốc này**; nhãn S5 bổ sung là dependency riêng cần xác minh quyền và file.
 
-Hai nguồn trên **chưa giải quyết điều kiện chạy X-012-A**. Tập cuối cần có claim theo transaction, người mục tiêu/không có mục tiêu trong khung, distractor, thời gian quan sát và quyền sử dụng rõ. Nếu nguồn công khai chỉ cung cấp tracking/face ID, cần dữ liệu do nhóm thu hợp lệ hoặc một protocol bổ sung có nhãn độc lập; kết quả proxy phải báo riêng, không suy hiệu năng tại phòng thi.
+**Nguồn mới đã kiểm:** [LTFT và audit file nhãn](T-012-S4-ltft-label-audit.md) công bố track/ID trên hai chuỗi ChokePoint S5 đông người. Hai file có 1.768/2.526 và 1.678/2.139 frame với ít nhất hai box `face=1`; bài báo nói box được tạo bằng detector rồi kiểm thủ công/gán ID. Nó đủ để chuẩn bị **proxy giữ đúng track đã chỉ định**, sau khi kiểm video và quyền dùng annotation; không có claim–actor hoặc lượt check-in. File nhãn LTFT công khai nhưng không có giấy phép rõ để tái phân phối.
+
+Các nguồn trên **chưa giải quyết điều kiện chạy X-012-A nghiệp vụ**. Tập cuối cần có claim theo transaction, người mục tiêu/không có mục tiêu trong khung, distractor, thời gian quan sát và quyền sử dụng rõ. Quốc An đã chốt **chỉ dùng dữ liệu có sẵn, không thu mới**; nếu nguồn hiện có chỉ cung cấp tracking/face ID thì chỉ chạy proxy với protocol/nhãn độc lập phù hợp, báo riêng và không suy hiệu năng tại phòng thi. Nếu không tìm được nguồn có claim–actor, X-012-A nghiệp vụ giữ `not runnable` trong phạm vi này.
 
 **Bước thực hiện khi đủ dữ liệu:** lập manifest và hướng dẫn gán nhãn → kiểm quyền/nhãn và phân bố ca → khóa split/metric/target → chạy A0 trước trên cùng tập → chạy candidate khả thi → báo cả ba nhánh và lỗi theo ca → review evidence trước quyết định kỹ thuật. Nếu dữ liệu S4 không có, ghi rõ `not runnable`; tiếp tục E1/E2/E3/M1 trong đúng phạm vi riêng của chúng.
 
-[Hợp đồng nhãn X-012-A](T-012-X-012-A-label-contract.md) định nghĩa tối thiểu claim–actor–target, các trạng thái `visible / absent-from-window / undeterminable`, đơn vị attempt, mẫu số và cổng chạy. Đây là chuẩn bị để nhóm kiểm dữ liệu trước thí nghiệm, không phải manifest đã thu hoặc run S4.
+[Hợp đồng nhãn X-012-A](T-012-X-012-A-label-contract.md) định nghĩa tối thiểu claim–actor–target, các trạng thái `visible / absent-from-window / undeterminable`, đơn vị attempt, mẫu số và cổng chạy; phần cuối tách phép thử proxy LTFT. Đây là chuẩn bị để nhóm kiểm dữ liệu trước thí nghiệm, không phải manifest đã có hoặc run S4.
