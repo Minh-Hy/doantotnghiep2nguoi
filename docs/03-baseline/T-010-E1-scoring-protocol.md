@@ -43,3 +43,15 @@ Mỗi wrapper trả về `image_path, bbox_xyxy_original_pixels, native_score, p
 5. Mọi thay đổi evaluator/config sau khi xem prediction hoặc AP phải có revision, lý do và phép đánh giá mới; không âm thầm sửa số cũ.
 
 **Quyết định tại thời điểm đặt trước:** khóa định nghĩa AP nội bộ và quy tắc GT/ignore/match nêu trên. **Chưa chạy benchmark** vì wrapper/evaluator implementation chưa qua preflight; chưa chọn detector cuối. T-011 phải ghi chính xác phiên bản protocol này trong run report.
+
+## 6. Candidate adapter configuration v1 — đặt trước prediction (2026-09-27)
+
+Các giá trị dưới đây là **cấu hình phép thử**, không phải lựa chọn detector/threshold triển khai. Mức score tối thiểu `0,01` được đặt thấp để AP quan sát nhiều prediction; nếu runtime không hỗ trợ ổn định, dừng và lập revision **trước khi xem điểm**. Giữ NMS native từng implementation; kết quả so **cấu hình hoàn chỉnh**, không quy khác biệt chỉ cho backbone.
+
+| Candidate | Input và runtime | Output gate / NMS | Weight đã pin từ T-009 |
+|---|---|---|---|
+| YuNet 2026may | OpenCV 5 CPU, input dynamic bằng kích thước ảnh BGR gốc; không resize ngoài model. [OpenCV Zoo](https://github.com/opencv/opencv_zoo/blob/main/models/face_detection_yunet/README.md) mô tả ONNX dynamic. | `score_threshold=0.01`, `nms_threshold=0.3`, `top_k=5000`; output `x,y,w,h,score` đổi sang tọa độ ảnh gốc. | SHA-256 `EBAFCE4E3C118D6554634BE5C27AB333B4C047A9A8C3FAF1D7CF93101C22F0F0`. |
+| BlazeFace full-range float16 | MediaPipe Tasks IMAGE mode, chuyển BGR→RGB, đưa nguyên ảnh vào `mp.Image(SRGB)`; Tasks tự xử lý input. [Google API](https://developers.google.com/edge/mediapipe/solutions/vision/face_detector/python) nêu bbox pixel gốc và options. | `min_detection_confidence=0.01`, `min_suppression_threshold=0.3`; bbox `origin_x,origin_y,width,height`, score từ category. | SHA-256 `3698B18F063835BC609069EF052228FBE86D9C9A6DC8DCB7C7C2D69AED2B181B`. |
+| SCRFD-500MF từ buffalo_sc | InsightFace 0.7.3/ONNX Runtime CPU, input `640×640` theo implementation, ảnh BGR gốc được adapter letterbox nội bộ. [InsightFace code](https://github.com/deepinsight/insightface/blob/master/python-package/insightface/model_zoo/scrfd.py) mô tả `prepare/detect`. | `det_thresh=0.01`, `nms_thresh=0.4`, `max_num=0`; output bbox `x1,y1,x2,y2,score` trong tọa độ gốc. | `det_500m.onnx` SHA-256 `5E4447F50245BBD7966BDC0FA52938C61474A04EC7DEF48753668A9D8B4EA3A`. |
+
+Trước run đầy đủ, thử vài ảnh **chỉ để kiểm API, kích thước và tọa độ**; không dùng chúng để chọn threshold/resize theo AP. Một lỗi model với ảnh lớn hoặc thư viện khác phiên bản phải được ghi và giải quyết bằng revision có lý do. Thời gian component bắt đầu sau decode ảnh, gồm chuyển màu/resize nội bộ, inference và hậu xử lý; thời gian I/O ảnh báo riêng nếu đo. Chưa có run E1 tại thời điểm ghi v1.
