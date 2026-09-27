@@ -1,0 +1,56 @@
+name: T-012 M2 same-runner reference encoder timing
+
+on:
+  push:
+    branches:
+      - codex/T-012-error-analysis
+    paths:
+      - ".github/workflows/t012-m2-reference-encoder.yml"
+      - "scripts/t012_m2_reference_encoder.py"
+      - "tests/test_t012_m2_reference_encoder.py"
+      - "docs/03-baseline/T-012-M2-reference-encoder-protocol.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reference-encoder-timing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install pinned E2 runtime
+        run: python -m pip install numpy==2.2.6 opencv-contrib-python==5.0.0.93 insightface==0.7.3 onnxruntime==1.20.1 scikit-learn==1.7.1
+      - name: Verify M2 schedule with synthetic features
+        run: python -m unittest tests/test_t012_m2_reference_encoder.py
+      - name: Download pinned XQLFW and model packs to temporary storage
+        run: |
+          mkdir -p "${RUNNER_TEMP}/t012-m2"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/Martlgap/xqlfw/releases/download/1.0/xqlfw.zip" \
+            --output "${RUNNER_TEMP}/t012-m2/xqlfw.zip"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/deepinsight/insightface/releases/download/model-zoo/buffalo_sc.zip" \
+            --output "${RUNNER_TEMP}/t012-m2/buffalo_sc.zip"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/deepinsight/insightface/releases/download/model-zoo/buffalo_l.zip" \
+            --output "${RUNNER_TEMP}/t012-m2/buffalo_l.zip"
+      - name: Time MBF and R50 on the same aligned crops
+        run: |
+          python scripts/t012_m2_reference_encoder.py \
+            --images "${RUNNER_TEMP}/t012-m2/xqlfw.zip" \
+            --sc-model "${RUNNER_TEMP}/t012-m2/buffalo_sc.zip" \
+            --r50-model "${RUNNER_TEMP}/t012-m2/buffalo_l.zip" \
+            --cache "${RUNNER_TEMP}/t012-m2/cache" \
+            --output "${RUNNER_TEMP}/t012-m2/summary.json"
+      - name: Remove temporary images, crops and weights
+        if: always()
+        run: rm -rf "${RUNNER_TEMP}/t012-m2"
