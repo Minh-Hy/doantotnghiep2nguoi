@@ -23,6 +23,8 @@ E2 có 954 genuine và 831 impostor `unresolved` trên toàn bộ 6.000 cặp. �
 
 E1 có AP/recall ba detector. [X-012-B run report](runs/T-012-E1-widerface-error-slices.md) cho thấy nhóm bbox `<16` px bị bỏ sót nhiều trên WIDER; phép chẩn đoán không phải cớ tune trên validation đã xem. Cần đo phân bố cỡ mặt/điều kiện tại camera cửa phòng trước khi gọi đây là bottleneck triển khai. [E2 split custom](runs/T-011-E2-xqlfw-identity-disjoint.md) tách identity giữa hai nhóm chọn/chấm threshold và vẫn thấy R50 ít lỗi hơn MBF trên cặp được chấm; 1.484 impostor nối nhóm bị loại và 1.378 cặp trong nhóm không qua rule một mặt, nên chưa là main test gần miền hoặc bằng chứng về unseen pretrain identity. X-012-C tồn tại để kiểm miền/chi phí encoder trên thiết bị đích. [M1 cùng runner](runs/T-011-M1-reference-detection.md) đã đo detection component, nhưng không thay phép đo thiết bị đích/attempt/hàng chờ X-012-E. E3 chờ policy profile và app; không dùng điểm E1/E2/M1 để điền kết quả.
 
+[Kế hoạch phân tầng S3](T-012-S4-one-vs-multi-comparison-plan.md) được ghi sau E1 tổng thể nhưng trước khi xem điểm nhóm. [Run 36322220681 và báo cáo](runs/T-012-S4-widerface-one-multi.md) cho thấy SCRFD dẫn ở ảnh một mặt, YuNet dẫn ở ảnh ≥2 mặt trên WIDER. Nhóm ảnh khác mạnh về cỡ mặt GT, nên bằng chứng này dẫn tới câu hỏi **giữ cùng cỡ mặt thì thứ hạng còn đổi không**, chưa dẫn tới chọn detector. Nhãn bbox WIDER cũng không trả lời S4 ai đã đưa mã; việc chọn đúng người theo lượt vẫn là thí nghiệm riêng.
+
 ## Quy tắc giữ nhất quán
 
 - Không gộp AP E1, FMR/FNMR E2, coverage S4 và pass/fail E3 thành một accuracy hệ thống.

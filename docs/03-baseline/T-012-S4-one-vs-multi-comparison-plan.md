@@ -1,6 +1,6 @@
 # T-012 — Kế hoạch so sánh một mặt và nhiều mặt theo từng stage
 
-**Ngày đặt kế hoạch:** 2026-09-27, sau các run T-011 và chẩn đoán T-012 đã công bố. **Trạng thái:** câu hỏi, dữ liệu và cách đo cho phép thử tiếp theo; chưa có run mới hoặc lựa chọn model từ kế hoạch này. Chỉ dùng dữ liệu có sẵn, không thu ảnh/video mới.
+**Ngày đặt kế hoạch:** 2026-09-27, sau các run T-011 và chẩn đoán T-012 đã công bố. **Trạng thái lúc đặt kế hoạch:** câu hỏi, dữ liệu và cách đo được ghi trước khi có điểm nhóm. **Run sau đó:** [36322220681](https://github.com/quocanwyf/doantotnghiep2nguoi/actions/runs/36322220681) thành công; [báo cáo](runs/T-012-S4-widerface-one-multi.md). Chưa chọn model từ kết quả này. Chỉ dùng dữ liệu có sẵn, không thu ảnh/video mới.
 
 ## Vì sao phép so sánh này tồn tại
 

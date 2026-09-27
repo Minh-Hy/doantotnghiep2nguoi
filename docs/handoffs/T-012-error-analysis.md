@@ -22,3 +22,5 @@
 - **Commit/PR:** [PR #8](https://github.com/quocanwyf/doantotnghiep2nguoi/pull/8) có base là nhánh PR #7; chưa merge. Khi T-010 PR #6 vào main cần đối chiếu hai bản `DECISION_LOGIC.md` của phase 03.
 
 - **Kế hoạch phép thử tiếp:** [so sánh một mặt/nhiều mặt theo stage](../03-baseline/T-012-S4-one-vs-multi-comparison-plan.md) đã định nghĩa nhóm GT WIDER, đối chứng ba detector, mẫu số, giới hạn XQLFW/LTFT và điều kiện X-012-A theo lượt trước khi chạy phân tầng mới. Chưa có run mới từ kế hoạch này.
+
+- **Run E1 một/nhiều mặt:** [báo cáo](../03-baseline/runs/T-012-S4-widerface-one-multi.md), [Actions 36322220681](https://github.com/quocanwyf/doantotnghiep2nguoi/actions/runs/36322220681), scorer/workflow commit `b424cd3`. Ba job thành công; 3.226 ảnh chia 4/1.119/2.103 theo 0/1/≥2 valid GT, cộng khớp 39.112 GT và E1 TP/rows/drop. SCRFD AP nhóm một mặt 0,946234, YuNet AP nhóm nhiều mặt 0,642116; cỡ mặt phân bố rất khác. Kết quả chỉ đo detection WIDER; không có nhãn người đưa mã, không chốt model.
