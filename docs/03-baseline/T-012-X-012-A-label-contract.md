@@ -37,3 +37,11 @@ File ảnh/video, mapping claim–actor, bbox/track theo người và nhãn mứ
 Trước run, kiểm: quyền/consent và nguồn; mapping claim–actor độc lập; frame + mốc attempt đồng bộ; nhãn target và distractor đủ để chấm; kiểm bất đồng nhãn; split theo actor; cấu hình A0/A1/A2 và cửa sổ quan sát cố định; metric và mức chấp nhận do nhóm duyệt. Chỉ A2 khi thực sự có sequence. Thiếu bất cứ điều kiện bắt buộc nào thì ghi đúng nguyên nhân `not runnable`; có thể làm kiểm logic với dữ liệu tổng hợp nhưng không báo performance S4 thực.
 
 Run report cần có số capture session, actor, attempt mỗi split và từng loại nhãn; số `undeterminable`/bị loại và lý do; ba outcome theo candidate trên cùng attempt; metric theo `visible`/`absent-from-window` và tình huống nhiều người; timing và điều kiện máy; sai khác/vi phạm protocol; kết luận chỉ trong miền dữ liệu đã đo. Điều kiện chấp nhận định lượng và policy vào phòng vẫn `TBD`, không lấy từ số XQLFW hoặc WIDER.
+
+## 5. Nếu nhóm tự thu dữ liệu mô phỏng
+
+Đây là **phương án tạo nguồn đánh giá**, chưa phải quyết định đã thu hay yêu cầu quay thí sinh thật. Trước ghi hình, nhóm cần thống nhất quyền tham gia/sử dụng/rút dữ liệu của tình nguyện viên, nơi lưu và người được truy cập; đặt camera và cửa sổ quan sát như một thiết lập thử có thể mô tả lại. Mã claim giả lập phải do người tham gia thực hiện ở mốc được ghi độc lập với video; không dùng model để suy ai vừa thao tác.
+
+Mỗi lượt nên được **gắn loại ca trước khi xem output**: target một mình, target cùng người nền, target rời/ngoài khung, target bị che hoặc đổi vị trí, lượt gián đoạn/quay lại. Không cần ép số lượng hay tỷ lệ ca khi chưa biết nguồn lực; report phải nêu phân bố thật để người đọc thấy ca nào thiếu. Nhóm thu chỉ nên chọn cảnh an toàn và được đồng ý; không biến mô phỏng thành tuyên bố về kỳ thi thực.
+
+Sau ghi hình, tách người/sequence giữa dev và test, gán nhãn bằng biên bản claim–actor và frame gốc, kiểm độc lập ca khó, rồi khóa manifest/nhãn trước khi chạy A0/A1/A2. Nếu quá ít người hoặc không có ca nhiều người/target vắng, ghi rõ câu hỏi nào `not runnable`; không bổ sung những frame test được chọn sau khi thấy lỗi để báo lại như test ban đầu. Phần mapping người và dữ liệu ảnh luôn ở kho cục bộ được kiểm soát, không đưa lên Git.
