@@ -31,6 +31,8 @@ E1 có AP/recall ba detector. [X-012-B run report](runs/T-012-E1-widerface-error
 
 Từ E2, R50 ít FA/FR hơn MBF trên cặp hợp lệ, nhưng chưa biết giá chi phí tính toán của lợi thế đó; M1 trước đây chỉ đo detector. Vì vậy [protocol M2](T-012-M2-reference-encoder-protocol.md) được commit `84a6683` trước khi đo hai encoder trên **cùng crop và cùng CPU runner**. [Run 36330836246](runs/T-012-M2-reference-encoder.md) thấy MBF median/p95 `8,35/14,55 ms`, R50 `67,33/72,81 ms` cho `get_feat` (180 calls mỗi ứng viên), weight MBF/R50 `13,6/174,4 MB`. Đây là thêm một trục chi phí vào candidate comparison, không đảo thành quyết định model: chất lượng E2 đo cặp web hợp lệ, M2 đo thành phần trên runner khác M1, và chưa có thiết bị đích, throughput mục tiêu, S4 theo lượt hoặc phép đo attempt đầu-cuối. X-012-C/E vẫn tồn tại để trả lời các uncertainty đó.
 
+[Ma trận bằng chứng T-012](T-012-candidate-evidence-matrix.md) đặt các kết quả vào đúng stage và phạm vi nguồn: YuNet/SCRFD còn đáng thử cho S3; MBF/R50 còn đáng thử cho S7–S8; A0/P1 là đối chứng/candidate S4 với nhãn khác loại. Từ đó xuất hiện câu hỏi interface **S3→S7**: E2 chỉ có SCRFD, nên cần giữ encoder và cặp ảnh cố định khi thay YuNet/SCRFD để biết detector/landmark ảnh hưởng coverage và xác minh ra sao. Phép này phải báo các cặp chưa chấm và giao cặp cùng hợp lệ, không được dùng nhãn XQLFW để tự chọn người giữa nhiều mặt. Đây là quyết định ứng viên/thí nghiệm tiếp, không là quyết định cấu hình cuối.
+
 ## Quy tắc giữ nhất quán
 
 - Không gộp AP E1, FMR/FNMR E2, coverage S4 và pass/fail E3 thành một accuracy hệ thống.
