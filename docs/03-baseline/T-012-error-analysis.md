@@ -1,0 +1,66 @@
+# T-012 — Phân tích lỗi baseline và câu hỏi thí nghiệm tiếp theo
+
+**Ngày:** 2026-09-27. **Trạng thái:** bản phân tích có điều kiện để Minh Hy review; T-011 vẫn draft, E3/M1 và đánh giá gần miền cửa phòng chưa có kết quả. **Phạm vi bằng chứng:** E1 detection trên WIDER validation và E2 verification trên cặp XQLFW dùng được; không phải đánh giá toàn hệ thống.
+
+## 1. Vì sao T-012 tồn tại
+
+[D-001](../00-project/decisions/T-004-D-001-chon-bai-toan-cua-phong-thi.md) đặt mục tiêu giảm công việc đối chiếu ở cửa phòng và xử lý đúng ngoại lệ. [T-008](https://github.com/quocanwyf/doantotnghiep2nguoi/blob/codex/T-008-exam-entry-requirements/docs/01-problem/T-008-requirements.md) tách attempt, check-in, quyền vào và attendance; FR-006/FR-009 cần phân biệt bằng chứng danh tính chưa đạt/chưa rõ và chuyển review đúng người. [T-009](https://github.com/quocanwyf/doantotnghiep2nguoi/pull/5) giữ các candidate đủ điều kiện khảo sát; [T-010](https://github.com/quocanwyf/doantotnghiep2nguoi/pull/6) đặt câu hỏi và protocol E1/E2 trước khi xem điểm. T-011 đã tạo một số evidence; T-012 cần xác định **lỗi nằm ở stage nào, điều gì vẫn chưa biết và phép thử nào phân biệt được các lời giải thích** trước khi nhóm chọn điểm tối ưu hoặc model triển khai.
+
+Mức khẳng định dùng trong tài liệu: **OBSERVED** = số liệu/run hoặc contract đã kiểm; **INFERENCE** = hệ quả logic từ các số liệu với phạm vi được nêu; **HYPOTHESIS** = cần thí nghiệm mới. Các khoảng trống không được điền bằng giả định kỳ thi, nhãn người mục tiêu hoặc hiệu năng trên thiết bị đích.
+
+## 2. Evidence hiện có và đơn vị đo
+
+| Nhánh | Bằng chứng đã có | Điều nó đo | Điều chưa đo |
+|---|---|---|---|
+| E1 / S3 | [Ba run WIDER](runs/T-011-E1-widerface-comparison.md), cùng 3.226 ảnh/39.112 valid GT và evaluator IoU > 0,5 | AP và recall bbox mặt của từng cấu hình trên validation TXT | Chọn đúng người S4, camera cửa phòng, WIDER Easy/Medium/Hard chính thức, chi phí cùng thiết bị đích |
+| E2 / S7–S8 | [MBF so R50](runs/T-011-E2-xqlfw-mbf-vs-r50.md), cùng 4.215 cặp hợp lệ/10 pair-fold | FMR/FNMR có điều kiện trên cặp đã qua rule đúng một mặt | 1.785 cặp bị loại, identity-disjoint/main test, policy check-in, latency target |
+| S4 / chọn người | [Coverage diagnosis](runs/T-011-E2-coverage-diagnosis.md) trên 7.263 ảnh được tham chiếu | Số detection và lý do cặp không vào E2 | Box nào thực sự là người mục tiêu; nhãn cho chọn sai người |
+| E3 / business logic | [T-010 E3 catalog](https://github.com/quocanwyf/doantotnghiep2nguoi/blob/codex/T-010-experiment-protocol/docs/03-baseline/T-010-E3-fixture-contract.md) có 12 nhóm fixture | Invariant và input/expected cần chuẩn bị | Profile policy được duyệt, implementation và pass/fail thật |
+| M1 / vận hành | Quan sát thời gian từng run E1 trên GitHub runner | Thời gian component trong từng lượt chạy không kiểm soát | Thời gian cùng thiết bị/quy trình, tải đến, hàng chờ, công sức và khả năng giảm người |
+
+Không cộng AP, FMR/FNMR, tỷ lệ cặp được chấm và số fixture thành một “accuracy hệ thống”. E1/E2 dùng dữ liệu khác miền và khác đơn vị; chúng chưa tạo được xác suất lỗi đầu-cuối ở cửa phòng.
+
+## 3. Lỗi và khoảng trống theo stage
+
+| Stage / nguồn T-008 | OBSERVED | Diễn giải có giới hạn | Chưa biết / rủi ro | Cần kiểm tiếp |
+|---|---|---|---|---|
+| S0–S2 hồ sơ/ca/phòng; FR-001–FR-005; RISK-003/010 | Chưa có run nghiệp vụ hoặc dữ liệu roster thật. | Không thể quy lỗi chấp nhận sai ca/phòng cho model mặt. | Nguồn roster, version, policy/context sai hoặc trùng hồ sơ có thể chi phối kết quả. | E3 fixture + kiểm nguồn dữ liệu khi profile được duyệt. |
+| S3 phát hiện mặt; FR-006; RISK-001/002 | Project AP/recall YuNet 0,648304/0,739466; SCRFD 0,547370/0,634179; BlazeFace 0,136009/0,180584. SCRFD có 595.274/4.858.820 box rỗng sau clip, 534.287 box bị clip. | Cấu hình YuNet v1 đạt AP/recall cao nhất **trên WIDER và evaluator này**. Số box clip/rỗng là dấu hiệu cần audit output, chưa chứng minh lỗi tọa độ hoặc độ chính xác trong miền triển khai. | Lỗi theo kích cỡ mặt, mờ, che khuất, góc, ánh sáng; tác động của preprocessing/adapter; chất lượng trên camera cửa phòng. | Phân tích matched/missed GT theo nhãn/size, kiểm tọa độ và đối chiếu dữ liệu gần miền. Không tune trên chính validation đã xem. |
+| S4 chọn người hiện tại; FR-006/009; RISK-001/002/006 | E2 chỉ dùng 4.215/6.000 cặp (70,25%); 1.399/1.785 cặp bị loại có ít nhất một ảnh nhiều detection; 448 cặp có ít nhất một ảnh không detection, gồm 62 cặp giao nhau. | Rule đúng một mặt làm mất coverage của **phép thử XQLFW**. Nhiều detection không chứng minh có nhiều người thật hoặc box nào là mục tiêu. | Chọn box lớn nhất hay retry có thể tăng coverage nhưng cũng có thể chọn sai người, gây false acceptance; ảnh XQLFW khác cảnh cửa phòng. | Có nhãn người mục tiêu/không có mục tiêu, kiểm chọn đúng, unresolved và ảnh hưởng FMR/FNMR khi ghép S4→E2. |
+| S7–S8 xác minh 1:1; FR-006/009; RISK-001/002 | Trên 4.215 cặp hợp lệ: MBF FA 133/2.169, FR 125/2.046; R50 FA 76/2.169, FR 74/2.046. R50 ít hơn 57 FA và 51 FR; fold 4 có FA bằng MBF (13). | R50 tốt hơn trên các cặp được chấm, nhưng lợi thế không đồng đều ở mọi fold. Cả hai còn lỗi; không biết lỗi trong 1.785 cặp bị loại. | Pair-fold trùng identity, ảnh web/crop và thiếu target label; chưa có operating point nghiệp vụ hoặc chi phí thiết bị. | Test identity-disjoint/miền gần cửa phòng với protocol và target có nguồn; đo cost cùng điều kiện trước lựa chọn. |
+| E3 rule, quyền, fallback, attendance; FR-007–FR-018; RISK-003–005/007–009 | Có catalog 12 fixture, chưa có run. | Không thể gọi E3 pass hoặc suy hệ thống cho vào/vắng đúng từ E1/E2. | Profile policy, authority và implementation chưa được duyệt/có. | Pin profile giả lập được nhóm duyệt, chạy fixture trên logic/app và audit actual–expected. |
+| M1 thời gian/công sức; FR-019; RISK-006/007 | Mỗi E1 run có timing trên runner riêng, không kiểm soát tải; E2 R50 từng phải chia chunk vì thiếu bộ nhớ trong lượt chạy liên tục. | Có rủi ro chi phí/tài nguyên đáng đo; không xếp hạng tốc độ từ các lượt hiện tại. | Thiết bị đích, throughput giờ cao điểm, thời gian review/fallback/As-Is. | Đo cùng thiết bị và procedure, tách component/attempt/review; khảo sát As-Is trước claim giảm người. |
+
+**Không suy từ box FP của E1 thành false acceptance nghiệp vụ.** E1 phát ra rất nhiều box ở score output thấp 0,01 để vẽ đường precision–recall; một lượt check-in còn qua chọn người, xác minh, policy và thẩm quyền. Tương tự, cặp bị loại khỏi E2 là coverage loss của protocol hiện tại, chưa phải false rejection hoặc absent.
+
+## 4. Mức ưu tiên và quyết định ở T-012
+
+**Ưu tiên nghiên cứu kế tiếp: S4 — xác định người mục tiêu và quản lý `unresolved` trước xác minh 1:1.** Lý do: trong E2 hiện tại, 1.785/6.000 cặp không được chấm; 1.399 cặp bị ảnh hưởng bởi nhiều detection. Đây là mất coverage lớn nhất được **quan sát trong pipeline thử XQLFW**, và một cách tự chọn sai người có thể chuyển vấn đề coverage thành rủi ro RISK-001. Quyết định này chỉ chọn **câu hỏi cần kiểm**, không khẳng định S4 là bottleneck tại phòng thi, không chọn model/rule chọn mặt, không thay kết quả E2 gốc.
+
+Điều kiện để phép thử S4 có nghĩa: có ảnh/attempt với nhãn người mục tiêu hoặc nhãn “không thể xác định”, nguồn/quyền dùng rõ, bối cảnh nhiều người đủ gần câu hỏi deployment; manifest tách theo người/ca/sequence nếu có; quy tắc gán nhãn và đo sai chọn người được đặt trước. Nếu chưa có nhãn, chỉ có thể đo số detection/coverage, **không chấm đúng người**. Nhóm cần xác định mức lỗi cho phép và hậu quả review trước khi gọi một kết quả là đạt nghiệp vụ.
+
+**Các cách đáng đưa vào X-012-A, chưa chọn triển khai:** (A0) rule T-011 hiện tại: chỉ tiếp tục khi đúng một mặt, còn lại unresolved; (A1) baseline không học đã có trong [T-005 survey S4](../02-survey/T-005-quoc-an-models.md): một mặt/track ổn định trong vùng đứng giao dịch, mơ hồ thì retry/manual; (A2) liên kết bbox qua frame bằng hình học và timeout nếu dữ liệu là sequence. Nhãn người mục tiêu do người gán chỉ dùng làm **ground truth/oracle đối chứng**, không được đưa vào input của A0–A2. Mọi cách cần cùng tập giao dịch và cửa sổ quan sát được ghi trước; báo thêm thời gian chờ, số frame và tỷ lệ chuyển tay. Không đưa tracker học máy hoặc rule “box lớn nhất trong hành lang” vào shortlist chỉ vì nó có thể tăng coverage: T-005 chưa có nhãn chứng minh an toàn cho chúng.
+
+## 5. Candidate questions và experiment kế tiếp
+
+| ID | Question / hypothesis cần bác bỏ | Dữ liệu và điều kiện kiểm soát | Metric / acceptance logic đặt trước | Quyết định có thể tạo |
+|---|---|---|---|---|
+| X-012-A — **ưu tiên** | A1/A2 có cải thiện coverage **mà không tăng chọn sai người** so A0 không? | Tập giao dịch có nhãn mục tiêu/không mục tiêu; cùng sequence/window, detector/weight và split; so A0/A1/A2 ở trên; giữ E2 encoder/threshold dev cố định khi đo tác động tiếp. | Target-selection error, coverage, unresolved/manual rate, FMR/FNMR của pipeline có điều kiện và mẫu số đầy đủ; thời gian thêm. Target chấp nhận theo rủi ro T-008 còn TBD, phải duyệt trước locked test. | Giữ/hoãn candidate S4 để thử sâu hơn; chưa chọn hệ thống cuối. |
+| X-012-B | Sai khác AP E1 có tập trung ở kích cỡ/điều kiện GT hoặc bất thường clip output không? | Cùng WIDER manifest/evaluator/config v1; phân tích hậu nghiệm theo nhãn GT và size đã định nghĩa trước khi đọc slice; audit adapter trên ảnh/box được phép xem. | Recall theo nhóm và số GT/mẫu số; tỷ lệ clip/rỗng; tái lập TP/AP tổng. Chỉ mô tả, không tune config trên validation này. | Xác định nhóm lỗi cụ thể cho thí nghiệm mới và nhu cầu dữ liệu miền cửa phòng. |
+| X-012-C | Lợi thế E2 của R50 có còn khi kiểm identity-disjoint/ảnh gần miền, và chi phí có phù hợp thiết bị? | Main/external test có quyền và nhãn; dev/test tách người; cùng probe/reference và detector/alignment được pin; cùng thiết bị đo. | FMR/FNMR tại operating point pre-approved, coverage, CI phù hợp phụ thuộc theo người; p50/p95 latency, RAM, kích thước. Acceptance target còn TBD. | Chọn candidate đưa vào experiment tối ưu hoặc hoãn, chưa dùng XQLFW pair-fold làm phán quyết cuối. |
+| X-012-D | Workflow giữ invariant khi thiếu bằng chứng, trùng lượt, fallback, correction không? | T-010 E3-F01–F12, profile giả lập được nhóm duyệt trước run, implementation thật, input synthetic. | Pass/fail/not-runnable từng fixture; audit và trạng thái attempt/check-in/entry/attendance tách riêng. | Sửa logic/app hoặc profile theo review; không là metric model. |
+| X-012-E | Thành phần nào chi phối thời gian/công sức ở tải cửa phòng? | Cùng thiết bị và điểm bắt/kết thúc; profile lượt đến và As-Is được quan sát/duyệt; tách nhánh thường lệ/review/fallback. | Thời gian component/attempt, queue/review, RAM và tải; target/acceptance TBD. | Chọn bottleneck vận hành thực, chưa suy giảm nhân sự từ timing runner. |
+
+X-012-A là câu hỏi tiếp theo được chọn **để thiết kế**, nhưng chưa thể chạy locked experiment vì thiếu nhãn mục tiêu và target business được duyệt. X-012-B có thể chạy như phân tích mô tả ngay mà không đổi protocol E1; nó không thay X-012-A hoặc dùng điểm validation để chọn threshold. Các phép thử còn lại có dependency riêng, không cần ép thành một bảng accuracy.
+
+## 6. Traceability và handoff
+
+| Nhu cầu nghiệp vụ | Evidence hiện có | Uncertainty | Câu hỏi tiếp theo |
+|---|---|---|---|
+| BP-002 → SC-006/007 → BR-005/008 → FR-006/009 → RISK-001/002/006 | E2 coverage 70,25%, nhiều detection ở 1.399 cặp bị loại | Không biết người mục tiêu và hậu quả chọn nhầm | X-012-A; TQ-002/003 |
+| BP-002 → FR-006 → T-010 E1/S3 | E1 AP/recall ba candidate | Lỗi theo điều kiện ảnh và domain gap | X-012-B; sau đó domain-specific E1 |
+| BP-002 → FR-006/009 → T-010 E2 | MBF/R50 FMR/FNMR có điều kiện | Identity/domain/chi phí target | X-012-C |
+| BP-003/004 → BR-007–BR-017 → FR-007–FR-018 | Chỉ có catalog E3 | Outcome/audit chưa được chấm | X-012-D |
+| BP-001/004 → FR-019 → RISK-006/007 | Timing component không kiểm soát | Bottleneck và tổng công sức | X-012-E |
+
+**Điều cần Minh Hy review:** (1) lỗi/giới hạn nào đang bị suy quá mức từ WIDER hoặc XQLFW; (2) thứ tự X-012-A/B có hợp lý với rủi ro sai người và thiếu nhãn; (3) dữ liệu/nhãn S4 nào nhóm có thể tiếp cận hợp lệ; (4) các target/policy nào cần xác nhận trước locked experiment. Sau review, cập nhật ưu tiên nếu evidence mới thay đổi; không sửa business requirement để khớp candidate hiện có.
