@@ -1,6 +1,6 @@
 # T-011 — E1 WIDER FACE: YuNet full validation
 
-**Ngày chạy:** 2026-09-27. **Trạng thái:** run component detection đã hoàn tất; chưa có so sánh đầy đủ E1 hoặc quyết định detector cuối.
+**Ngày chạy:** 2026-09-27. **Trạng thái:** run component detection đã hoàn tất; so sánh ba detector được ghi ở báo cáo E1; chưa có quyết định detector cuối.
 
 ## Câu hỏi và phạm vi
 
@@ -30,6 +30,6 @@ Thời gian phần preprocessing + inference + postprocessing sau giải mã ả
 
 ## Diễn giải và bước tiếp
 
-Điểm AP và recall trả lời cho **một cấu hình YuNet** trên bộ validation và evaluator đã pin. Số FP lớn gắn với ngưỡng output thấp được đặt trước để quan sát đường precision–recall; không suy từ đây rằng ngưỡng triển khai nên là 0,01. Cần chạy BlazeFace full-range và SCRFD-500MF trên cùng manifest/evaluator, xem các lỗi/giới hạn theo điều kiện ảnh, rồi mới so candidate. Cần dữ liệu tương tự cửa phòng thi và phép đo trên thiết bị đích trước final technical decision.
+Điểm AP và recall trả lời cho **một cấu hình YuNet** trên bộ validation và evaluator đã pin. Số FP lớn gắn với ngưỡng output thấp được đặt trước để quan sát đường precision–recall; không suy từ đây rằng ngưỡng triển khai nên là 0,01. [Báo cáo so sánh E1](T-011-E1-widerface-comparison.md) đối chiếu ba run trên cùng manifest/evaluator. Cần dữ liệu tương tự cửa phòng thi và phép đo trên thiết bị đích trước final technical decision.
 
-**Trạng thái đồng bộ:** báo cáo này được chuẩn bị trong workspace sau khi kết nối GitHub trả 403 cho thao tác ghi; chưa xác nhận đã nằm trên PR #7.
+**Trạng thái đồng bộ:** báo cáo đã được đẩy lên draft PR #7.
