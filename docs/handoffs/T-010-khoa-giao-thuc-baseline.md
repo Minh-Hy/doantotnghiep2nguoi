@@ -14,3 +14,7 @@
 - [T-010 E1 scoring protocol](../03-baseline/T-010-E1-scoring-protocol.md) đã đặt trước AP nội bộ WIDER validation, xử lý valid/ignored GT, matching và preflight. Nguồn dữ liệu đã được T-011 kiểm; evaluator code/wrapper chưa qua preflight nên chưa có điểm detector.
 - [T-010 E3 fixture contract](../03-baseline/T-010-E3-fixture-contract.md) có 12 nhóm case trace về T-008 theo mốc Quốc An yêu cầu dùng. Đây là thiết kế input/invariant, chưa có profile được duyệt hoặc implementation để chấm pass/fail.
 - Lượt này không chạy được phép thử tại máy vì helper khởi tạo tiến trình báo `helper_unknown_error: setup refresh had errors` cho cả PowerShell và Node REPL. Không coi việc ghi protocol là kết quả benchmark.
+
+## Đính chính hash SCRFD trong E1 (2026-09-27)
+
+[T-011 preflight run 36294478001](https://github.com/quocanwyf/doantotnghiep2nguoi/actions/runs/36294478001) phát hiện giá trị SHA-256 `det_500m.onnx` trong bảng adapter v1 bị chép sai một ký tự. ZIP `buffalo_sc.zip` đúng hash; file ONNX bên trong 2.524.817 byte có SHA-256 `5E4447F50245BBD7966BD6C0FA52938C61474A04EC7DEF48753668A9D8B4EA3A`. Đã sửa [T-010 E1 protocol](../03-baseline/T-010-E1-scoring-protocol.md) và runner T-011 trước mọi điểm AP; không đổi candidate, score threshold hoặc evaluator. [Run 36294608464](https://github.com/quocanwyf/doantotnghiep2nguoi/actions/runs/36294608464) xác nhận cả ba adapter qua preflight 8 ảnh.
