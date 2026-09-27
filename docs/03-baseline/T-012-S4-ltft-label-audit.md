@@ -1,6 +1,6 @@
 # T-012 — Audit nhãn LTFT cho phép thử proxy S4
 
-**Ngày kiểm:** 27/09/2026. **Trạng thái:** đã kiểm file nhãn công khai; chưa tải/kiểm frame S5, chưa chạy candidate, chưa có kết quả S4. Đây là audit khả năng dùng **dữ liệu có sẵn**, không phải quyết định chọn dataset/model cuối.
+**Ngày kiểm:** 27/09/2026. **Trạng thái:** đã kiểm file nhãn và cấu trúc archive video S5 công khai; **chưa xác lập được mapping frame–nhãn, nên proxy chưa chạy được**. Chưa trích xuất/kiểm nội dung ảnh, chưa chạy candidate và chưa có kết quả S4. Đây là audit khả năng dùng **dữ liệu có sẵn**, không phải quyết định chọn dataset/model cuối.
 
 ## Vì sao kiểm nguồn này
 
@@ -24,9 +24,20 @@ Hai file đều có **0 dòng sai số trường**. Số ID có `face=1` khớp 
 - Choke1/Choke2 nối ba camera/đoạn theo thứ tự riêng của LTFT. Phải xác minh khớp số frame, thứ tự và kích thước bbox trên video gốc trước khi chấm; không gán ID bằng vị trí gần nhất từ bản XML ChokePoint cũ vì archive đó không có S5.
 - LTFT không có claim–actor, người mục tiêu theo transaction, attendance hay quyền vào phòng. Số nhiều mặt nói trên chỉ chứng minh **khả năng xây proxy**, chưa chứng minh A1/A2 hoạt động hoặc cải thiện nghiệp vụ. Trường hợp `face=0`/không box không tự động là “target vắng”; đó có thể là giới hạn của annotation.
 
+## Kiểm cấu trúc video Zenodo: hiện không khớp hướng dẫn LTFT
+
+Tải tuần tự hai archive S5 đúng [record Zenodo](https://zenodo.org/records/815657) về thư mục tạm, xác nhận MD5 gốc rồi chỉ đọc **tên file** trong tar lồng nhau, không trích xuất ảnh:
+
+| Archive | Kích thước / MD5 đã kiểm | Cấu trúc thực thấy | Số frame từ tên file | Nhãn LTFT tương ứng |
+|---|---|---|---:|---:|
+| `P2E_S5.tar.xz` | 180.516.452 byte / `e6bca312e40ebebdfb709f2315eebf80` | `C1.1`, `C2.1`, `C3.1`, mỗi thư mục 808 JPG | 2.424 nếu nối ba camera | Choke1: 2.526 |
+| `P2L_S5.tar.xz` | 143.729.848 byte / `14b28f3d83a75b62d3aa6ad5ee117843` | `C1.1`, `C2.1`, `C3.1`, mỗi thư mục 757 JPG | 2.271 nếu nối ba camera | Choke2: 2.139 |
+
+[README LTFT](https://github.com/hertasecurity/LTFT) yêu cầu ghép `C1.2 → C1.1 → C1.3` cho từng video, nhưng archive Zenodo mà chính README trỏ tới chỉ chứa `.1` của ba camera. Mặt khác, tổng frame từ tên file cũng lệch 102 (Choke1) và 132 (Choke2) so với header nhãn. **Chưa biết** đây là lỗi hướng dẫn, bản archive khác, cắt/nhân frame hay quy ước tên riêng; không tự đoán phép đổi chỉ số. Vì vậy **không thể ghép bbox/ID LTFT lên frame Zenodo một cách có căn cứ ở hiện trạng**. Không chạy proxy hoặc báo wrong-track/coverage từ hai nguồn này trước khi tìm được mapping có thể kiểm độc lập.
+
 ## Bước tiếp có thể làm bằng dữ liệu sẵn có
 
-1. Kiểm frame S5 công khai với file LTFT, hash/version nguồn, camera order, fps và box alignment; báo mọi frame lệch/mất.
+1. Tìm bản frame/video hoặc hướng dẫn dựng Choke1/Choke2 đúng 2.526/2.139 frame từ nguồn tác giả, hoặc bằng chứng độc lập cho mapping từng frame; kiểm vài mốc đầu/giữa/cuối, camera order, fps và bbox alignment trước khi khóa manifest. Nếu không giải được sai khác ở trên, LTFT `not runnable` cho proxy có ảnh.
 2. Định nghĩa proxy trước khi xem output: chọn target ID từ nhãn tại đầu một cửa sổ, chỉ truyền **vị trí quan sát ban đầu** cho candidate; chấm việc giữ đúng track ở frame sau, `wrong-track` và `unresolved` trên cùng cửa sổ. Không đưa ID nhãn hoặc tọa độ tương lai vào candidate.
 3. Tách cửa sổ dev/test theo video hoặc ID nếu khả thi; kiểm ID có thể xuất hiện giữa Choke1/Choke2 và frame chồng lặp trước khi nói split độc lập. Khóa cách lấy mẫu, mẫu số và điều kiện chấp nhận trước test.
 4. Nếu chỉ có nhãn mà không có frame đúng hoặc không rõ quyền chạy/chia sẻ, dừng ở audit. Nếu proxy chạy được, tên/report phải ghi **LTFT tracking proxy**, không gọi là X-012-A nghiệp vụ hay hiệu quả cửa phòng.
