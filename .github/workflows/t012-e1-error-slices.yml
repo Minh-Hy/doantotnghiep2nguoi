@@ -1,4 +1,4 @@
-name: T-012 E1 descriptive error slices
+name: T-012 E1 slices and one-vs-multi groups
 
 on:
   push:
@@ -8,6 +8,8 @@ on:
       - ".github/workflows/t012-e1-error-slices.yml"
       - "scripts/t012_widerface_error_slices.py"
       - "tests/test_t012_widerface_error_slices.py"
+      - "scripts/t012_widerface_one_multi.py"
+      - "tests/test_t012_widerface_one_multi.py"
   workflow_dispatch:
 
 permissions:
@@ -43,6 +45,8 @@ jobs:
           python-version: "3.12"
       - name: Check slice logic on synthetic boxes
         run: python -m unittest discover -s tests -p test_t012_widerface_error_slices.py -v
+      - name: Check one-vs-multi group scoring on synthetic boxes
+        run: python -m unittest discover -s tests -p test_t012_widerface_one_multi.py -v
       - name: Install pinned YuNet runtime
         if: matrix.candidate == 'yunet'
         run: python -m pip install numpy==2.2.6 opencv-contrib-python==5.0.0.93
@@ -136,9 +140,18 @@ jobs:
             --expected-rows "${{ matrix.expected_rows }}" \
             --expected-dropped "${{ matrix.expected_dropped }}" \
             --expected-clipped "${{ matrix.expected_clipped }}"
+      - name: Score one-vs-multi-valid-GT image groups
+        run: |
+          python scripts/t012_widerface_one_multi.py \
+            --images "${RUNNER_TEMP}/t012-e1/WIDER_val.zip" \
+            --annotations "${RUNNER_TEMP}/t012-e1/wider_face_split.zip" \
+            --predictions "${RUNNER_TEMP}/t012-e1/predictions.json" \
+            --e1-summary "${RUNNER_TEMP}/t012-e1/e1-summary.json" \
+            --output "${RUNNER_TEMP}/t012-e1/one-multi-summary.json"
       - name: Remove temporary predictions and summary
         if: always()
         run: |
           rm -f "${RUNNER_TEMP}/t012-e1/predictions.json"
           rm -f "${RUNNER_TEMP}/t012-e1/e1-summary.json"
           rm -f "${RUNNER_TEMP}/t012-e1/summary.json"
+          rm -f "${RUNNER_TEMP}/t012-e1/one-multi-summary.json"

@@ -17,6 +17,12 @@ Câu hỏi chính: **thứ hạng và kiểu lỗi của các ứng viên thay �
 | S4 giữ track — proxy | Nhãn bbox/ID LTFT S5 và [protocol P0/P1](T-012-S4-box-only-proxy-protocol.md) đã chạy. | Cùng 1.024 cửa sổ–ID và box khởi đầu do nhãn cấp; nếu làm phân tầng mới, đặt tiêu chí số box một/nhiều **trước run mới** và dùng cùng cửa sổ cho P0/P1. | Correct/wrong/unresolved, số cửa sổ từng trôi ID, số frame mất target ID; mẫu số theo nhóm nếu nhóm đó có dữ liệu. | Chỉ đo liên kết hình học sau khởi tạo oracle, không so detector/encoder và không chứng minh chọn đúng người khai báo. |
 | S4→E2 theo lượt | Nguồn hiện đã rà **chưa kiểm đủ** nhãn nối mã/hồ sơ được khai báo với người mục tiêu trong cảnh. | [X-012-A](T-012-S4-experiment-readiness.md) giữ A0/A1/A2 và yêu cầu nhãn độc lập, split, cùng transaction/window trước locked test. | Correct-target/wrong-target/unresolved theo lượt, rồi FMR/FNMR đầu-cuối nếu reference/claim hợp lệ. | **Chưa chạy được phép chấm theo lượt**. Không tạo claim giả từ ID track/identity của dataset. |
 
+## Runner và cổng kiểm trước khi xem điểm nhóm
+
+[Scorer phân tầng](../../scripts/t012_widerface_one_multi.py) dùng lại `evaluate()` của T-011, chia ảnh theo **số valid GT** trước khi chấm; không dùng số detection của candidate để gán nhóm. [Workflow](../../.github/workflows/t012-e1-error-slices.yml) tải đúng archive/weight đã pin, tạo prediction trong thư mục tạm, kiểm lại E1 tổng, rồi mới chấm từng nhóm bằng cùng prediction đó. Mọi số đếm cộng được (ảnh, GT, TP/FP, neutral, prediction/drop/clip) phải đối chiếu đúng E1 tổng; AP từng nhóm được tính riêng, không cộng/trung bình để thay AP toàn tập. Nhóm 0 valid GT báo ảnh/FP/neutral, AP và recall là không xác định. [Kiểm tra synthetic](../../tests/test_t012_widerface_one_multi.py) kiểm phân nhóm và cổng đối chiếu trước run thật.
+
+Workflow chỉ in số tổng hợp; ảnh, weight, prediction theo ảnh và JSON tạm không đưa lên Git. Run trên GitHub Actions là phép đo chất lượng detector trên WIDER, không là thời gian của thiết bị đích. Chưa điền kết quả trước khi run thành công.
+
 ## Thứ tự thực hiện và quy tắc đọc kết quả
 
 1. **Kiểm manifest WIDER theo nhãn gốc** và báo số ảnh/GT của ba nhóm; xác nhận có đủ mẫu một mặt và nhiều mặt. Khóa mã phân tầng, config E1, metric và script trước khi xem điểm theo nhóm.
