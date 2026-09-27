@@ -249,3 +249,7 @@ Quốc An yêu cầu coi T-008 PR #3 commit `c235b80` là mốc nghiệp vụ đ
 **Tác động lên gate:** điều kiện mapping capability T-008 cho nghiên cứu tiếp được coi là đáp ứng theo chỉ đạo này. Điều đó **không** khóa policy profile, authority cụ thể, acceptance target hoặc expected outcome phụ thuộc kỳ thi; cũng không chứng minh E3/M1. E3 có thể chuẩn bị fixture generic bám SC/BR/FR, nhưng chỉ chấm pass/fail khi profile thử được phê duyệt và có implementation. Case “không thấy mặt” là fixture **có điều kiện** khi profile dùng bằng chứng mặt; invariant generic là `IdentityEvidenceRequirement` trả unmet/unavailable/inconclusive và chuyển review đúng quyền.
 
 **Bằng chứng đến sau khi viết protocol:** T-011 đã chạy E2 XQLFW/MobileFaceNet và thêm đối chứng R50 trên cùng 4.215 cặp hợp lệ; R50 là phép thăm dò thêm sau run đầu, không là xác nhận độc lập hoặc quyết định model cuối. T-011 đã kiểm WIDER FACE validation 3.226 ảnh/39.708 bbox; E1 còn phải khóa evaluator/ignore/adapter **trước khi chấm**. E2 không thay thế S4 target selection, E3 hoặc M1. Không sửa hồi tố quy tắc threshold, split hoặc cách diễn giải run E2 đã ghi ở mục 1–8.
+
+## 13. Quy tắc chấm E1 đặt trước khi có điểm (2026-09-27)
+
+[Giao thức E1 trên WIDER FACE validation](T-010-E1-scoring-protocol.md) khóa AP nội bộ ở IoU >0,5, valid/ignored GT, thứ tự prediction, match một-một và các preflight bắt buộc. Đây không phải điểm WIDER Easy/Medium/Hard chính thức. Wrapper, evaluator code và điều kiện đo vẫn phải pin/kiểm trước khi chạy; T-011 chưa có AP/recall detector.
