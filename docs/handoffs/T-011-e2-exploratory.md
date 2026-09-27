@@ -12,3 +12,7 @@
 ## Bổ sung chẩn đoán coverage (2026-09-26)
 
 [Phân tích hậu nghiệm](../03-baseline/runs/T-011-E2-coverage-diagnosis.md) và script scripts/t011_xqlfw_coverage.py xác nhận 1.399/1.785 cặp bị loại có ít nhất một ảnh nhiều mặt. Chạy cùng ZIP/hash và cấu hình detector; JSON tổng hợp nằm ngoài Git ở artifacts/t011-xqlfw-coverage.json. Chưa có nhãn để biết box nào là người mục tiêu, nên chưa đổi rule chọn mặt hoặc kết quả E2 gốc.
+
+## Bổ sung đối chứng R50 (2026-09-27)
+
+[Run E2 đối chứng](../03-baseline/runs/T-011-E2-xqlfw-mbf-vs-r50.md) dùng cùng 4.215 cặp hợp lệ, detector và pair-fold: MobileFaceNet tái lập đúng run gốc (FMR 133/2.169; FNMR 125/2.046), R50 có FMR 76/2.169 và FNMR 74/2.046. R50 được giữ làm ứng viên cho phép đo tiếp, chưa là model cuối do dữ liệu khác miền, coverage 70,25%, fold trùng identity và chưa đo chi phí trên thiết bị đích. Runner chunked ở scripts/t011_xqlfw_r50_comparison.py; buffalo_l.zip ngoài Git có hash trong external-assets. JSON aggregate cục bộ ở artifacts; checkpoint embedding tạm đã xóa sau kiểm tra.

@@ -58,3 +58,7 @@ JSON tổng hợp nằm cục bộ trong thư mục artifacts bị ignore; khôn
 ## Chẩn đoán coverage hậu nghiệm
 
 [Phân tích T-011](T-011-E2-coverage-diagnosis.md) phân tách lý do loại 1.785 cặp trên đúng input/detector của run này. Đây là quan sát sau khi xem kết quả; không sửa quy tắc hoặc số đo E2 gốc.
+
+## Đối chứng encoder tiếp theo
+
+[Run T-011 MobileFaceNet so R50](T-011-E2-xqlfw-mbf-vs-r50.md) dùng đúng các cặp hợp lệ và cùng detector/alignment; run gốc ở trên vẫn là mốc bất biến. Kết quả so sánh chỉ có điều kiện trên cặp dùng được.
