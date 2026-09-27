@@ -1,6 +1,6 @@
 # T-012 — Phân tích lỗi baseline và câu hỏi thí nghiệm tiếp theo
 
-**Ngày:** 2026-09-27. **Trạng thái:** phân tích hoàn tất trong phạm vi E1/E2/M1 tham chiếu; PR #8 chờ review sau PR #7. E3/app, thiết bị đích và đánh giá gần miền cửa phòng chưa có kết quả. **Phạm vi bằng chứng:** E1 detection trên WIDER validation, E2 verification trên cặp XQLFW và M1 detection timing trên cùng CPU runner; không phải đánh giá toàn hệ thống.
+**Ngày:** 2026-09-27. **Trạng thái:** phân tích hoàn tất trong phạm vi E1/E2/M1/M2 tham chiếu; PR #8 chờ review sau PR #7. E3/app, thiết bị đích và đánh giá gần miền cửa phòng chưa có kết quả. **Phạm vi bằng chứng:** E1 detection trên WIDER validation, E2 verification trên cặp XQLFW, M1 detection timing và M2 encoder timing ở các CPU runner tham chiếu; không phải đánh giá toàn hệ thống.
 
 ## 1. Vì sao T-012 tồn tại
 
@@ -19,6 +19,7 @@ Mức khẳng định dùng trong tài liệu: **OBSERVED** = số liệu/run ho
 | S4 / chọn người | [Coverage diagnosis](runs/T-011-E2-coverage-diagnosis.md) trên 7.263 ảnh được tham chiếu | Số detection và lý do cặp không vào E2 | Box nào thực sự là người mục tiêu; nhãn cho chọn sai người |
 | E3 / business logic | [T-010 E3 catalog](https://github.com/quocanwyf/doantotnghiep2nguoi/blob/codex/T-010-experiment-protocol/docs/03-baseline/T-010-E3-fixture-contract.md) có 12 nhóm fixture | Invariant và input/expected cần chuẩn bị | Profile policy được duyệt, implementation và pass/fail thật |
 | M1 / vận hành | [Run M1 tham chiếu](runs/T-011-M1-reference-detection.md): 60 ảnh WIDER, 180 calls/candidate trong cùng CPU runner | Median/p95 của `adapter.detect` cho ba detector trong điều kiện runner này | Encoder, attempt đầu-cuối, RAM riêng, thiết bị đích, tải đến, hàng chờ, công sức và khả năng giảm người |
+| M2 / chi phí xác minh | [Run M2 tham chiếu](runs/T-012-M2-reference-encoder.md): cùng 60 crop XQLFW đã căn chỉnh, 180 calls/encoder trong một CPU runner | Median/p95 `get_feat` và kích thước ONNX của MBF/R50 | Pipeline/attempt đầu-cuối, RAM đỉnh, thiết bị đích, acceptance vận hành; M1 và M2 là hai run khác nhau |
 
 Không cộng AP, FMR/FNMR, tỷ lệ cặp được chấm và số fixture thành một “accuracy hệ thống”. E1/E2 dùng dữ liệu khác miền và khác đơn vị; chúng chưa tạo được xác suất lỗi đầu-cuối ở cửa phòng.
 
@@ -40,6 +41,8 @@ Không cộng AP, FMR/FNMR, tỷ lệ cặp được chấm và số fixture th�
 [T-012 E2 three-outcome analysis](runs/T-012-E2-three-outcome-analysis.md) đối chiếu toàn bộ 6.000 cặp theo `match / non-match / unresolved`: 954/3.000 cặp genuine và 831/3.000 cặp impostor là `unresolved` trước bước encoder. Trong 4.215 cặp được chấm, MBF cho 1.921 genuine match, 125 genuine non-match, 133 impostor match, 2.036 impostor non-match; R50 lần lượt là 1.972, 74, 76, 2.093. Số unresolved không đổi khi đổi encoder vì detector và rule lọc được giữ cố định. Đây là kết quả **theo cặp ảnh và threshold pair-fold**, không phải quyết định check-in hay tỷ lệ review tại cửa phòng. Bằng chứng này làm rõ vì sao X-012-A phải đo cả `wrong-target` lẫn `unresolved`, thay vì chỉ tăng tỷ lệ cặp có điểm similarity.
 
 **Kiểm split E2 tiếp theo:** [run 36306431440](https://github.com/quocanwyf/doantotnghiep2nguoi/actions/runs/36306431440) dùng hai nhóm danh tính không giao nhau cho việc chọn/chấm threshold. Trong 4.516 cặp đủ điều kiện chia nhóm trước detection, 3.138 cặp qua rule một mặt (2.046 genuine, 1.092 impostor); 1.378 cặp còn lại không có score. Ngoài ra 1.484 impostor nối hai nhóm bị loại bởi **thiết kế split**, không phải unresolved của detector. MBF có FMR 68/1.092 = 6,23%, FNMR 121/2.046 = 5,91%; R50 là 44/1.092 = 4,03% và 75/2.046 = 3,67%. R50 tiếp tục ít lỗi trên cặp được chấm, nhưng run này vẫn là XQLFW, không kiểm người mục tiêu S4 hoặc miền camera cửa phòng. Không so tỷ lệ giữa hai protocol như một phép đo riêng tác động của split, vì mẫu số impostor và threshold đã đổi.
+
+**Chi phí encoder tham chiếu M2:** [run 36330836246](https://github.com/quocanwyf/doantotnghiep2nguoi/actions/runs/36330836246) trên cùng 60 crop XQLFW/180 calls mỗi encoder cho MBF median/p95 `8,35/14,55 ms`, R50 `67,33/72,81 ms`; ONNX lần lượt `13.616.099/174.383.860` byte. [Báo cáo M2](runs/T-012-M2-reference-encoder.md) giữ nguồn, điều kiện, mẫu số và giới hạn. R50 có lợi thế lỗi E2 nhưng tốn thời gian/weight hơn trên CPU runner M2. Không cộng M1 và M2 từ hai run để suy latency lượt hoặc chọn model cuối.
 
 ## 4. Mức ưu tiên và quyết định ở T-012
 
@@ -91,8 +94,8 @@ Các slice được đặt **trước khi chạy**: căn bậc hai diện tích 
 |---|---|---|---|
 | BP-002 → SC-006/007 → BR-005/008 → FR-006/009 → RISK-001/002/006 | E2 coverage 70,25%; [ba nhánh](runs/T-012-E2-three-outcome-analysis.md) giữ 1.785 cặp unresolved; nhiều detection ở 1.399 cặp bị loại | Số cặp web chưa cho biết tỷ lệ cảnh nhiều người ở cửa phòng hoặc mặt nào thuộc người khai báo; sai target có thể ảnh hưởng xác minh 1:1 | So sánh S4 một mặt/nhiều mặt bằng nguồn có nhãn phù hợp; [X-012-A theo lượt](T-012-S4-experiment-readiness.md) cần nhãn claim–actor; trong lúc thiếu nhãn vẫn nghiên cứu component/proxy và giữ fallback; TQ-002/003 |
 | BP-002 → FR-006 → T-010 E1/S3 | E1 AP/recall ba candidate | Lỗi theo điều kiện ảnh và domain gap | X-012-B; sau đó domain-specific E1 |
-| BP-002 → FR-006/009 → T-010 E2 | MBF/R50 FMR/FNMR có điều kiện ở pair-fold và split custom; split loại 1.484 impostor nối nhóm | Domain, pretrain overlap, chi phí encoder trên target | X-012-C |
+| BP-002 → FR-006/009 → T-010 E2 | MBF/R50 FMR/FNMR có điều kiện ở pair-fold và split custom; split loại 1.484 impostor nối nhóm; M2 đo `get_feat` cùng crop trên CPU runner | Domain, pretrain overlap, chi phí encoder trên thiết bị đích và mức chấp nhận | X-012-C |
 | BP-003/004 → BR-007–BR-017 → FR-007–FR-018 | Chỉ có catalog E3 | Outcome/audit chưa được chấm | X-012-D |
-| BP-001/004 → FR-019 → RISK-006/007 | M1 đo detection cùng CPU runner: median YuNet/BlazeFace/SCRFD = 25,72/13,26/83,24 ms | Chi phí encoder/attempt trên thiết bị đích, bottleneck và tổng công sức | X-012-E |
+| BP-001/004 → FR-019 → RISK-006/007 | M1 đo detection YuNet/BlazeFace/SCRFD; M2 đo MBF/R50 encoder trên runner khác | Chi phí attempt trên cùng thiết bị đích, bottleneck và tổng công sức | X-012-E |
 
 **Điểm chuyển giao để Minh Hy review, không chặn hoàn tất phân tích:** (1) lỗi/giới hạn nào đang bị suy quá mức từ WIDER hoặc XQLFW; (2) luồng một người khai báo rồi quét trong bối cảnh có thể nhiều người trước camera đã được phản ánh nhất quán chưa; (3) đối chứng và nhãn nào đủ để so một mặt/nhiều mặt ở từng cấp độ component, proxy và transaction; (4) các target/policy nào cần xác nhận trước locked experiment. Nếu evidence hoặc phạm vi nghiệp vụ đổi, cập nhật T-012; không sửa business requirement để khớp candidate hiện có.

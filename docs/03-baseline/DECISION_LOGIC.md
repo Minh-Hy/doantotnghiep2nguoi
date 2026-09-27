@@ -29,6 +29,8 @@ E1 có AP/recall ba detector. [X-012-B run report](runs/T-012-E1-widerface-error
 
 [Phân nhóm proxy LTFT theo số mặt đầu](runs/T-012-S4-ltft-face-density.md) được đặt ở commit `7547a9c` sau khi đã xem P0/P1 tổng nhưng trước khi xem slice: 21 trường hợp 1 mặt, 46 trường hợp 2 mặt, 957 trường hợp ≥3 mặt. Trong nhóm ≥3, P1 `710/35/212` so P0 `422/135/400` đúng/sai/chưa kết luận. Vì phần lớn mẫu proxy là nhiều mặt, cải thiện P1 không thể quy cho nhóm một mặt; tuy nhiên box đầu là oracle và các nhóm không cân bằng/không kiểm soát điều kiện. Bước tiếp theo vẫn là kiểm chọn đúng **người đã đưa mã** từ đầu vào có nhãn theo lượt, hoặc giữ kết luận ở mức thành phần khi nguồn sẵn có không đáp ứng. Không chốt P1 làm cách triển khai.
 
+Từ E2, R50 ít FA/FR hơn MBF trên cặp hợp lệ, nhưng chưa biết giá chi phí tính toán của lợi thế đó; M1 trước đây chỉ đo detector. Vì vậy [protocol M2](T-012-M2-reference-encoder-protocol.md) được commit `84a6683` trước khi đo hai encoder trên **cùng crop và cùng CPU runner**. [Run 36330836246](runs/T-012-M2-reference-encoder.md) thấy MBF median/p95 `8,35/14,55 ms`, R50 `67,33/72,81 ms` cho `get_feat` (180 calls mỗi ứng viên), weight MBF/R50 `13,6/174,4 MB`. Đây là thêm một trục chi phí vào candidate comparison, không đảo thành quyết định model: chất lượng E2 đo cặp web hợp lệ, M2 đo thành phần trên runner khác M1, và chưa có thiết bị đích, throughput mục tiêu, S4 theo lượt hoặc phép đo attempt đầu-cuối. X-012-C/E vẫn tồn tại để trả lời các uncertainty đó.
+
 ## Quy tắc giữ nhất quán
 
 - Không gộp AP E1, FMR/FNMR E2, coverage S4 và pass/fail E3 thành một accuracy hệ thống.
