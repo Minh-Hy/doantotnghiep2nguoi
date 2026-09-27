@@ -13,7 +13,7 @@
 
 T-011 E2 chỉ chấm 4.215/6.000 cặp; 1.399/1.785 cặp bị loại có ảnh nhiều detection. Đây là dấu hiệu coverage của pipeline nghiên cứu, không xác nhận sai người ở cửa phòng. Để cân nhắc thay rule một mặt cần nhãn người mục tiêu và metric lỗi chọn nhầm (T-008 RISK-001/002), vì chỉ tăng số cặp được chấm có thể che giấu sai lựa chọn S4. Do đó X-012-A tồn tại **trước** bất kỳ quyết định chọn rule/model S4 nào.
 
-E1 có AP/recall ba detector nhưng chưa có lỗi theo điều kiện ảnh hoặc dữ liệu gần miền triển khai. X-012-B là bước chẩn đoán, không phải cớ tune trên WIDER validation đã xem. E2 chưa chứng minh unseen identity; X-012-C cần split/test phù hợp và phép đo chi phí cùng điều kiện. E3/M1 phải chờ dependency nghiệp vụ/thiết bị thực, không dùng điểm E1/E2 để điền kết quả.
+E1 có AP/recall ba detector. [X-012-B run report](runs/T-012-E1-widerface-error-slices.md) cho thấy nhóm bbox `<16` px bị bỏ sót nhiều trên WIDER; phép chẩn đoán không phải cớ tune trên validation đã xem. Cần đo phân bố cỡ mặt/điều kiện tại camera cửa phòng trước khi gọi đây là bottleneck triển khai. E2 chưa chứng minh unseen identity; X-012-C cần split/test phù hợp và phép đo chi phí cùng điều kiện. E3/M1 phải chờ dependency nghiệp vụ/thiết bị thực, không dùng điểm E1/E2 để điền kết quả.
 
 ## Quy tắc giữ nhất quán
 

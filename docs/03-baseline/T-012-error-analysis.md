@@ -61,6 +61,8 @@ Các slice được đặt **trước khi chạy**: căn bậc hai diện tích 
 
 **Deviation và revision trước khi xem slice SCRFD:** [run v1 36298113886](https://github.com/quocanwyf/doantotnghiep2nguoi/actions/runs/36298113886) kiểm exact TP, prediction rows, box rỗng và box clip so với T-011. YuNet/BlazeFace qua; SCRFD bị dừng **trước khi in slice** vì box clip = 534.289 so với 534.287 ở T-011, trong khi TP 24.804, rows 4.858.820 và box rỗng 595.274 đều khớp. Hai box khác biệt chưa đủ căn cứ kết luận nguyên nhân; không âm thầm dùng output thất bại. Revision `T-012-X-012-B-v2` giữ **exact TP/rows/box rỗng** làm gate ghép/mẫu số, chạy lại evaluator T-011 để đối chiếu AP, và báo riêng clip count/delta mỗi run. Đây là sửa tiêu chí chẩn đoán vì clip count là thuộc tính tọa độ output từng lượt, không phải số GT được ghép; không đổi dữ liệu, weight, config, metric AP hoặc size/attribute bins. Nếu TP/rows/box rỗng lệch, dừng diễn giải. Sai khác clip hoặc AP phải được ghi trong report, không gọi là tái lập bit-for-bit.
 
+**Kết quả X-012-B v2:** [run 36298776083](https://github.com/quocanwyf/doantotnghiep2nguoi/actions/runs/36298776083) thành công cả ba job; [run report theo size và mã annotation](runs/T-012-E1-widerface-error-slices.md) ghi exact reconciliation, SCRFD AP/clip deviation và các mẫu số. Nhóm bbox `<16` px chứa 17.911/39.112 valid GT; recall cực đại lần lượt YuNet 53,57%, SCRFD 29,74%, BlazeFace 0%. Đây là chẩn đoán **WIDER**; chưa biết camera cửa phòng có bao nhiêu mặt nhỏ. X-012-A vẫn ưu tiên vì thiếu nhãn người mục tiêu, còn X-012-B chỉ bổ sung câu hỏi về khoảng cách/cỡ mặt và điều kiện ảnh cho dữ liệu miền sau.
+
 ## 6. Traceability và handoff
 
 | Nhu cầu nghiệp vụ | Evidence hiện có | Uncertainty | Câu hỏi tiếp theo |
