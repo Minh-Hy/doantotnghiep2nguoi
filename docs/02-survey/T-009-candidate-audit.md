@@ -116,3 +116,12 @@ Trace quyết định: [T-004 business scope](../00-project/decisions/T-004-D-00
 - Đối chiếu lại phần quyền/shortlist đã được tự kiểm ở mục 2.1 và 3.1 nếu phạm vi sử dụng hoặc file candidate thay đổi; WIDER/LFW/ChokePoint chưa có archive ảnh được kiểm ở T-009; XQLFW có pairs và archive được T-010 kiểm, có thể dùng thử học thuật nhưng không được tuyên bố identity-disjoint hoặc đại diện phòng thi.
 - Nhóm đối chiếu candidate với protocol T-010 đang được review riêng, rồi xác định dữ liệu và phương tiện thực sự có thể dùng cho thí nghiệm. Không lấy bảng này làm tuyên bố đã qua đủ B0 của dataset.
 - Khi T-008 được review xong, đối chiếu lại ranh giới claim/record resolution, human authority và outcome trước khi khóa thí nghiệm.
+
+## 7. Đối chiếu với mốc nghiệp vụ T-008 cho bước sau (2026-09-27)
+
+Theo chỉ đạo trực tiếp của Quốc An ngày 2026-09-27, dùng T-008 PR #3 commit `c235b80` làm mốc nghiệp vụ cho T-009/T-010/T-011 trong lượt đối chiếu; không sửa T-008. Việc PR #3 chưa merge/review xong trên GitHub là trạng thái riêng, không đổi phạm vi quyết định **candidate để thử** của T-009. [Bảng đối chiếu đầy đủ ở T-011 PR #7](https://github.com/quocanwyf/doantotnghiep2nguoi/blob/codex/T-011-exploratory-baseline/docs/03-baseline/T-011-T008-T009-T010-trace-review.md).
+
+- TQ-002/FR-006 dẫn đến S3 detection và S7–S8 verification 1:1 trong hướng nghiên cứu D-001/D-002. WIDER FACE chỉ có nhãn detection; XQLFW chỉ có nhãn cặp. Hai tập không chứng minh S4 chọn người mục tiêu, tra cứu hồ sơ, quyền vào hoặc attendance. TQ-003 về unavailable/inconclusive tạo yêu cầu báo coverage và nhánh review; không được biến cặp không chấm thành match/non-match.
+- TQ-001 và TQ-004–007 là lookup, context/policy, duplicate, fallback, audit/attendance/correction. T-009 chỉ chỉ ra nhu cầu dữ liệu/fixture của chúng; **chưa audit nguồn roster hoặc triển khai các capability đó**. Không chọn model cho rule/database.
+- TQ-008 cần đo vận hành thực; smoke runtime B0 không trả lời throughput hoặc công sức tại cửa. Các policy value/authority của kỳ thi cụ thể vẫn chưa có dù cấu trúc T-008 được dùng làm mốc.
+- Evidence đến sau T-009 được giữ đúng thời điểm: T-011 đã kiểm file/nhãn WIDER FACE và chạy R50 trên XQLFW, nhưng đó không hồi tố biến shortlist B0 thành lựa chọn cuối. T-009 **giữ nguyên candidate**, chuyển các khoảng trống sang protocol/run tiếp theo.
