@@ -1,6 +1,11 @@
 name: T-011 M1 same-runner reference detection timing
 
 on:
+  push:
+    branches:
+      - codex/T-011-exploratory-baseline
+    paths:
+      - ".github/workflows/t011-m1-reference.yml"
   workflow_dispatch:
 
 permissions:
