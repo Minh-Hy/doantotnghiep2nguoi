@@ -253,3 +253,7 @@ Quốc An yêu cầu coi T-008 PR #3 commit `c235b80` là mốc nghiệp vụ đ
 ## 13. Quy tắc chấm E1 đặt trước khi có điểm (2026-09-27)
 
 [Giao thức E1 trên WIDER FACE validation](T-010-E1-scoring-protocol.md) khóa AP nội bộ ở IoU >0,5, valid/ignored GT, thứ tự prediction, match một-một và các preflight bắt buộc. Đây không phải điểm WIDER Easy/Medium/Hard chính thức. Wrapper, evaluator code và điều kiện đo vẫn phải pin/kiểm trước khi chạy; T-011 chưa có AP/recall detector.
+
+## 14. Catalog fixture E3 từ contract T-008 (2026-09-27)
+
+[T-010-E3-fixture-contract.md](T-010-E3-fixture-contract.md) liệt kê 12 nhóm case, input, invariant generic, policy slot và trace SC/BR/FR/TQ. Đây là **thiết kế fixture**, chưa có policy profile được duyệt hoặc implementation để báo pass/fail. Nhánh không thấy mặt chỉ áp dụng khi profile thử dùng bằng chứng mặt; generic invariant là xử lý `unavailable/inconclusive` đúng quyền.
