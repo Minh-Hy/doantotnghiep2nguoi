@@ -21,7 +21,7 @@ from typing import Any
 MODEL_SHA256 = {
     "yunet": "ebafce4e3c118d6554634be5c27ab333b4c047a9a8c3faf1d7cf93101c22f0f0",
     "blazeface": "3698b18f063835bc609069ef052228fbe86d9c9a6dc8dcb7c7c2d69aed2b181b",
-    "scrfd": "5e4447f50245bbd7966bdc0fa52938c61474a04ec7def48753668a9d8b4ea3a",
+    "scrfd": "5e4447f50245bbd7966bd6c0fa52938c61474a04ec7def48753668a9d8b4ea3a",
 }
 IMAGE_SHA256 = "f9efbd09f28c5d2d884be8c0eaef3967158c866a593fc36ab0413e4b2a58a17a"
 ANNOTATION_SHA256 = "c7561e4f5e7a118c249e0a5c5c902b0de90bbf120d7da9fa28d99041f68a8a5c"
