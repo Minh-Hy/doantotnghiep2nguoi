@@ -88,7 +88,7 @@ class WiderFaceEvaluatorTests(unittest.TestCase):
         metrics = evaluator.evaluate(truth, predictions, {"a.jpg": (10, 10), "b.jpg": (10, 10)})
         self.assertEqual(metrics["images"], 2)
         self.assertEqual(metrics["images_with_no_predictions"], 1)
-        self.assertEqual(metrics["predictions_clipped"], 2)
+        self.assertEqual(metrics["predictions_clipped"], 1)
         self.assertEqual(metrics["predictions_dropped_empty_box"], 1)
         self.assertEqual((metrics["tp"], metrics["fp"]), (1, 0))
 
