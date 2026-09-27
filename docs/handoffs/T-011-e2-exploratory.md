@@ -38,3 +38,7 @@
 ## Bổ sung preflight ba detector (2026-09-27)
 
 [Run 36294608464](https://github.com/quocanwyf/doantotnghiep2nguoi/actions/runs/36294608464) chạy qua GT/image gate và API/coordinate preflight trên cùng 8 ảnh đầu manifest: YuNet 10.419 box, BlazeFace full-range 2.126 box, SCRFD-500MF 20.866 box ở cấu hình score thấp đã đặt trước. Tất cả weight được đối chiếu SHA-256; số box chỉ xác nhận adapter chạy và cảnh báo dung lượng output, **không phải AP/recall hay căn cứ chọn model**. Run 36294478001 đã phát hiện hash nội bộ `det_500m.onnx` bị chép sai một ký tự dù `buffalo_sc.zip` đúng hash; T-010 và T-011 đã đính chính trước khi chấm. Chưa chạy full 3.226 ảnh; cần thống nhất một gói OpenCV, kiểm chi phí lưu/chấm prediction lớn và report điều kiện đo.
+
+## Bổ sung run YuNet toàn WIDER và việc tiếp theo (2026-09-27)
+
+Các mục trên ghi trạng thái tại thời điểm viết; mốc mới nhất là [run E1 YuNet 36294898744](https://github.com/quocanwyf/doantotnghiep2nguoi/actions/runs/36294898744), được phân tích trong [run report](../03-baseline/runs/T-011-E1-widerface-yunet.md). Trên 3.226 ảnh, project AP tại IoU > 0,5 = 0,6483041468, recall cực đại = 0,7394661485 (39.112 valid GT). Prediction và summary chỉ ở bộ nhớ tạm GitHub runner, đã xóa cuối job. Đây chưa là điểm WIDER chính thức hay quyết định detector. Đã chuẩn bị workflow riêng để chạy BlazeFace và SCRFD trên cùng manifest/evaluator; hai kết quả này chưa có. Giữ PR #7 ở draft đến khi so sánh có đủ phạm vi và giới hạn.
