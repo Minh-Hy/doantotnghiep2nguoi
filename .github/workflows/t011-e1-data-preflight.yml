@@ -90,7 +90,7 @@ jobs:
               content = source.read(matches[0])
           actual_detector_hash = hashlib.sha256(content).hexdigest()
           print(f"SCRFD detector bytes={len(content)} sha256={actual_detector_hash}", flush=True)
-          assert actual_detector_hash == "5e4447f50245bbd7966bdc0fa52938c61474a04ec7def48753668a9d8b4ea3a"
+          assert actual_detector_hash == "5e4447f50245bbd7966bd6c0fa52938c61474a04ec7def48753668a9d8b4ea3a"
           (root / "det_500m.onnx").write_bytes(content)
           print("Pinned SCRFD detector extracted and hashed")
           PY
