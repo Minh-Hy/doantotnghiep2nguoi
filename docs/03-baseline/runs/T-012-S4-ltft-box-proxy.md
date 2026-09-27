@@ -36,4 +36,6 @@ Nhóm 218 **không** được gọi là người vắng mặt: bộ nhãn bắt 
 
 **Thiết kế chỉ là exploratory:** không có dev/test hay split danh tính; cửa sổ không chồng lặp nhưng cùng ID có thể xuất hiện nhiều lần, và người ở Choke1/Choke2 có thể trùng. Không tính khoảng tin cậy kiểu các cửa sổ độc lập, không tối ưu IoU/timeout hoặc chọn winner cuối từ bảng này. Repository LTFT công khai annotation nhưng chưa thấy license rõ cho tái phân phối; chỉ dẫn nguồn và giữ số tổng hợp trong báo cáo.
 
+**Chẩn đoán bổ sung sau khi xem điểm:** [D1 đường đi P1](T-012-S4-ltft-path-diagnostic.md) phát lại đúng 1.024 trường hợp: 41 từng chọn sai ID ở ít nhất một frame, gồm 38 sai endpoint và 3 kết thúc unresolved. Đây là phân tích hậu nghiệm, không sửa hoặc thay mẫu số P0/P1 ở trên.
+
 **Quyết định T-012:** giữ câu hỏi S4 về chọn đúng người mục tiêu ở trạng thái chưa được giải quyết. Nếu nghiên cứu tiếp bằng dữ liệu có sẵn, phải tách (a) chọn box khởi đầu từ hành động/claim và (b) giữ track sau khi đã chọn; proxy hiện tại chỉ cung cấp evidence cho (b). X-012-A nghiệp vụ vẫn `not runnable` khi không có claim–actor và nhãn transaction độc lập.

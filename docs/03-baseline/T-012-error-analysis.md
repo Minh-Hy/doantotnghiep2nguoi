@@ -65,6 +65,8 @@ X-012-A là câu hỏi tiếp theo được chọn **để thiết kế**, nhưn
 
 **Evidence proxy box-only, không phải X-012-A:** [protocol đã khóa trước run](T-012-S4-box-only-proxy-protocol.md) và [báo cáo 1.024 cửa sổ–ID](runs/T-012-S4-ltft-box-proxy.md) so `P0-static` với `P1-sequential` trên cùng nhãn LTFT. P0 đúng/sai/unresolved `446/143/435`, P1 `758/38/228`. Vì box mục tiêu ban đầu được **cấp từ ground truth**, kết quả chỉ nói về liên kết hình học sau khởi tạo; không biết hệ thống chọn đúng người khai báo hồ sơ. Video nguồn còn lệch nhãn, và không có split danh tính/miền cửa phòng, nên không chốt rule S4 hay model cuối.
 
+**Lỗi ẩn trong đường đi:** [D1 hậu nghiệm](runs/T-012-S4-ltft-path-diagnostic.md) cho thấy P1 từng chọn sai ID ở 41/1.024 cửa sổ, dù chỉ 38 còn sai ở endpoint; 3 trường hợp kết thúc unresolved. Lần sai đầu của cả 41 xảy ra khi box target `face=1` không được annotation ghi nhận ở frame đó. Đây là uncertainty về **trôi track khi mất box**, không phải bằng chứng người thật rời khung; candidate không có nhãn oracle để tự biết target đã mất.
+
 ### Thiết kế chẩn đoán X-012-B trước khi xem slice
 
 [Script T-012](../../scripts/t012_widerface_error_slices.py) phát lại đúng quy tắc ghép GT của [evaluator T-011](../../scripts/t011_widerface_evaluate.py): prediction score giảm dần trong từng ảnh, clip box về biên, chọn GT valid có IoU lớn nhất và `IoU > 0,5`, một GT chỉ ghép một lần. Vì ảnh độc lập, thứ tự score toàn tập của AP và thứ tự trong từng ảnh cho cùng tập GT được ghép. Không xuất prediction theo ảnh.
