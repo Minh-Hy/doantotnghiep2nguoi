@@ -22,7 +22,7 @@ Cả ba run dùng `WIDER_val.zip` và `wider_face_split.zip` cùng hash ở [dat
 
 - Không có official WIDER Easy/Medium/Hard benchmark; evaluator dùng validation TXT và quy tắc project đã đặt trước.
 - Ảnh WIDER không đại diện đầy đủ cho camera cửa phòng thi; chưa có domain-specific detection evaluation, kiểm S4 chọn một người trong khung, hoặc tác động đến verification E2 và nghiệp vụ E3.
-- Các số median/p95 trên GitHub CPU runner thuộc lượt riêng, tải máy không kiểm soát và chưa cùng thiết bị đích; **không dùng để xếp hạng latency/compute**. M1 vẫn mở.
+- Các số median/p95 của từng E1 run thuộc lượt riêng và không dùng để xếp hạng latency. [M1 tham chiếu cùng runner](T-011-M1-reference-detection.md) nay đã đo `adapter.detect` cho ba candidate trên cùng 60 ảnh/CPU job; kết quả chỉ mô tả môi trường này, chưa đo thiết bị đích hoặc check-in đầu-cuối.
 - Không có acceptance target nghiệp vụ được xác nhận hoặc policy kỳ thi cụ thể; không thể tuyên bố candidate nào đủ triển khai.
 
 **Quyết định ở mức T-011:** E1 đã có bằng chứng thực nghiệm cho cả ba candidate theo protocol v1. Chuyển các sai khác AP/recall, box clipped/rỗng và domain gap sang T-012 để đặt câu hỏi thí nghiệm tiếp. Giữ cả ba run và cấu hình để truy vết; chưa chốt detector, threshold hay architecture.
