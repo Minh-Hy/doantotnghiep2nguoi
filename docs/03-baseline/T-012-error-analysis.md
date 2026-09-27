@@ -53,6 +53,12 @@ Không cộng AP, FMR/FNMR, tỷ lệ cặp được chấm và số fixture th�
 
 X-012-A là câu hỏi tiếp theo được chọn **để thiết kế**, nhưng chưa thể chạy locked experiment vì thiếu nhãn mục tiêu và target business được duyệt. X-012-B có thể chạy như phân tích mô tả ngay mà không đổi protocol E1; nó không thay X-012-A hoặc dùng điểm validation để chọn threshold. Các phép thử còn lại có dependency riêng, không cần ép thành một bảng accuracy.
 
+### Thiết kế chẩn đoán X-012-B trước khi xem slice
+
+[Script T-012](../../scripts/t012_widerface_error_slices.py) phát lại đúng quy tắc ghép GT của [evaluator T-011](../../scripts/t011_widerface_evaluate.py): prediction score giảm dần trong từng ảnh, clip box về biên, chọn GT valid có IoU lớn nhất và `IoU > 0,5`, một GT chỉ ghép một lần. Vì ảnh độc lập, thứ tự score toàn tập của AP và thứ tự trong từng ảnh cho cùng tập GT được ghép. Run chỉ hợp lệ nếu **TP, prediction rows, box rỗng và box clip khớp chính xác** run E1 gốc của candidate. Không xuất prediction theo ảnh.
+
+Các slice được đặt **trước khi chạy**: căn bậc hai diện tích bbox GT ở ảnh gốc `<16`, `16–<32`, `32–<96`, `≥96` pixel; và từng mã số nguyên gốc của `blur`, `illumination`, `occlusion`, `pose` trong validation TXT. Mỗi slice báo `valid GT`, `matched GT`, `missed GT` và recall cực đại; không gán nghĩa mức độ cho mã khi chưa đối chiếu tài liệu nhãn. Không tính official WIDER Easy/Medium/Hard, không chọn score threshold, resize hay detector bằng chính các slice này. Prediction từ ba cấu hình E1 v1 được tạo lại trên cùng archive/hash và xóa cuối job; summary chỉ gồm số tổng hợp. Nếu tổng không khớp E1 cũ, dừng diễn giải và điều tra trước.
+
 ## 6. Traceability và handoff
 
 | Nhu cầu nghiệp vụ | Evidence hiện có | Uncertainty | Câu hỏi tiếp theo |
