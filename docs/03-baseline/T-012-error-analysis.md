@@ -67,6 +67,8 @@ X-012-A là câu hỏi tiếp theo được chọn **để thiết kế**, nhưn
 
 **Lỗi ẩn trong đường đi:** [D1 hậu nghiệm](runs/T-012-S4-ltft-path-diagnostic.md) cho thấy P1 từng chọn sai ID ở 41/1.024 cửa sổ, dù chỉ 38 còn sai ở endpoint; 3 trường hợp kết thúc unresolved. Lần sai đầu của cả 41 xảy ra khi box target `face=1` không được annotation ghi nhận ở frame đó. Đây là uncertainty về **trôi track khi mất box**, không phải bằng chứng người thật rời khung; candidate không có nhãn oracle để tự biết target đã mất.
 
+[D2 kiểm nhãn thô](runs/T-012-S4-ltft-faceflag-audit.md) phân nhóm 41 lần sai đầu: **0** ca còn target ID với `face=0`, **41** ca không có target ID trong dòng nhãn. Vì vậy kết quả D1 không do riêng bộ lọc `face=1` bỏ sót một record `face=0`; vẫn chưa biết nguyên nhân thiếu ID ngoài đời hoặc cách candidate nhận ra sự mất dấu.
+
 ### Thiết kế chẩn đoán X-012-B trước khi xem slice
 
 [Script T-012](../../scripts/t012_widerface_error_slices.py) phát lại đúng quy tắc ghép GT của [evaluator T-011](../../scripts/t011_widerface_evaluate.py): prediction score giảm dần trong từng ảnh, clip box về biên, chọn GT valid có IoU lớn nhất và `IoU > 0,5`, một GT chỉ ghép một lần. Vì ảnh độc lập, thứ tự score toàn tập của AP và thứ tự trong từng ảnh cho cùng tập GT được ghép. Không xuất prediction theo ảnh.

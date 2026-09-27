@@ -18,6 +18,8 @@ Với từng cửa sổ–ID, `ever-wrong` nghĩa là P1 **đã chọn box có I
 
 Số endpoint `38` khớp báo cáo chính; nếu chỉ đọc endpoint thì bỏ qua **3** trường hợp đã chọn sai ID rồi kết thúc `unresolved`. Không có trường hợp đã sai rồi trở lại `correct-track` ở endpoint trong protocol này. Trong **41/41** lần sai đầu, target không có box `face=1` tại frame sai đầu. Khi target có box lại về cuối, P1 vẫn có thể đang bám ID khác: trong báo cáo chính, **11/38** cửa sổ sai endpoint vẫn có box target ở frame cuối.
 
+[Audit D2 trên dòng nhãn thô](T-012-S4-ltft-faceflag-audit.md) kiểm tiếp đúng 41 frame này: **0** frame còn target ID với `face=0`, **41** frame không có target ID trong dòng thô. Đây là phân nhóm hậu nghiệm của D1, không xác định lý do vật lý khiến target ID không được ghi.
+
 ## Ý nghĩa và giới hạn
 
 Kết quả hỗ trợ một uncertainty cụ thể: rule chỉ dựa vào overlap có thể **trôi sang người khác lúc box target bị mất trong annotation**, và sai lựa chọn có thể tồn tại sau khi target được ghi nhận trở lại. Đây là lý do phải đo lỗi dọc theo cửa sổ, không chỉ chấm một frame cuối. Tuy nhiên candidate **không biết ID ground truth**, nên không thể dùng nhãn “target đang thiếu” như một điều kiện runtime để né lỗi; cần một cơ chế quan sát/abstain có thể kiểm độc lập nếu tiếp tục nghiên cứu.
