@@ -25,6 +25,8 @@ E1 có AP/recall ba detector. [X-012-B run report](runs/T-012-E1-widerface-error
 
 [Kế hoạch phân tầng S3](T-012-S4-one-vs-multi-comparison-plan.md) được ghi sau E1 tổng thể nhưng trước khi xem điểm nhóm. [Run 36322220681 và báo cáo](runs/T-012-S4-widerface-one-multi.md) cho thấy SCRFD dẫn ở ảnh một mặt, YuNet dẫn ở ảnh ≥2 mặt trên WIDER. Nhóm ảnh khác mạnh về cỡ mặt GT, nên bằng chứng này dẫn tới câu hỏi **giữ cùng cỡ mặt thì thứ hạng còn đổi không**, chưa dẫn tới chọn detector. Nhãn bbox WIDER cũng không trả lời S4 ai đã đưa mã; việc chọn đúng người theo lượt vẫn là thí nghiệm riêng.
 
+[Câu hỏi cỡ mặt được khóa trước run ở commit `fbc968a`](T-012-S4-one-vs-multi-comparison-plan.md) và [run 36328357593](runs/T-012-S4-widerface-size-strata.md) trả lời ở mức S3: SCRFD dẫn trong hai khoảng `32–<96` và `≥96` px ở cả ảnh một/nhiều mặt; YuNet dẫn ở GT `<16` px nhiều mặt. Vì thế thứ hạng gộp phụ thuộc mạnh vào phân bố cỡ mặt của WIDER. Bước tiếp theo không thể suy ra detector triển khai từ bảng này: cần biết phân bố cỡ/điều kiện của nguồn dùng để đánh giá gần miền, và S4 chọn người đưa mã vẫn cần nhãn theo lượt riêng. Không tạo nhãn claim từ bbox WIDER hoặc biến kết quả S3 thành quyết định model cuối.
+
 ## Quy tắc giữ nhất quán
 
 - Không gộp AP E1, FMR/FNMR E2, coverage S4 và pass/fail E3 thành một accuracy hệ thống.
