@@ -56,7 +56,7 @@ Pool ban đầu:
 - **Giữ cố định:** reference/probe protocol, split, thiết bị và procedure đo.
 - **Preprocessing:** mỗi candidate dùng alignment/color/normalization đúng implementation/weight đã pin; không ép một crop tùy tiện cho mọi model.
 - **Metric:** ROC, FMR/FNMR theo threshold, TAR tại các FMR được protocol cho phép báo cáo, EER khi phù hợp.
-- **Quy tắc threshold:** chọn/tune trên dev; test chỉ dùng để đánh giá sau khi config và operating point đã khóa. Ghi số genuine/impostor attempts, số identity, khoảng tin cậy và phạm vi FMR dữ liệu có thể ước lượng; không nội suy operating point cực thấp từ vài nghìn cặp.
+- **Quy tắc threshold:** chọn/tune trên dev; test chỉ dùng để đánh giá sau khi config và operating point đã khóa. Với benchmark XQLFW, ghi số **cặp ảnh** genuine/impostor, số identity, khoảng tin cậy và phạm vi FMR dữ liệu có thể ước lượng; không nội suy operating point cực thấp từ vài nghìn cặp.
 - **Điều kiện so sánh:** hiện chỉ MobileFaceNet vượt runtime smoke T-009; một encoder không tạo được kết luận A tốt hơn B. EdgeFace/AdaFace/R50 phải có weight ID, điều kiện dùng phù hợp phạm vi đồ án, checksum, chạy ảnh hợp lệ và preprocessing được pin trước khi vào cùng protocol. Mỗi encoder phải công bố crop/align riêng; nếu khác nhau, kết quả bao gồm ảnh hưởng preprocessing và không quy toàn bộ chênh lệch cho backbone.
 
 ### E3 — Uncertain / retry / manual-review behavior
@@ -169,7 +169,7 @@ Sau khi freeze, không sửa preprocessing dựa trên test result; nếu cần 
 | E3 workflow | expected outcome pass/fail theo từng invariant/fixture | số ca retry/manual/unresolved; audit đầy đủ hay thiếu | Theo profile đã được duyệt; chưa có profile thì chưa chấm pass/fail phần phụ thuộc |
 | M1 vận hành | thời gian attempt thường lệ, review và fallback **đo riêng** khi có luồng tương ứng | median/tail latency, RAM, số lượt đến và thời gian chờ nếu quan sát được | TBD theo tải và thiết bị; không suy giảm nhân lực từ latency model |
 
-**Định nghĩa E2:** FMR = số impostor attempts được chấp nhận / tổng impostor attempts hợp lệ; FNMR = số genuine attempts bị từ chối / tổng genuine attempts hợp lệ tại cùng operating point. Các lượt inconclusive/retry/manual phải được báo **riêng** cùng coverage; không lặng lẽ tính thành match hoặc non-match. Báo denominator, số identity, khoảng tin cậy và số attempt tối thiểu có thể hỗ trợ operating point được yêu cầu. Nếu target FMR nhỏ hơn khả năng ước lượng từ dữ liệu, kết luận là **không đủ bằng chứng**.
+**Định nghĩa E2 trên XQLFW:** FMR = số **cặp ảnh impostor** được chấp nhận / tổng cặp ảnh impostor hợp lệ; FNMR = số **cặp ảnh genuine** bị từ chối / tổng cặp ảnh genuine hợp lệ tại cùng operating point. Cặp không đủ điều kiện để chấm được báo **riêng** cùng coverage, không lặng lẽ tính thành match hoặc non-match. Báo mẫu số cặp ảnh, số identity, khoảng tin cậy và quy mô dữ liệu cần để hỗ trợ operating point được yêu cầu. Retry/manual là outcome của **lượt check-in** trong phép thử workflow sau này, không suy trực tiếp từ cặp XQLFW. Nếu target FMR nhỏ hơn khả năng ước lượng từ dữ liệu, kết luận là **không đủ bằng chứng**.
 
 **Quy tắc acceptance:** trước khi mở locked test, nhóm phải duyệt nguồn của FMR/FNMR target, giới hạn retry/manual, điều kiện thời gian/tài nguyên trên thiết bị và outcome policy. Nếu chưa có các giá trị đó, vẫn có thể khóa cách thu **số liệu mô tả** cho baseline khám phá, nhưng không ghi đạt/không đạt yêu cầu nghiệp vụ hoặc chọn model cuối. Không chọn target sau khi xem test; thay đổi target phải ghi revision và dùng test chưa bị nhìn để xác nhận.
 
@@ -257,3 +257,5 @@ Quốc An yêu cầu coi T-008 PR #3 commit `c235b80` là mốc nghiệp vụ đ
 ## 14. Catalog fixture E3 từ contract T-008 (2026-09-27)
 
 [T-010-E3-fixture-contract.md](T-010-E3-fixture-contract.md) liệt kê 12 nhóm case, input, invariant generic, policy slot và trace SC/BR/FR/TQ. Đây là **thiết kế fixture**, chưa có policy profile được duyệt hoặc implementation để báo pass/fail. Nhánh không thấy mặt chỉ áp dụng khi profile thử dùng bằng chứng mặt; generic invariant là xử lý `unavailable/inconclusive` đúng quyền.
+
+**Đính chính thuật ngữ (2026-09-27, sau các run E2):** hai chỗ dùng `attempts` trong mô tả mẫu số E2 được sửa thành `cặp ảnh` cho đúng đơn vị XQLFW. Đây là sửa cách gọi, không thay split, threshold, metric, số đo hoặc protocol đã dùng khi chạy.
