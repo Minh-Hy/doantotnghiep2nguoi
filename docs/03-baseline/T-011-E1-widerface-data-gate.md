@@ -1,6 +1,6 @@
 # T-011 — Cổng dữ liệu E1 cho WIDER FACE validation
 
-**Ngày kiểm:** 2026-09-27. **Trạng thái:** file/annotation gate đạt; quy tắc chấm/ignore đã được đặt trước ở T-010; evaluator và adapter đã viết nhưng **chưa chạy preflight/test hoặc detector benchmark**.
+**Ngày kiểm:** 2026-09-27. **Trạng thái:** file/annotation gate đạt; quy tắc chấm/ignore đã được đặt trước ở T-010; evaluator và adapter đã viết; **10 kiểm thử tổng hợp đạt trên GitHub Actions**, còn preflight dữ liệu/model và detector benchmark chưa chạy.
 
 ## Vì sao kiểm
 
@@ -28,12 +28,12 @@ Cả hai ZIP qua kiểm CRC. File nhãn được parse là wider_face_split/wide
 
 ## Điều kiện trước khi chạy E1
 
-1. Khóa annotation và evaluator: bbox nào được tính/ignore, xử lý invalid/nonpositive và cách match prediction–ground truth; nếu báo AP theo WIDER chuẩn phải có đúng ground truth/protocol của từng mức khó. Không tự coi mọi dòng TXT là bbox hợp lệ.
+1. Dùng annotation/evaluator đã khóa ở [T-010 E1 scoring protocol](https://github.com/quocanwyf/doantotnghiep2nguoi/blob/codex/T-010-experiment-protocol/docs/03-baseline/T-010-E1-scoring-protocol.md); kiểm preflight GT trước khi tính điểm. Nếu báo AP theo WIDER chuẩn phải có đúng ground truth/protocol của từng mức khó. Không tự coi mọi dòng TXT là bbox hợp lệ.
 2. Pin manifest validation, kích thước ảnh/tọa độ, preprocessing và output adapter riêng cho YuNet, BlazeFace full-range, SCRFD-500MF; so trên **cùng ảnh và cùng evaluator**.
 3. Ghi nguồn/hash weight, runtime, warm-up và thiết bị; nếu thiếu một wrapper hoặc dữ liệu cho candidate thì không tạo bảng so sánh giả.
 4. Giới hạn kết luận ở detection S3: WIDER FACE là ảnh sự kiện, không có claim thí sinh/người mục tiêu S4 hoặc nghiệp vụ ca/phòng. Nó không kiểm được xác minh 1:1 hay hiệu quả cửa phòng.
 
-**Quyết định cổng:** WIDER FACE validation qua kiểm file/nhãn cơ bản cho E1. Phép đo AP/recall vẫn chờ quy tắc evaluation/ignore và các wrapper detector được khóa trước khi chấm.
+**Quyết định cổng:** WIDER FACE validation qua kiểm file/nhãn cơ bản cho E1. Protocol evaluation/ignore và config ba wrapper đã được đặt trước; phép đo AP/recall vẫn chờ preflight trên dữ liệu thật và inference.
 
 ## Protocol chấm được đặt trước — 2026-09-27
 
@@ -43,5 +43,6 @@ Cả hai ZIP qua kiểm CRC. File nhãn được parse là wider_face_split/wide
 
 - [Evaluator E1](../../scripts/t011_widerface_evaluate.py) nhận validation ZIP/annotation ZIP đã pin, kiểm manifest/ảnh/GT và tính AP nội bộ theo [T-010 E1 protocol](https://github.com/quocanwyf/doantotnghiep2nguoi/blob/codex/T-010-experiment-protocol/docs/03-baseline/T-010-E1-scoring-protocol.md). [Test evaluator](../../tests/test_t011_widerface_evaluator.py) dùng box tổng hợp để bắt lỗi ignore, duplicate, IoU boundary, AP, ảnh rỗng và manifest.
 - [Prediction adapter](../../scripts/t011_widerface_predict.py) có ba nhánh YuNet/BlazeFace/SCRFD với hash/config v1 đặt trước, xuất bbox/score theo tọa độ ảnh gốc vào JSON **ngoài Git**. [Test adapter](../../tests/test_t011_widerface_predict_adapter.py) kiểm chuyển tọa độ và giá trị không hữu hạn.
-- Thứ tự thực hiện khi môi trường chạy trở lại: (1) chạy hai file unit test; (2) evaluator `--preflight-only` để kiểm GT/ảnh, số box ngoài biên; (3) mỗi adapter `--preflight-only` để kiểm API/tọa độ; (4) chạy prediction đầy đủ trên cùng 3.226 ảnh; (5) evaluator chấm từng JSON bằng cùng code và ghi summary; (6) so AP và thời gian với phạm vi đo rõ. Nếu một gate lỗi, dừng và ghi revision, **không chọn cấu hình bằng điểm validation**.
-- Chưa có output test/preflight/run trong lượt này: công cụ khởi tạo tiến trình trên máy trả lỗi `helper_unknown_error: setup refresh had errors` cho lệnh chạy và runtime dự phòng. Vì vậy code trên PR chỉ là implementation **chưa được thực thi**, không là bằng chứng AP/recall hay model thắng.
+- Thứ tự thực hiện khi môi trường chạy trở lại: (1) evaluator `--preflight-only` để kiểm GT/ảnh, số box ngoài biên; (2) mỗi adapter `--preflight-only` để kiểm API/tọa độ; (3) chạy prediction đầy đủ trên cùng 3.226 ảnh; (4) evaluator chấm từng JSON bằng cùng code và ghi summary; (5) so AP và thời gian với phạm vi đo rõ. Nếu một gate lỗi, dừng và ghi revision, **không chọn cấu hình bằng điểm validation**.
+- [GitHub Actions run 36293858671](https://github.com/quocanwyf/doantotnghiep2nguoi/actions/runs/36293858671) chạy Python 3.12, **10/10 unit test tổng hợp đạt** cho logic AP/ignore/duplicate/IoU/manifest và chuyển tọa độ adapter. Đây là test synthetic của code; không đọc WIDER thật và không load weight/model. Bản workflow tiếp theo đổi sang `actions/checkout@v7` và `actions/setup-python@v7` để tránh cảnh báo Node 20; cần xem run mới cho revision này.
+- Chưa có output GT/model preflight hoặc run E1 trên máy: công cụ khởi tạo tiến trình cục bộ trả lỗi `helper_unknown_error: setup refresh had errors`. Vì vậy chưa có AP/recall/latency detector hay model thắng.
