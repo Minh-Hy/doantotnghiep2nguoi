@@ -38,3 +38,18 @@ jobs:
             --images "${RUNNER_TEMP}/t011-e1/WIDER_val.zip" \
             --annotations "${RUNNER_TEMP}/t011-e1/wider_face_split.zip" \
             --preflight-only
+      - name: Download pinned YuNet weight to temporary runner storage
+        run: |
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/opencv/opencv_zoo/raw/refs/heads/main/models/face_detection_yunet/face_detection_yunet_2026may.onnx" \
+            --output "${RUNNER_TEMP}/t011-e1/face_detection_yunet_2026may.onnx"
+      - name: Preflight YuNet adapter on eight images
+        env:
+          OPENCV_FORCE_DNN_ENGINE: "4"
+        run: |
+          python scripts/t011_widerface_predict.py \
+            --candidate yunet \
+            --model "${RUNNER_TEMP}/t011-e1/face_detection_yunet_2026may.onnx" \
+            --images "${RUNNER_TEMP}/t011-e1/WIDER_val.zip" \
+            --annotations "${RUNNER_TEMP}/t011-e1/wider_face_split.zip" \
+            --preflight-only
