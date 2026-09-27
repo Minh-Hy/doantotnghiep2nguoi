@@ -36,6 +36,11 @@ class ErrorSliceTests(unittest.TestCase):
         self.assertEqual(sliced["groups"]["size_px_sqrt_area"]["16to31"]["missed_gt"], 1)
         self.assertEqual(sliced["groups"]["size_px_sqrt_area"]["ge96"]["matched_gt"], 1)
         self.assertEqual(sliced["groups"]["blur_code"]["2"]["missed_gt"], 1)
+        cross = sliced["groups"]["image_group_and_size_px_sqrt_area"]
+        self.assertEqual(cross["multi_valid:lt16"]["matched_gt"], 1)
+        self.assertEqual(cross["multi_valid:16to31"]["missed_gt"], 1)
+        self.assertEqual(cross["one_valid:ge96"]["matched_gt"], 1)
+        self.assertEqual(sum(row["matched_gt"] for row in cross.values()), baseline["tp"])
 
     def test_misordered_metadata_is_rejected(self):
         annotation = "a.jpg\n2\n0 0 10 10 0 0 0 0 0 0\n20 20 10 10 0 0 0 0 0 0\n"

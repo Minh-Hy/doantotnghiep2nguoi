@@ -32,3 +32,11 @@ Workflow chỉ in số tổng hợp; ảnh, weight, prediction theo ảnh và JS
 5. Chỉ khi có dữ liệu **claim–actor theo lượt** hợp lệ mới so A0/A1/A2 về chọn đúng người và xác minh 1:1 đầu-cuối. Nếu không có, giữ giới hạn này và tiếp tục quyết định ở cấp component; không lấy proxy thay bằng chứng nghiệp vụ.
 
 **Tiêu chí chấp nhận hiện tại:** phép so sánh phải dùng cùng dữ liệu/split/config trong mỗi nhánh, báo đủ mẫu số và ba outcome khi phù hợp, không tăng coverage bằng cách âm thầm chọn sai người. Mức FMR/FNMR, wrong-target, latency đạt nghiệp vụ chưa có nguồn kỳ thi nên để mở; kết quả nghiên cứu được dùng để giữ/loại candidate cho phép thử sau, chưa là quyết định triển khai.
+
+## Kiểm tiếp sau run nhóm ảnh: giữ cố định cỡ mặt GT
+
+Run 36322220681 cho thấy nhóm ảnh một mặt và nhiều mặt khác mạnh về phân bố cỡ mặt. Trước khi xem kết quả mới, khóa phép đếm chéo **nhóm ảnh theo số valid GT (đúng 1 / từ 2 trở lên) × cỡ bbox valid GT** theo bốn khoảng đã dùng ở T-012: `<16`, `16–<32`, `32–<96`, `≥96` px (căn bậc hai diện tích bbox trên ảnh gốc). Nhóm ảnh được xác định từ nhãn, không từ output của detector.
+
+Trên cùng prediction, IoU `>0,5` và quy tắc matching E1, báo cho từng candidate và từng ô: **valid GT, matched GT, missed GT, recall cực đại = matched/valid**. Đối chiếu tổng từng ô với TP E1 và số GT/TP của hai nhóm ảnh trong báo cáo trước. Không tính AP theo ô vì việc lọc GT theo cỡ có thể đổi cách xử lý prediction trùng/ignored; phép này chỉ so recall trên các GT có cùng khoảng cỡ. Ưu tiên diễn giải `32–<96` và `≥96` vì nhóm một mặt chỉ có 5 GT `<16` và 26 GT `16–<32`; các ô nhỏ vẫn phải báo mẫu số, không coi thứ hạng ở đó là ổn định. Không tune model hoặc threshold từ bảng này.
+
+Đây vẫn là so sánh mô tả S3 trên WIDER: giữ cỡ mặt theo khoảng **không** kiểm soát hết che khuất, góc nhìn, nền hoặc mật độ cảnh; không suy tác động nhân quả của nhiều người hay khả năng chọn đúng người đưa mã. Mã và định nghĩa ô phải được commit trước run chéo mới.

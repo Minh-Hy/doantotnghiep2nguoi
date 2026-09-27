@@ -95,6 +95,7 @@ def analyze(
     totals: dict[str, dict[str, list[int]]] = {
         "size_px_sqrt_area": defaultdict(lambda: [0, 0]),
         **{name + "_code": defaultdict(lambda: [0, 0]) for name in ATTRIBUTES},
+        "image_group_and_size_px_sqrt_area": defaultdict(lambda: [0, 0]),
     }
     prediction_rows = dropped = clipped = matched_total = 0
     for path in sorted(truth):
@@ -138,7 +139,12 @@ def analyze(
         matched_total += len(matched)
         for index, box in enumerate(valid):
             hit = int(index in matched)
-            groups = {"size_px_sqrt_area": size_bucket(box)}
+            size = size_bucket(box)
+            image_group = "one_valid" if len(valid) == 1 else "multi_valid"
+            groups = {
+                "size_px_sqrt_area": size,
+                "image_group_and_size_px_sqrt_area": f"{image_group}:{size}",
+            }
             groups.update({name + "_code": str(attributes[index][name]) for name in ATTRIBUTES})
             for category, key in groups.items():
                 totals[category][key][0] += 1
@@ -228,12 +234,13 @@ def main() -> None:
     }
     summary = {
         "scope": "T-012 descriptive WIDER error slices; not official difficulty benchmark or config tuning",
-        "analysis_revision": "T-012-X-012-B-v2: exact TP/rows/dropped gate; clip count is audited separately",
+        "analysis_revision": "T-012-X-012-B-v3: add image-group-by-GT-size recall; retain v2 gates",
         "protocol_version": PROTOCOL_VERSION,
         "source_sha256": source_hashes,
         "candidate": candidate,
         "size_definition": "sqrt(valid GT box area) in original-image pixels: <16, 16-<32, 32-<96, >=96",
         "attribute_definition": "Raw validation TXT integer codes; no severity interpretation",
+        "cross_tab_definition": "one_valid/multi_valid from valid GT count per image; GT size is sqrt(box area) in original-image pixels; matched/valid is max recall",
         "replay_audit": replay_audit,
         "metrics": metrics,
     }
