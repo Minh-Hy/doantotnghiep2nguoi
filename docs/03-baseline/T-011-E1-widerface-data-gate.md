@@ -34,3 +34,7 @@ Cả hai ZIP qua kiểm CRC. File nhãn được parse là wider_face_split/wide
 4. Giới hạn kết luận ở detection S3: WIDER FACE là ảnh sự kiện, không có claim thí sinh/người mục tiêu S4 hoặc nghiệp vụ ca/phòng. Nó không kiểm được xác minh 1:1 hay hiệu quả cửa phòng.
 
 **Quyết định cổng:** WIDER FACE validation qua kiểm file/nhãn cơ bản cho E1. Phép đo AP/recall vẫn chờ quy tắc evaluation/ignore và các wrapper detector được khóa trước khi chấm.
+
+## Protocol chấm được đặt trước — 2026-09-27
+
+[T-010 E1 scoring protocol](https://github.com/quocanwyf/doantotnghiep2nguoi/blob/codex/T-010-experiment-protocol/docs/03-baseline/T-010-E1-scoring-protocol.md) đã định nghĩa AP **nội bộ** trên 3.226 ảnh validation từ TXT, xử lý `invalid`/bbox không dương, ignored region, ghép prediction–GT và các ca preflight. Không gọi kết quả sau này là WIDER Easy/Medium/Hard chính thức. **Benchmark E1 vẫn chưa chạy**: evaluator code, wrapper ba detector và điều kiện đo phải được pin, kiểm bằng fixture trước khi xem điểm; mốc dữ liệu ở tài liệu này không tự hoàn thành các gate đó.
