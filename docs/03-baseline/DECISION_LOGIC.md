@@ -27,6 +27,8 @@ E1 có AP/recall ba detector. [X-012-B run report](runs/T-012-E1-widerface-error
 
 [Câu hỏi cỡ mặt được khóa trước run ở commit `fbc968a`](T-012-S4-one-vs-multi-comparison-plan.md) và [run 36328357593](runs/T-012-S4-widerface-size-strata.md) trả lời ở mức S3: SCRFD dẫn trong hai khoảng `32–<96` và `≥96` px ở cả ảnh một/nhiều mặt; YuNet dẫn ở GT `<16` px nhiều mặt. Vì thế thứ hạng gộp phụ thuộc mạnh vào phân bố cỡ mặt của WIDER. Bước tiếp theo không thể suy ra detector triển khai từ bảng này: cần biết phân bố cỡ/điều kiện của nguồn dùng để đánh giá gần miền, và S4 chọn người đưa mã vẫn cần nhãn theo lượt riêng. Không tạo nhãn claim từ bbox WIDER hoặc biến kết quả S3 thành quyết định model cuối.
 
+[Phân nhóm proxy LTFT theo số mặt đầu](runs/T-012-S4-ltft-face-density.md) được đặt ở commit `7547a9c` sau khi đã xem P0/P1 tổng nhưng trước khi xem slice: 21 trường hợp 1 mặt, 46 trường hợp 2 mặt, 957 trường hợp ≥3 mặt. Trong nhóm ≥3, P1 `710/35/212` so P0 `422/135/400` đúng/sai/chưa kết luận. Vì phần lớn mẫu proxy là nhiều mặt, cải thiện P1 không thể quy cho nhóm một mặt; tuy nhiên box đầu là oracle và các nhóm không cân bằng/không kiểm soát điều kiện. Bước tiếp theo vẫn là kiểm chọn đúng **người đã đưa mã** từ đầu vào có nhãn theo lượt, hoặc giữ kết luận ở mức thành phần khi nguồn sẵn có không đáp ứng. Không chốt P1 làm cách triển khai.
+
 ## Quy tắc giữ nhất quán
 
 - Không gộp AP E1, FMR/FNMR E2, coverage S4 và pass/fail E3 thành một accuracy hệ thống.
