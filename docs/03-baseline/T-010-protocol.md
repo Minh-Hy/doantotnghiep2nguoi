@@ -241,3 +241,11 @@ T-011 chỉ tạo **evidence thực nghiệm**; chưa chọn final model/pipelin
 - EdgeFace/AdaFace/R50 chưa qua runtime/preprocessing gate tương đương MobileFaceNet; E2 hiện chưa có so sánh nhiều encoder hợp lệ.
 
 Chuỗi trace: **T-008 capability/risk → T-009 candidate audit → T-010 protocol được review/khóa khi đủ gate → T-011 baseline evidence → T-012 phân tích lỗi/chọn câu hỏi experiment → experiment và review → final technical decision**.
+
+## 12. Đối chiếu sau khi Quốc An chấp nhận mốc T-008 cho downstream (2026-09-27)
+
+Quốc An yêu cầu coi T-008 PR #3 commit `c235b80` là mốc nghiệp vụ đã quyết định **cho lượt đối chiếu T-009/T-010/T-011**, không sửa T-008. [Bảng trace theo TQ/FR tại T-011 PR #7](https://github.com/quocanwyf/doantotnghiep2nguoi/blob/codex/T-011-exploratory-baseline/docs/03-baseline/T-011-T008-T009-T010-trace-review.md) kiểm từng nhánh. Các câu “T-008 còn review” ở trên ghi tình trạng khi đặt protocol ngày 2026-09-26; không phải lý do dừng thiết kế E3 generic theo mốc hiện được chỉ đạo dùng. Nếu mốc T-008 đổi về sau, rà lại fixture và kết luận phụ thuộc phiên bản.
+
+**Tác động lên gate:** điều kiện mapping capability T-008 cho nghiên cứu tiếp được coi là đáp ứng theo chỉ đạo này. Điều đó **không** khóa policy profile, authority cụ thể, acceptance target hoặc expected outcome phụ thuộc kỳ thi; cũng không chứng minh E3/M1. E3 có thể chuẩn bị fixture generic bám SC/BR/FR, nhưng chỉ chấm pass/fail khi profile thử được phê duyệt và có implementation. Case “không thấy mặt” là fixture **có điều kiện** khi profile dùng bằng chứng mặt; invariant generic là `IdentityEvidenceRequirement` trả unmet/unavailable/inconclusive và chuyển review đúng quyền.
+
+**Bằng chứng đến sau khi viết protocol:** T-011 đã chạy E2 XQLFW/MobileFaceNet và thêm đối chứng R50 trên cùng 4.215 cặp hợp lệ; R50 là phép thăm dò thêm sau run đầu, không là xác nhận độc lập hoặc quyết định model cuối. T-011 đã kiểm WIDER FACE validation 3.226 ảnh/39.708 bbox; E1 còn phải khóa evaluator/ignore/adapter **trước khi chấm**. E2 không thay thế S4 target selection, E3 hoặc M1. Không sửa hồi tố quy tắc threshold, split hoặc cách diễn giải run E2 đã ghi ở mục 1–8.
