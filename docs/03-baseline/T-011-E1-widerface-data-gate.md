@@ -1,6 +1,6 @@
 # T-011 — Cổng dữ liệu E1 cho WIDER FACE validation
 
-**Ngày kiểm:** 2026-09-27. **Trạng thái:** file/annotation gate đạt để thiết kế run E1; **chưa chạy detector benchmark** và chưa khóa quy tắc chấm/ignore.
+**Ngày kiểm:** 2026-09-27. **Trạng thái:** file/annotation gate đạt; quy tắc chấm/ignore đã được đặt trước ở T-010; evaluator và adapter đã viết nhưng **chưa chạy preflight/test hoặc detector benchmark**.
 
 ## Vì sao kiểm
 
@@ -38,3 +38,10 @@ Cả hai ZIP qua kiểm CRC. File nhãn được parse là wider_face_split/wide
 ## Protocol chấm được đặt trước — 2026-09-27
 
 [T-010 E1 scoring protocol](https://github.com/quocanwyf/doantotnghiep2nguoi/blob/codex/T-010-experiment-protocol/docs/03-baseline/T-010-E1-scoring-protocol.md) đã định nghĩa AP **nội bộ** trên 3.226 ảnh validation từ TXT, xử lý `invalid`/bbox không dương, ignored region, ghép prediction–GT và các ca preflight. Không gọi kết quả sau này là WIDER Easy/Medium/Hard chính thức. **Benchmark E1 vẫn chưa chạy**: evaluator code, wrapper ba detector và điều kiện đo phải được pin, kiểm bằng fixture trước khi xem điểm; mốc dữ liệu ở tài liệu này không tự hoàn thành các gate đó.
+
+## Mã chạy và thứ tự kiểm bắt buộc — 2026-09-27
+
+- [Evaluator E1](../../scripts/t011_widerface_evaluate.py) nhận validation ZIP/annotation ZIP đã pin, kiểm manifest/ảnh/GT và tính AP nội bộ theo [T-010 E1 protocol](https://github.com/quocanwyf/doantotnghiep2nguoi/blob/codex/T-010-experiment-protocol/docs/03-baseline/T-010-E1-scoring-protocol.md). [Test evaluator](../../tests/test_t011_widerface_evaluator.py) dùng box tổng hợp để bắt lỗi ignore, duplicate, IoU boundary, AP, ảnh rỗng và manifest.
+- [Prediction adapter](../../scripts/t011_widerface_predict.py) có ba nhánh YuNet/BlazeFace/SCRFD với hash/config v1 đặt trước, xuất bbox/score theo tọa độ ảnh gốc vào JSON **ngoài Git**. [Test adapter](../../tests/test_t011_widerface_predict_adapter.py) kiểm chuyển tọa độ và giá trị không hữu hạn.
+- Thứ tự thực hiện khi môi trường chạy trở lại: (1) chạy hai file unit test; (2) evaluator `--preflight-only` để kiểm GT/ảnh, số box ngoài biên; (3) mỗi adapter `--preflight-only` để kiểm API/tọa độ; (4) chạy prediction đầy đủ trên cùng 3.226 ảnh; (5) evaluator chấm từng JSON bằng cùng code và ghi summary; (6) so AP và thời gian với phạm vi đo rõ. Nếu một gate lỗi, dừng và ghi revision, **không chọn cấu hình bằng điểm validation**.
+- Chưa có output test/preflight/run trong lượt này: công cụ khởi tạo tiến trình trên máy trả lỗi `helper_unknown_error: setup refresh had errors` cho lệnh chạy và runtime dự phòng. Vì vậy code trên PR chỉ là implementation **chưa được thực thi**, không là bằng chứng AP/recall hay model thắng.
