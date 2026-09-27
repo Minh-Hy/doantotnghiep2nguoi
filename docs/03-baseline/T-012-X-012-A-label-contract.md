@@ -2,6 +2,8 @@
 
 **Trạng thái:** bản chuẩn bị trước dữ liệu, chưa khóa thí nghiệm và chưa có kết quả S4. Tài liệu này cụ thể hóa [câu hỏi X-012-A](T-012-error-analysis.md) và [điều kiện sẵn sàng](T-012-S4-experiment-readiness.md); nó không chọn dataset, cách chọn mặt hay giá trị chấp nhận.
 
+X-012-A chỉ cần dùng nếu nhóm muốn so các cách **tự động xử lý ngoại lệ nhiều mặt**. Luồng chính một người khai báo hồ sơ rồi quét chính người đó vẫn có thể dùng quy tắc một mặt trong vùng quét, giữ `unresolved` khi mơ hồ và chuyển retry/manual; không cần bộ nhãn X-012-A để bắt đầu phần đó.
+
 ## 1. Đơn vị và sự thật cần biết
 
 - **Capture session:** một buổi/camera/thiết lập ghi hình có nguồn và quyền dùng xác định.

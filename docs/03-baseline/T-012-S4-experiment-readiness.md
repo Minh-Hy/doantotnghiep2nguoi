@@ -2,11 +2,13 @@
 
 **Trạng thái:** kế hoạch nghiên cứu X-012-A, **chưa chạy experiment** và chưa chọn cách triển khai. Nguồn câu hỏi là [T-012 error analysis](T-012-error-analysis.md): E2 pair-fold chỉ chấm 4.215/6.000 cặp XQLFW; [phân tích ba nhánh](runs/T-012-E2-three-outcome-analysis.md) giữ 1.785 cặp còn lại ở `unresolved`. [Split danh tính custom](runs/T-011-E2-xqlfw-identity-disjoint.md) chấm 3.138 cặp trong 4.516 cặp đủ điều kiện chia nhóm trước detection; 1.484 impostor nối nhóm bị loại bởi thiết kế split, không thuộc unresolved của detector. Số cặp ảnh web không thay thế số lượt ở cửa phòng.
 
+**Phạm vi được làm rõ:** luồng chính là một thí sinh khai báo hồ sơ rồi quét chính người đó để xác minh 1:1. Nhiều mặt trong vùng camera là ngoại lệ cần quét lại hoặc chuyển xử lý nếu không rõ người thực hiện lượt; không phải mục tiêu mặc định phải tự chọn người từ đám đông. X-012-A chỉ cần mở lại khi nhóm quyết định tự động kết luận trong ngoại lệ nhiều mặt. Thiếu dữ liệu cho X-012-A **không chặn** nghiên cứu E1/E2 hoặc xây nhánh `unresolved`/fallback của app.
+
 ## 1. Quyết định cần bằng chứng
 
 **Business need:** sau khi hồ sơ thí sinh đã được xác định, hệ thống cần biết người đang đứng kiểm tra có phải đối tượng cần xác minh hay bằng chứng còn mơ hồ. Theo T-008 FR-006/FR-009 và RISK-001/002, không được biến mơ hồ thành xác minh thành công; quyền xử lý ngoại lệ phụ thuộc policy/người có thẩm quyền.
 
-**Câu hỏi thử:** so với A0 (chỉ tiếp tục khi đúng một mặt), A1 (người/track ổn định trong vùng giao dịch, mơ hồ thì unresolved) hoặc A2 (liên kết hình học qua các frame, nếu có sequence) có tạo thêm **kết luận đúng mục tiêu** mà không tăng **kết luận sai mục tiêu** không? A2 chỉ được thử khi dữ liệu có chuỗi thời gian và đồng bộ giao dịch. Chưa coi A1/A2 là giải pháp được chọn.
+**Câu hỏi thử có điều kiện:** nếu nhóm muốn tăng tự động hóa ở cảnh nhiều mặt, so với A0 (chỉ tiếp tục khi đúng một mặt), A1 (người/track ổn định trong vùng giao dịch, mơ hồ thì unresolved) hoặc A2 (liên kết hình học qua các frame, nếu có sequence) có tạo thêm **kết luận đúng mục tiêu** mà không tăng **kết luận sai mục tiêu** không? A2 chỉ được thử khi dữ liệu có chuỗi thời gian và đồng bộ giao dịch. Chưa coi A1/A2 là giải pháp được chọn.
 
 ## 2. Đơn vị dữ liệu và nhãn cần có từ nguồn sẵn có
 
