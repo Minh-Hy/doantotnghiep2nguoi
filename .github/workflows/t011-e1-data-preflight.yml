@@ -22,7 +22,7 @@ jobs:
         with:
           python-version: "3.12"
       - name: Install image decoding dependencies
-        run: python -m pip install numpy==2.2.6 opencv-python-headless==5.0.0.93
+        run: python -m pip install numpy==2.2.6 opencv-contrib-python==5.0.0.93
       - name: Download pinned WIDER validation assets to temporary runner storage
         run: |
           mkdir -p "${RUNNER_TEMP}/t011-e1"
@@ -65,6 +65,38 @@ jobs:
           python scripts/t011_widerface_predict.py \
             --candidate blazeface \
             --model "${RUNNER_TEMP}/t011-e1/blaze_face_full_range.tflite" \
+            --images "${RUNNER_TEMP}/t011-e1/WIDER_val.zip" \
+            --annotations "${RUNNER_TEMP}/t011-e1/wider_face_split.zip" \
+            --preflight-only
+      - name: Install pinned SCRFD runtime
+        run: python -m pip install insightface==0.7.3 onnxruntime==1.20.1
+      - name: Download and extract pinned buffalo_sc detector
+        run: |
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/deepinsight/insightface/releases/download/model-zoo/buffalo_sc.zip" \
+            --output "${RUNNER_TEMP}/t011-e1/buffalo_sc.zip"
+          python - <<'PY'
+          import hashlib
+          import os
+          from pathlib import Path
+          from zipfile import ZipFile
+
+          root = Path(os.environ["RUNNER_TEMP"]) / "t011-e1"
+          archive = root / "buffalo_sc.zip"
+          assert hashlib.sha256(archive.read_bytes()).hexdigest() == "57d31b56b6ffa911c8a73cfc1707c73cab76efe7f13b675a05223bf42de47c72"
+          with ZipFile(archive) as source:
+              matches = [name for name in source.namelist() if Path(name).name == "det_500m.onnx"]
+              assert len(matches) == 1
+              content = source.read(matches[0])
+          assert hashlib.sha256(content).hexdigest() == "5e4447f50245bbd7966bdc0fa52938c61474a04ec7def48753668a9d8b4ea3a"
+          (root / "det_500m.onnx").write_bytes(content)
+          print("Pinned SCRFD detector extracted and hashed")
+          PY
+      - name: Preflight SCRFD adapter on eight images
+        run: |
+          python scripts/t011_widerface_predict.py \
+            --candidate scrfd \
+            --model "${RUNNER_TEMP}/t011-e1/det_500m.onnx" \
             --images "${RUNNER_TEMP}/t011-e1/WIDER_val.zip" \
             --annotations "${RUNNER_TEMP}/t011-e1/wider_face_split.zip" \
             --preflight-only
