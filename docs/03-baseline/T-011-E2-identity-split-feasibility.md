@@ -1,6 +1,6 @@
 # T-011 — Kiểm khả năng tách danh tính khi chọn ngưỡng E2
 
-**Ngày kiểm:** 2026-09-27. **Trạng thái:** chỉ kiểm cấu trúc [file pairs XQLFW của tác giả](https://martlgap.github.io/xqlfw/pages/download.html) (SHA-256 `636852F90B886F3F56C73B13C9775F7FFCD37662DBB189C694F6A0A605B63B84`); **chưa chạy detector/encoder** cho split mới. Đây là protocol **tự thiết kế để kiểm độ nhạy**, không phải 10-fold chính thức của XQLFW và không là main test miền cửa phòng.
+**Ngày kiểm:** 2026-09-27. **Trạng thái:** audit cấu trúc [file pairs XQLFW của tác giả](https://martlgap.github.io/xqlfw/pages/download.html) (SHA-256 `636852F90B886F3F56C73B13C9775F7FFCD37662DBB189C694F6A0A605B63B84`) được đặt trước; [run ảnh thật sau đó](runs/T-011-E2-xqlfw-identity-disjoint.md) đã hoàn tất. Đây là protocol **tự thiết kế để kiểm độ nhạy**, không phải 10-fold chính thức của XQLFW và không là main test miền cửa phòng.
 
 ## Câu hỏi
 
