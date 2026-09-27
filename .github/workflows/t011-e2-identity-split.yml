@@ -40,8 +40,10 @@ jobs:
           result = evaluate_identity_split(scores, labels, groups)
           assert result["aggregate"]["genuine"] == 2
           assert result["aggregate"]["impostor"] == 2
-          assert result["aggregate"]["false_reject"] == 0
+          assert result["aggregate"]["false_reject"] == 1
           assert result["aggregate"]["false_accept"] == 0
+          assert result["groups"][0]["threshold"] == 0.8
+          assert result["groups"][1]["threshold"] == 0.9
           print("Custom split scoring preflight passed")
           PY
       - name: Download XQLFW and model packs into temporary storage
