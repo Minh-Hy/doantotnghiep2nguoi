@@ -6,12 +6,14 @@
 2. [T-009 PR #5](https://github.com/quocanwyf/doantotnghiep2nguoi/pull/5) kiểm ứng viên dữ liệu/weight theo đúng stage và giữ/hoãn có điều kiện. Quyết định survey chỉ chọn **candidate đáng thử**.
 3. [T-010 PR #6](https://github.com/quocanwyf/doantotnghiep2nguoi/pull/6) suy uncertainty thành E1 detection, E2 verification, E3 fixture nghiệp vụ và M1 vận hành; đặt dữ liệu, biến, metric, quy tắc chọn threshold và giới hạn trước khi xem điểm. Bản logic gốc của T-010 ở PR #6 là nguồn; file này được mang sang nhánh T-012 để tiếp tục cùng chuỗi reasoning khi các PR chưa hợp nhất.
 4. [T-011 draft PR #7](https://github.com/quocanwyf/doantotnghiep2nguoi/pull/7) tạo evidence E1 trên WIDER và E2 trên XQLFW. E3 chưa có profile được duyệt/implementation; M1 chưa có phép đo cùng thiết bị đích. Mỗi run chỉ trả lời phạm vi của nó.
-5. [T-012](T-012-error-analysis.md) phân loại observed error, inference, hypothesis và chọn câu hỏi X-012-A về S4 target selection/coverage; vì thiếu nhãn mục tiêu, bước kế là thiết kế data gate và phép thử, chưa chấm thắng/thua.
+5. [T-012](T-012-error-analysis.md) phân loại observed error, inference, hypothesis. [Phân tích ba nhánh E2](runs/T-012-E2-three-outcome-analysis.md) cho thấy 1.785 cặp chưa chấm cần ở `unresolved`; đổi encoder không tác động coverage của rule một mặt. Từ đó [X-012-A](T-012-S4-experiment-readiness.md) đặt đơn vị transaction, nhãn mục tiêu và cách chấm `correct-target / wrong-target / unresolved`; chưa chấm thắng/thua vì thiếu dữ liệu.
 6. Experiment sau này kiểm uncertainty với split/metric/acceptance có nguồn; **final technical decision** mới dựa trên evidence đó và review. Không đi ngược từ candidate hoặc điểm benchmark để sửa nghiệp vụ.
 
 ## Vì sao bước sau tồn tại
 
 T-011 E2 chỉ chấm 4.215/6.000 cặp; 1.399/1.785 cặp bị loại có ảnh nhiều detection. Đây là dấu hiệu coverage của pipeline nghiên cứu, không xác nhận sai người ở cửa phòng. Để cân nhắc thay rule một mặt cần nhãn người mục tiêu và metric lỗi chọn nhầm (T-008 RISK-001/002), vì chỉ tăng số cặp được chấm có thể che giấu sai lựa chọn S4. Do đó X-012-A tồn tại **trước** bất kỳ quyết định chọn rule/model S4 nào.
+
+E2 có 954 genuine và 831 impostor `unresolved` trên toàn bộ 6.000 cặp. Đây không phải false reject hay absence: một cặp ảnh không là transaction và không có quyền ra quyết định vào phòng. Chính sự phân biệt này dẫn đến yêu cầu **nhãn transaction và ba outcome có mẫu số đầy đủ** trong X-012-A. Nếu chỉ đo FMR/FNMR trên cặp còn lại, phần thiếu kết luận và khả năng chọn sai người vẫn không thấy được.
 
 E1 có AP/recall ba detector. [X-012-B run report](runs/T-012-E1-widerface-error-slices.md) cho thấy nhóm bbox `<16` px bị bỏ sót nhiều trên WIDER; phép chẩn đoán không phải cớ tune trên validation đã xem. Cần đo phân bố cỡ mặt/điều kiện tại camera cửa phòng trước khi gọi đây là bottleneck triển khai. E2 chưa chứng minh unseen identity; X-012-C cần split/test phù hợp và phép đo chi phí cùng điều kiện. E3/M1 phải chờ dependency nghiệp vụ/thiết bị thực, không dùng điểm E1/E2 để điền kết quả.
 

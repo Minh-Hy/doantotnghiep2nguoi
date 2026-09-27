@@ -1,6 +1,6 @@
 # T-012 — Phân tích lỗi baseline và câu hỏi thí nghiệm tiếp theo
 
-**Ngày:** 2026-09-27. **Trạng thái:** bản phân tích có điều kiện để Minh Hy review; T-011 vẫn draft, E3/M1 và đánh giá gần miền cửa phòng chưa có kết quả. **Phạm vi bằng chứng:** E1 detection trên WIDER validation và E2 verification trên cặp XQLFW dùng được; không phải đánh giá toàn hệ thống.
+**Ngày:** 2026-09-27. **Trạng thái:** đang phân tích trong draft PR #8; T-011 vẫn draft, E3/M1 và đánh giá gần miền cửa phòng chưa có kết quả. **Phạm vi bằng chứng:** E1 detection trên WIDER validation và E2 verification trên cặp XQLFW dùng được; không phải đánh giá toàn hệ thống.
 
 ## 1. Vì sao T-012 tồn tại
 
@@ -13,7 +13,7 @@ Mức khẳng định dùng trong tài liệu: **OBSERVED** = số liệu/run ho
 | Nhánh | Bằng chứng đã có | Điều nó đo | Điều chưa đo |
 |---|---|---|---|
 | E1 / S3 | [Ba run WIDER](runs/T-011-E1-widerface-comparison.md), cùng 3.226 ảnh/39.112 valid GT và evaluator IoU > 0,5 | AP và recall bbox mặt của từng cấu hình trên validation TXT | Chọn đúng người S4, camera cửa phòng, WIDER Easy/Medium/Hard chính thức, chi phí cùng thiết bị đích |
-| E2 / S7–S8 | [MBF so R50](runs/T-011-E2-xqlfw-mbf-vs-r50.md), cùng 4.215 cặp hợp lệ/10 pair-fold | FMR/FNMR có điều kiện trên cặp đã qua rule đúng một mặt | 1.785 cặp bị loại, identity-disjoint/main test, policy check-in, latency target |
+| E2 / S7–S8 | [MBF so R50](runs/T-011-E2-xqlfw-mbf-vs-r50.md), cùng 4.215 cặp hợp lệ/10 pair-fold; [ba nhánh trên 6.000 cặp](runs/T-012-E2-three-outcome-analysis.md) | FMR/FNMR có điều kiện trên cặp đã qua rule đúng một mặt; phần không chấm được giữ `unresolved` | Sai người S4, identity-disjoint/main test, policy check-in, latency target |
 | S4 / chọn người | [Coverage diagnosis](runs/T-011-E2-coverage-diagnosis.md) trên 7.263 ảnh được tham chiếu | Số detection và lý do cặp không vào E2 | Box nào thực sự là người mục tiêu; nhãn cho chọn sai người |
 | E3 / business logic | [T-010 E3 catalog](https://github.com/quocanwyf/doantotnghiep2nguoi/blob/codex/T-010-experiment-protocol/docs/03-baseline/T-010-E3-fixture-contract.md) có 12 nhóm fixture | Invariant và input/expected cần chuẩn bị | Profile policy được duyệt, implementation và pass/fail thật |
 | M1 / vận hành | Quan sát thời gian từng run E1 trên GitHub runner | Thời gian component trong từng lượt chạy không kiểm soát | Thời gian cùng thiết bị/quy trình, tải đến, hàng chờ, công sức và khả năng giảm người |
@@ -32,6 +32,10 @@ Không cộng AP, FMR/FNMR, tỷ lệ cặp được chấm và số fixture th�
 | M1 thời gian/công sức; FR-019; RISK-006/007 | Mỗi E1 run có timing trên runner riêng, không kiểm soát tải; E2 R50 từng phải chia chunk vì thiếu bộ nhớ trong lượt chạy liên tục. | Có rủi ro chi phí/tài nguyên đáng đo; không xếp hạng tốc độ từ các lượt hiện tại. | Thiết bị đích, throughput giờ cao điểm, thời gian review/fallback/As-Is. | Đo cùng thiết bị và procedure, tách component/attempt/review; khảo sát As-Is trước claim giảm người. |
 
 **Không suy từ box FP của E1 thành false acceptance nghiệp vụ.** E1 phát ra rất nhiều box ở score output thấp 0,01 để vẽ đường precision–recall; một lượt check-in còn qua chọn người, xác minh, policy và thẩm quyền. Tương tự, cặp bị loại khỏi E2 là coverage loss của protocol hiện tại, chưa phải false rejection hoặc absent.
+
+### E2: giữ riêng ba kết quả quan sát được
+
+[T-012 E2 three-outcome analysis](runs/T-012-E2-three-outcome-analysis.md) đối chiếu toàn bộ 6.000 cặp theo `match / non-match / unresolved`: 954/3.000 cặp genuine và 831/3.000 cặp impostor là `unresolved` trước bước encoder. Trong 4.215 cặp được chấm, MBF cho 1.921 genuine match, 125 genuine non-match, 133 impostor match, 2.036 impostor non-match; R50 lần lượt là 1.972, 74, 76, 2.093. Số unresolved không đổi khi đổi encoder vì detector và rule lọc được giữ cố định. Đây là kết quả **theo cặp ảnh và threshold pair-fold**, không phải quyết định check-in hay tỷ lệ review tại cửa phòng. Bằng chứng này làm rõ vì sao X-012-A phải đo cả `wrong-target` lẫn `unresolved`, thay vì chỉ tăng tỷ lệ cặp có điểm similarity.
 
 ## 4. Mức ưu tiên và quyết định ở T-012
 
@@ -53,6 +57,8 @@ Không cộng AP, FMR/FNMR, tỷ lệ cặp được chấm và số fixture th�
 
 X-012-A là câu hỏi tiếp theo được chọn **để thiết kế**, nhưng chưa thể chạy locked experiment vì thiếu nhãn mục tiêu và target business được duyệt. X-012-B có thể chạy như phân tích mô tả ngay mà không đổi protocol E1; nó không thay X-012-A hoặc dùng điểm validation để chọn threshold. Các phép thử còn lại có dependency riêng, không cần ép thành một bảng accuracy.
 
+**Điều kiện để thực sự chạy X-012-A:** [T-012 S4 experiment readiness](T-012-S4-experiment-readiness.md) xác định đơn vị transaction, nhãn mục tiêu độc lập, ca có/không có người mục tiêu, split tránh rò rỉ theo người/sequence và metric ba nhánh. Hiện chưa có tập dữ liệu/nhãn đó; kế hoạch không được trình bày như kết quả hay quyết định chọn rule S4.
+
 ### Thiết kế chẩn đoán X-012-B trước khi xem slice
 
 [Script T-012](../../scripts/t012_widerface_error_slices.py) phát lại đúng quy tắc ghép GT của [evaluator T-011](../../scripts/t011_widerface_evaluate.py): prediction score giảm dần trong từng ảnh, clip box về biên, chọn GT valid có IoU lớn nhất và `IoU > 0,5`, một GT chỉ ghép một lần. Vì ảnh độc lập, thứ tự score toàn tập của AP và thứ tự trong từng ảnh cho cùng tập GT được ghép. Không xuất prediction theo ảnh.
@@ -67,7 +73,7 @@ Các slice được đặt **trước khi chạy**: căn bậc hai diện tích 
 
 | Nhu cầu nghiệp vụ | Evidence hiện có | Uncertainty | Câu hỏi tiếp theo |
 |---|---|---|---|
-| BP-002 → SC-006/007 → BR-005/008 → FR-006/009 → RISK-001/002/006 | E2 coverage 70,25%, nhiều detection ở 1.399 cặp bị loại | Không biết người mục tiêu và hậu quả chọn nhầm | X-012-A; TQ-002/003 |
+| BP-002 → SC-006/007 → BR-005/008 → FR-006/009 → RISK-001/002/006 | E2 coverage 70,25%; [ba nhánh](runs/T-012-E2-three-outcome-analysis.md) giữ 1.785 cặp unresolved; nhiều detection ở 1.399 cặp bị loại | Không biết người mục tiêu và hậu quả chọn nhầm | [X-012-A và điều kiện dữ liệu](T-012-S4-experiment-readiness.md); TQ-002/003 |
 | BP-002 → FR-006 → T-010 E1/S3 | E1 AP/recall ba candidate | Lỗi theo điều kiện ảnh và domain gap | X-012-B; sau đó domain-specific E1 |
 | BP-002 → FR-006/009 → T-010 E2 | MBF/R50 FMR/FNMR có điều kiện | Identity/domain/chi phí target | X-012-C |
 | BP-003/004 → BR-007–BR-017 → FR-007–FR-018 | Chỉ có catalog E3 | Outcome/audit chưa được chấm | X-012-D |
