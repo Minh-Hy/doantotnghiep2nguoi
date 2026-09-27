@@ -36,3 +36,9 @@ Chuỗi: **T-008 TQ-002/003 (tạm chấp nhận) → T-009 candidate B0 → T-0
 ## Cập nhật E1 sau review ban đầu — 2026-09-27
 
 [Cổng dữ liệu WIDER FACE validation](T-011-E1-widerface-data-gate.md) đã kiểm file thật từ CUHK-CSE: 3.226 ảnh khớp annotation, 39.708 bbox, hash/CRC và giải mã đạt. Vì có cờ invalid và bbox không dương, E1 vẫn cần khóa evaluator, quy tắc ignore/match và wrapper từng detector trước khi chấm AP/recall. Kết luận review ban đầu “thiếu archive/nhãn” được thay bằng **“data gate cơ bản đạt; benchmark E1 chưa khóa”**. Không có điểm detector trong cập nhật này.
+
+## Đối chiếu T-008 → T-009 → T-010 → T-011 theo chỉ đạo mới — 2026-09-27
+
+Quốc An yêu cầu dùng nội dung T-008 tại PR #3 commit `c235b80` như mốc nghiệp vụ đã quyết định **cho công việc downstream**, không xử lý PR #3 trong lượt này. [Bảng đối chiếu theo từng TQ/FR](T-011-T008-T009-T010-trace-review.md) ghi rõ T-009 đã khảo sát gì, T-010 đã đặt phép đo gì, T-011 đã tạo evidence gì và ô nào còn trống. Trạng thái review GitHub của PR #3 vẫn là lịch sử riêng; không dùng nó làm lý do dừng thiết kế fixture generic E3. Nếu T-008 thay đổi sau này, phải rà lại fixture/kết luận phụ thuộc phiên bản.
+
+Sau đối chiếu: E2 đã có số liệu hẹp trên cặp XQLFW hợp lệ; E1 mới qua data gate; S4 chọn người mục tiêu, E3 outcome nghiệp vụ và M1 vận hành chưa có kết quả. E3 có thể **thiết kế fixture generic ngay** theo T-008 hiện tại; pass/fail vẫn cần profile policy được duyệt và implementation. Chấp nhận cấu trúc T-008 không tự cấp giá trị policy kỳ thi, threshold hay quyền tự động cho hệ thống.
