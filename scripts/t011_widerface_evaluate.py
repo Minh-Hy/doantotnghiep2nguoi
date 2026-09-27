@@ -268,9 +268,12 @@ def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--images", type=Path, required=True)
     parser.add_argument("--annotations", type=Path, required=True)
-    parser.add_argument("--predictions", type=Path, required=True)
-    parser.add_argument("--output", type=Path, required=True)
+    parser.add_argument("--predictions", type=Path)
+    parser.add_argument("--output", type=Path)
+    parser.add_argument("--preflight-only", action="store_true")
     args = parser.parse_args()
+    if not args.preflight_only and (args.predictions is None or args.output is None):
+        parser.error("--predictions and --output are required for scoring")
 
     source_hashes = {"images": sha256(args.images), "annotations": sha256(args.annotations)}
     if source_hashes != {
@@ -290,6 +293,14 @@ def main() -> None:
         raise ValueError(
             f"{outside} GT boxes extend beyond image bounds; review protocol before scoring"
         )
+    if args.preflight_only:
+        print(json.dumps({
+            "scope": "E1 GT/image preflight only; no detector scores",
+            "source_sha256": source_hashes,
+            "annotation_counts": counts,
+            "gt_outside_image": outside,
+        }, ensure_ascii=False))
+        return
 
     payload: Any = json.loads(args.predictions.read_text(encoding="utf-8"))
     if not isinstance(payload, dict) or payload.get("protocol_version") != PROTOCOL_VERSION:
