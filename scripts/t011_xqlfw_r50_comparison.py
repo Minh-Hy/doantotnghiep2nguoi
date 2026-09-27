@@ -21,6 +21,7 @@ from insightface.app import FaceAnalysis
 from sklearn.metrics import roc_auc_score, roc_curve
 
 from t011_xqlfw_baseline import EXPECTED, checked_zip, counts, digest, load_pairs, prepare_pack, select_threshold, wilson
+from t011_xqlfw_identity_split_audit import audit as audit_identity_pairs, group_for, parse_pairs as parse_identity_pairs
 
 R50_ZIP_SHA256 = "80ffe37d8a5940d59a7384c201a2a38d4741f2f3c51eef46ebb28218a7b0ca2f"
 R50_ONNX_SHA256 = "4c06341c33c2ca1f86781dab0e829f88ad5b64be9fba56e56bc9ebdefc619e43"
@@ -109,6 +110,31 @@ def evaluate(scores: np.ndarray, labels: np.ndarray, folds: np.ndarray) -> dict:
     }
 
 
+def evaluate_identity_split(scores: np.ndarray, labels: np.ndarray, groups: np.ndarray) -> dict:
+    """Two cross-fit tests with no identity shared by threshold dev and test."""
+    results = []
+    totals = {"genuine": 0, "impostor": 0, "false_reject": 0, "false_accept": 0}
+    for test_group in (0, 1):
+        dev, held_out = groups == 1 - test_group, groups == test_group
+        if not dev.any() or not held_out.any():
+            raise ValueError("Identity split lost a dev or test group")
+        threshold = select_threshold(scores[dev], labels[dev])
+        result = counts(scores[held_out], labels[held_out], threshold)
+        if result["genuine"] == 0 or result["impostor"] == 0:
+            raise ValueError("Identity test group lost a pair class after face detection")
+        for key in totals:
+            totals[key] += result[key]
+        results.append({"test_group": test_group, "dev_group": 1 - test_group, "threshold": threshold, **result})
+    return {
+        "groups": results,
+        "aggregate": {
+            **totals,
+            "fmr": totals["false_accept"] / totals["impostor"],
+            "fnmr": totals["false_reject"] / totals["genuine"],
+        },
+    }
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--images", type=Path, required=True)
@@ -120,6 +146,7 @@ def main() -> None:
     parser.add_argument("--chunk-size", type=int, default=100)
     parser.add_argument("--checkpoint-dir", type=Path, required=True)
     parser.add_argument("--smoke-images", type=int, default=0)
+    parser.add_argument("--identity-disjoint", action="store_true", help="Also score the fixed custom two-group identity split")
     args = parser.parse_args()
     if args.smoke_images < 0:
         raise ValueError("Smoke image count must be nonnegative")
@@ -203,11 +230,12 @@ def main() -> None:
             raise ValueError("Smoke sample did not produce an embedding")
         print(json.dumps({"smoke_images": len(requested), "image_outcomes": dict(image_outcomes)}))
         return
-    if dict(image_outcomes) != {"one_face": 6064, "zero_faces": 291, "multiple_faces": 908}:
+    if not args.identity_disjoint and dict(image_outcomes) != {"one_face": 6064, "zero_faces": 291, "multiple_faces": 908}:
         raise ValueError("Image coverage changed from the original run")
 
     scores = {"mbf": [], "r50": []}
     labels, folds = [], []
+    identity_groups = []
     for left, right, same, fold in pairs:
         if left not in features["mbf"] or right not in features["mbf"]:
             continue
@@ -215,9 +243,13 @@ def main() -> None:
             scores[model].append(float(np.dot(features[model][left], features[model][right])))
         labels.append(same)
         folds.append(fold)
+        left_group = group_for(Path(left).parts[-2])
+        right_group = group_for(Path(right).parts[-2])
+        identity_groups.append(left_group if left_group == right_group else -1)
     labels = np.asarray(labels, dtype=bool)
     folds = np.asarray(folds, dtype=int)
-    if len(labels) != 4215:
+    identity_groups = np.asarray(identity_groups, dtype=int)
+    if not args.identity_disjoint and len(labels) != 4215:
         raise ValueError("Pair coverage changed from the original run")
     results = {model: evaluate(np.asarray(values), labels, folds) for model, values in scores.items()}
     summary = {
@@ -244,9 +276,31 @@ def main() -> None:
         "valid_pairs": len(labels),
         "results": results,
     }
+    if args.identity_disjoint:
+        split_audit = audit_identity_pairs(parse_identity_pairs(args.pairs))
+        valid_group_counts = {
+            group: {
+                "genuine": int(np.sum((identity_groups == group) & labels)),
+                "impostor": int(np.sum((identity_groups == group) & ~labels)),
+            }
+            for group in (0, 1)
+        }
+        summary["identity_disjoint"] = {
+            "scope": "custom identity-disjoint threshold dev/test on XQLFW pairs; not author 10-fold, not training-disjoint or exam-room",
+            "pairs_audit": split_audit,
+            "valid_pair_groups": valid_group_counts,
+            "cross_group_pairs_valid_but_excluded": int(np.sum(identity_groups == -1)),
+            "results": {
+                model: evaluate_identity_split(np.asarray(values), labels, identity_groups)
+                for model, values in scores.items()
+            },
+        }
     args.output.parent.mkdir(parents=True, exist_ok=True)
     args.output.write_text(json.dumps(summary, ensure_ascii=False, indent=2), encoding="utf-8")
-    print(json.dumps({"valid_pairs": len(labels), "mbf": results["mbf"]["aggregate"], "r50": results["r50"]["aggregate"]}))
+    printed = {"valid_pairs": len(labels), "mbf": results["mbf"]["aggregate"], "r50": results["r50"]["aggregate"]}
+    if args.identity_disjoint:
+        printed["identity_disjoint"] = summary["identity_disjoint"]
+    print(json.dumps(printed))
 
 
 if __name__ == "__main__":
