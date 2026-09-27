@@ -1,6 +1,6 @@
 # T-011 — Cổng dữ liệu E1 cho WIDER FACE validation
 
-**Ngày kiểm:** 2026-09-27. **Trạng thái:** file/annotation gate đạt; quy tắc chấm/ignore đã được đặt trước ở T-010; evaluator và adapter đã viết; **10 kiểm thử tổng hợp đạt**, GT/image preflight trên toàn bộ WIDER validation đạt; còn model preflight và detector benchmark chưa chạy.
+**Ngày kiểm:** 2026-09-27. **Trạng thái:** file/annotation gate đạt; quy tắc chấm/ignore đã được đặt trước ở T-010; evaluator và adapter đã viết; **10 kiểm thử tổng hợp đạt**, GT/image preflight trên toàn bộ WIDER validation và API preflight của cả ba detector trên 8 ảnh đạt; detector benchmark chưa chạy.
 
 ## Vì sao kiểm
 
@@ -33,7 +33,7 @@ Cả hai ZIP qua kiểm CRC. File nhãn được parse là wider_face_split/wide
 3. Ghi nguồn/hash weight, runtime, warm-up và thiết bị; nếu thiếu một wrapper hoặc dữ liệu cho candidate thì không tạo bảng so sánh giả.
 4. Giới hạn kết luận ở detection S3: WIDER FACE là ảnh sự kiện, không có claim thí sinh/người mục tiêu S4 hoặc nghiệp vụ ca/phòng. Nó không kiểm được xác minh 1:1 hay hiệu quả cửa phòng.
 
-**Quyết định cổng:** WIDER FACE validation qua kiểm file/nhãn cơ bản và GT/image preflight cho E1. Protocol evaluation/ignore và config ba wrapper đã được đặt trước; phép đo AP/recall vẫn chờ model preflight và inference.
+**Quyết định cổng:** WIDER FACE validation qua kiểm file/nhãn cơ bản và GT/image preflight cho E1. Protocol evaluation/ignore và config ba wrapper đã được đặt trước; phép đo AP/recall vẫn chờ inference đầy đủ trên cùng 3.226 ảnh.
 
 ## Protocol chấm được đặt trước — 2026-09-27
 
@@ -46,4 +46,5 @@ Cả hai ZIP qua kiểm CRC. File nhãn được parse là wider_face_split/wide
 - Thứ tự thực hiện khi môi trường chạy trở lại: (1) evaluator `--preflight-only` để kiểm GT/ảnh, số box ngoài biên; (2) mỗi adapter `--preflight-only` để kiểm API/tọa độ; (3) chạy prediction đầy đủ trên cùng 3.226 ảnh; (4) evaluator chấm từng JSON bằng cùng code và ghi summary; (5) so AP và thời gian với phạm vi đo rõ. Nếu một gate lỗi, dừng và ghi revision, **không chọn cấu hình bằng điểm validation**.
 - [GitHub Actions run 36293858671](https://github.com/quocanwyf/doantotnghiep2nguoi/actions/runs/36293858671) chạy Python 3.12, **10/10 unit test tổng hợp đạt** cho logic AP/ignore/duplicate/IoU/manifest và chuyển tọa độ adapter. Đây là test synthetic của code; không đọc WIDER thật và không load weight/model. [Run 36293972494](https://github.com/quocanwyf/doantotnghiep2nguoi/actions/runs/36293972494) trên workflow `actions/checkout@v7` và `actions/setup-python@v7` cũng đạt **10/10 test**; job và log đã được kiểm.
 - [GT/image preflight run 36294105147](https://github.com/quocanwyf/doantotnghiep2nguoi/actions/runs/36294105147) tải hai ZIP vào bộ nhớ tạm của GitHub runner, kiểm SHA-256/CRC, 3.226 ảnh giải mã và manifest; `gt_outside_image = 0`, `valid_gt = 39.112`, `ignored_gt = 585`, `nonpositive_rows = 11`. Chỉ log số tổng hợp, không lưu ảnh/nhãn thô vào Git hoặc artifact. Python 3.12.14, NumPy 2.2.6, OpenCV headless 5.0.0.93. Đây là cổng dữ liệu, **không có detector score**.
-- Chưa có output model preflight hoặc run E1: công cụ khởi tạo tiến trình cục bộ trả lỗi `helper_unknown_error: setup refresh had errors`; GitHub runner mới kiểm dữ liệu. Vì vậy chưa có AP/recall/latency detector hay model thắng.
+- [Run 36294608464](https://github.com/quocanwyf/doantotnghiep2nguoi/actions/runs/36294608464) qua GT/image gate và API/coordinate preflight trên **cùng 8 ảnh đầu theo manifest** cho YuNet, BlazeFace full-range, SCRFD-500MF. Đúng hash weight: YuNet `EBAFCE4E...`, BlazeFace `3698B18F...`, SCRFD `5E4447F5...BD6C0...`; lần đầu SCRFD thất bại do chép nhầm một ký tự hash nội bộ, đã sửa ở [T-010 protocol](https://github.com/quocanwyf/doantotnghiep2nguoi/blob/codex/T-010-experiment-protocol/docs/03-baseline/T-010-E1-scoring-protocol.md) và runner **trước khi có AP**. Số row lần lượt 10.419, 2.126, 20.866; chỉ kiểm output shape/tọa độ/score và nhận diện rủi ro dung lượng prediction, không dùng chúng để chọn model hoặc threshold. Thời gian 8 ảnh trong log là quan sát không kiểm soát, không dùng làm so sánh latency.
+- Chưa có run E1 đầy đủ: công cụ khởi tạo tiến trình cục bộ trả lỗi `helper_unknown_error: setup refresh had errors`; GitHub runner mới thực hiện preflight. Vì vậy chưa có AP/recall/latency detector hay model thắng. Trước benchmark cần chuẩn hóa môi trường OpenCV: `mediapipe` kéo `opencv-contrib-python`, `insightface` kéo thêm `opencv-python-headless`; [hướng dẫn gói OpenCV](https://pypi.org/project/opencv-python-headless/) khuyên chỉ cài một gói cung cấp `cv2`. Cần xử lý xung đột này và kiểm tài nguyên cho JSON prediction lớn trước phép đo toàn bộ.
