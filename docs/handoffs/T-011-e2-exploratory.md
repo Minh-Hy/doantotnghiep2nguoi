@@ -20,3 +20,7 @@
 ## Bổ sung cổng dữ liệu E1 (2026-09-27)
 
 [WIDER FACE validation data gate](../03-baseline/T-011-E1-widerface-data-gate.md) kiểm archive CUHK-CSE và annotation: 3.226 ảnh/nhãn khớp, 39.708 bbox, 0 ảnh lỗi giải mã; 585 nhãn invalid và 11 bbox kích thước không dương cần quy tắc ignore/chấm được khóa. Nguồn, byte, hash ở external-assets A-004. Chưa có AP/recall hoặc quyết định detector; E1 cần evaluator/adapter cùng manifest trước run.
+
+## Bổ sung đối chiếu và chuẩn bị run (2026-09-27)
+
+[Bảng trace T-008→T-011](../03-baseline/T-011-T008-T009-T010-trace-review.md) dùng nội dung T-008 PR #3 commit `c235b80` làm mốc theo chỉ đạo Quốc An, không sửa T-008. T-010 đã thêm [quy tắc chấm E1](https://github.com/quocanwyf/doantotnghiep2nguoi/blob/codex/T-010-experiment-protocol/docs/03-baseline/T-010-E1-scoring-protocol.md) và [catalog fixture E3](https://github.com/quocanwyf/doantotnghiep2nguoi/blob/codex/T-010-experiment-protocol/docs/03-baseline/T-010-E3-fixture-contract.md). T-011 chưa có AP/recall detector hay pass/fail workflow. Môi trường tiến trình cục bộ đang trả lỗi `helper_unknown_error: setup refresh had errors`, nên chưa thể preflight evaluator/wrapper hoặc chạy run E1; ghi giới hạn này thay vì tự điền kết quả.
