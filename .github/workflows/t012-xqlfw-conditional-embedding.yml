@@ -1,6 +1,13 @@
 name: T-012 X-012-I conditional embedding
 
 on:
+  push:
+    branches:
+      - codex/T-012-error-analysis
+    paths:
+      - ".github/workflows/t012-xqlfw-conditional-embedding.yml"
+      - "scripts/t012_xqlfw_conditional_embedding.py"
+      - "docs/03-baseline/T-012-X-012-I-conditional-embedding-protocol.md"
   workflow_dispatch:
 
 permissions:
