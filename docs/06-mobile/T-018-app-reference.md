@@ -28,11 +28,11 @@ Giao diện Flutter ưu tiên chữ/trạng thái dễ đọc, thao tác chính 
 - [Backend](../../backend/README.md): mô hình ca/phòng/context, quyền operator/reviewer, roster theo phiên bản, attempt, review case, check-in và audit; API v1 mới cho health, danh sách context, tạo/đọc attempt.
 - [Flutter](../../mobile/README.md): Material 3, màn hình trạng thái kết nối và khung thao tác tiếp nhận; nút bắt đầu còn khóa trong khi chưa có đăng nhập, context và camera.
 - Lượt tra cứu đúng hồ sơ chỉ ở `IN_PROGRESS`; trường hợp thiếu/mơ hồ/sai phòng vào `REVIEW_PENDING`. Chưa ghi check-in, không suy ra quyền vào phòng hoặc attendance.
-- Kiểm thử hiện tại dùng SQLite trong bộ nhớ cho backend; cần PostgreSQL thật và thiết bị/emulator cho chuỗi end-to-end.
+- Test tự động backend dùng SQLite trong bộ nhớ; PostgreSQL thật đã được kiểm migration/readiness ở M2. Chuỗi end-to-end vẫn cần thiết bị/emulator.
 
 ## Mốc 2 — đang triển khai
 
-API đã có kiểm tra kết nối DB, đăng nhập/đăng xuất và danh sách context theo vai trò; Flutter đã có màn hình tương ứng. Lệnh `seed_demo` tạo ca thi học phần giả lập ở `SETUP`, không tự phê duyệt policy. PostgreSQL trên máy nhận kết nối ở port 5432 nhưng chưa có cấu hình `.env`/database ứng dụng nên chưa gọi M2 hoàn thành. Xem [bàn giao mốc này](../handoffs/T-018-auth-context.md).
+API đã có kiểm tra kết nối DB, đăng nhập/đăng xuất và danh sách context theo vai trò; Flutter đã có màn hình tương ứng. Lệnh `seed_demo` tạo ca thi học phần giả lập ở `SETUP`, không tự phê duyệt policy. PostgreSQL 18 cục bộ đã có role/database `exam_entry`, chạy migration và readiness đạt; tài khoản Django, seed demo và kiểm trên Android thật vẫn cần thực hiện nên M2 chưa hoàn thành. Xem [bàn giao mốc này](../handoffs/T-018-auth-context.md).
 
 ## Điều kiện trước khi gọi là chạy được
 
