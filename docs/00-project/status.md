@@ -20,6 +20,8 @@
 
 T-005 **hoàn thiện phần phân tích/survey**. Quốc An xác nhận T-008 đủ mốc bài toán cho nghiên cứu và T-009/T-010 hoàn tất phạm vi hiện tại; góp ý nghiệp vụ chi tiết của T-008 để khi xây app. T-011 đã bổ sung kiểm nguồn/file, pin cấu hình, E1/E2 và M1 tham chiếu; vẫn chưa có main test phù hợp miền cửa phòng thi, phép đo trên thiết bị đích, kiểm E3/app hoặc phân tích bottleneck đủ để chốt kỹ thuật. Shortlist dataset/model, threshold, hướng tối ưu và mobile stack vẫn là candidate/câu hỏi. Chưa có pilot để tuyên bố giảm nhân sự; dữ liệu công khai và fixture giả lập không thay thế đánh giá tại kỳ thi thật.
 
+[T-009 audit B0](../02-survey/T-009-candidate-audit.md) đã đối chiếu nguồn công bố và kiểm file/runtime tối thiểu cho một số weight trên đầu vào tổng hợp. File ảnh/nhãn của các dataset chính chưa được kiểm đầy đủ; chưa chọn main test hoặc model cuối. T-008 generic business baseline đang được Minh Hy review ở [PR riêng](https://github.com/quocanwyf/doantotnghiep2nguoi/pull/3); T-009 được review độc lập và phải đối chiếu lại nếu baseline thay đổi.
+
 ## Bước tiếp theo theo thứ tự
 
 1. **Tiếp tục T-012:** phân tích lỗi E1/E2 theo stage và domain gap, bao gồm phép kiểm tách danh tính mới; chọn câu hỏi/thí nghiệm tiếp theo từ rủi ro đã quan sát. PR #7 là mốc nghiên cứu cho bước này, không cần đợi review chi tiết T-008 để làm tiếp.
