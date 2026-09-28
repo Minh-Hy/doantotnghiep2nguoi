@@ -15,6 +15,10 @@ Hai thành viên đã khảo sát độc lập. Nhóm chọn bối cảnh cửa 
 
 Các tài liệu trên **thay cho** bản khảo sát một file trước đây. Chúng là thiết kế nghiên cứu: chưa có final dataset/model/pipeline/optimization, chưa tải/kiểm tra trọn bộ dữ liệu, chưa chạy benchmark. Candidate shortlist giúp tạo phép thử; không phải kết quả đánh giá. PAD là task bổ trợ riêng; nghiệp vụ phòng/ca/giờ và ghi nhận là phần mềm có test riêng.
 
+## T-009 — Audit khả dụng trước thí nghiệm
+
+[T-009: kiểm tra dataset và trọng số ứng viên](T-009-candidate-audit.md) ghi nguồn, quyền được công bố, mức kiểm file/runtime thực tế và khoảng trống còn lại. Một số weight đã mở/chạy với đầu vào tổng hợp; dataset ảnh chưa được tải/parse đầy đủ. [Sổ nguồn T-009](T-009-source-register.md) ghi link, mục/trang nguồn và lý do giữ, hoãn hoặc cần điều kiện để tái sử dụng khi viết báo cáo. Tài liệu audit lọc **candidate để chuẩn bị thí nghiệm**, chưa chọn dataset/model cuối hoặc báo performance. T-008 đang được review ở [PR riêng](https://github.com/quocanwyf/doantotnghiep2nguoi/pull/3), nên mapping nghiệp vụ cần kiểm lại khi baseline ổn định.
+
 ## Cổng chuyển sang thực nghiệm sau T-007
 
 Trước khi chạy, xác minh quyền dùng và phiên bản file/weight; chốt protocol, manifest cặp/lượt, tách dev/test theo identity hoặc phiên phù hợp, thiết bị đo, metric chính và operating point. Chạy baseline trước, phân tích lỗi có nhãn rồi mới chọn bottleneck và phương pháp tối ưu. Nếu làm nhiều can thiệp, có ablation đơn lẻ và kết hợp; so với chính baseline gốc lẫn pipeline mạnh khác. Chỉ chốt pipeline cuối khi có bằng chứng trên cùng dữ liệu/split/điều kiện đo.
