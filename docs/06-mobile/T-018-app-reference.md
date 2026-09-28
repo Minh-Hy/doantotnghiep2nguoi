@@ -1,6 +1,6 @@
 # T-018 — App cửa phòng thi tham chiếu
 
-- **Trạng thái:** chọn stack và pipeline AI tham chiếu; chưa có app, API hoặc cơ sở dữ liệu được triển khai.
+- **Trạng thái:** đã có lõi Django/Flutter ở nhánh T-018 để review; PostgreSQL, AI, camera và luồng check-in chưa được kiểm tích hợp.
 - **Quyết định:** [D-004](../00-project/decisions/T-018-D-004-chon-stack-app-tham-chieu.md).
 - **Người thực hiện/review:** Minh Hy / Quốc An theo Sheet.
 
@@ -20,6 +20,13 @@ Pipeline AI tham chiếu là [B0 T-012](../03-baseline/T-012-B0-pipeline-choice.
 6. Case ngoại lệ có người nhận, bước tiếp và audit; cuối ca đối soát cả bản ghi thủ công, sự cố và case mở; correction giữ lịch sử.
 
 Giao diện Flutter ưu tiên chữ/trạng thái dễ đọc, thao tác chính rõ ràng, phản hồi lỗi và bước tiếp theo cụ thể. Màn hình tại cửa chỉ hiển thị thông tin tối thiểu theo quyền. Thiết kế chi tiết UX, thiết bị, cách build và kết quả thử sẽ bổ sung cùng mã T-018.
+
+## Mốc 1 — lõi có thể mở rộng
+
+- [Backend](../../backend/README.md): mô hình ca/phòng/context, quyền operator/reviewer, roster theo phiên bản, attempt, review case, check-in và audit; API v1 mới cho health, danh sách context, tạo/đọc attempt.
+- [Flutter](../../mobile/README.md): Material 3, màn hình trạng thái kết nối và khung thao tác tiếp nhận; nút bắt đầu còn khóa trong khi chưa có đăng nhập, context và camera.
+- Lượt tra cứu đúng hồ sơ chỉ ở `IN_PROGRESS`; trường hợp thiếu/mơ hồ/sai phòng vào `REVIEW_PENDING`. Chưa ghi check-in, không suy ra quyền vào phòng hoặc attendance.
+- Kiểm thử hiện tại dùng SQLite trong bộ nhớ cho backend; cần PostgreSQL thật và thiết bị/emulator cho chuỗi end-to-end.
 
 ## Điều kiện trước khi gọi là chạy được
 
