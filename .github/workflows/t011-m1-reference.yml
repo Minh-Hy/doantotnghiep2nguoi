@@ -1,0 +1,77 @@
+name: T-011 M1 same-runner reference detection timing
+
+on:
+  push:
+    branches:
+      - codex/T-011-exploratory-baseline
+    paths:
+      - ".github/workflows/t011-m1-reference.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  reference-timing:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      OPENCV_FORCE_DNN_ENGINE: "4"
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install pinned E1 runtimes
+        run: python -m pip install numpy==2.2.6 opencv-contrib-python==5.0.0.93 mediapipe==1.0.0 insightface==0.7.3 onnxruntime==1.20.1
+      - name: Download pinned WIDER archive and model weights
+        run: |
+          mkdir -p "${RUNNER_TEMP}/t011-m1"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://huggingface.co/datasets/CUHK-CSE/wider_face/resolve/main/data/WIDER_val.zip" \
+            --output "${RUNNER_TEMP}/t011-m1/WIDER_val.zip"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/opencv/opencv_zoo/raw/refs/heads/main/models/face_detection_yunet/face_detection_yunet_2026may.onnx" \
+            --output "${RUNNER_TEMP}/t011-m1/yunet.onnx"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_full_range/float16/latest/blaze_face_full_range.tflite" \
+            --output "${RUNNER_TEMP}/t011-m1/blazeface.tflite"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/deepinsight/insightface/releases/download/model-zoo/buffalo_sc.zip" \
+            --output "${RUNNER_TEMP}/t011-m1/buffalo_sc.zip"
+          python - <<'PY'
+          import hashlib
+          import os
+          from pathlib import Path
+          from zipfile import ZipFile
+
+          root = Path(os.environ["RUNNER_TEMP"]) / "t011-m1"
+          archive = root / "buffalo_sc.zip"
+          assert hashlib.sha256(archive.read_bytes()).hexdigest() == "57d31b56b6ffa911c8a73cfc1707c73cab76efe7f13b675a05223bf42de47c72"
+          with ZipFile(archive) as source:
+              matches = [name for name in source.namelist() if Path(name).name == "det_500m.onnx"]
+              assert len(matches) == 1
+              content = source.read(matches[0])
+          assert hashlib.sha256(content).hexdigest() == "5e4447f50245bbd7966bd6c0fa52938c61474a04ec7def48753668a9d8b4ea3a"
+          (root / "scrfd.onnx").write_bytes(content)
+          PY
+      - name: Measure all detectors in one process
+        run: |
+          python scripts/t011_m1_reference_detection.py \
+            --images "${RUNNER_TEMP}/t011-m1/WIDER_val.zip" \
+            --yunet "${RUNNER_TEMP}/t011-m1/yunet.onnx" \
+            --blazeface "${RUNNER_TEMP}/t011-m1/blazeface.tflite" \
+            --scrfd "${RUNNER_TEMP}/t011-m1/scrfd.onnx" \
+            --output "${RUNNER_TEMP}/t011-m1/summary.json"
+      - name: Remove temporary input and summary
+        if: always()
+        run: |
+          rm -f "${RUNNER_TEMP}/t011-m1/summary.json"
+          rm -f "${RUNNER_TEMP}/t011-m1/WIDER_val.zip"
+          rm -f "${RUNNER_TEMP}/t011-m1/buffalo_sc.zip"
+          rm -f "${RUNNER_TEMP}/t011-m1/yunet.onnx"
+          rm -f "${RUNNER_TEMP}/t011-m1/blazeface.tflite"
+          rm -f "${RUNNER_TEMP}/t011-m1/scrfd.onnx"
