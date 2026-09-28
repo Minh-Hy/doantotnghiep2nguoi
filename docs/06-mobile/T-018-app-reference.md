@@ -2,6 +2,7 @@
 
 - **Trạng thái:** đã có lõi Django/Flutter ở nhánh T-018 để review; PostgreSQL, AI, camera và luồng check-in chưa được kiểm tích hợp.
 - **Quyết định:** [D-004](../00-project/decisions/T-018-D-004-chon-stack-app-tham-chieu.md).
+- **Phạm vi bản đầu:** [D-005](../00-project/decisions/T-018-D-005-pham-vi-android-ai-tren-may.md) chọn Android, AI trên điện thoại, check-in do nhân sự xác nhận.
 - **Người thực hiện/review:** Minh Hy / Quốc An theo Sheet.
 - **Lộ trình:** [kế hoạch triển khai T-018](T-018-ke-hoach-trien-khai-app.md).
 
@@ -29,9 +30,13 @@ Giao diện Flutter ưu tiên chữ/trạng thái dễ đọc, thao tác chính 
 - Lượt tra cứu đúng hồ sơ chỉ ở `IN_PROGRESS`; trường hợp thiếu/mơ hồ/sai phòng vào `REVIEW_PENDING`. Chưa ghi check-in, không suy ra quyền vào phòng hoặc attendance.
 - Kiểm thử hiện tại dùng SQLite trong bộ nhớ cho backend; cần PostgreSQL thật và thiết bị/emulator cho chuỗi end-to-end.
 
+## Mốc 2 — đang triển khai
+
+API đã có kiểm tra kết nối DB, đăng nhập/đăng xuất và danh sách context theo vai trò; Flutter đã có màn hình tương ứng. Lệnh `seed_demo` tạo ca thi học phần giả lập ở `SETUP`, không tự phê duyệt policy. PostgreSQL trên máy nhận kết nối ở port 5432 nhưng chưa có cấu hình `.env`/database ứng dụng nên chưa gọi M2 hoàn thành. Xem [bàn giao mốc này](../handoffs/T-018-auth-context.md).
+
 ## Điều kiện trước khi gọi là chạy được
 
-- Chọn và ghi rõ AI chạy trên thiết bị hay server sau khi kiểm thiết bị đích và phương án mất mạng; hiện chưa chốt.
+- Đo B0 trên thiết bị Android đích; chốt cách đóng gói và xử lý check-in khi mất mạng. AI trên máy không đồng nghĩa toàn bộ workflow đã offline.
 - Chọn profile nghiệp vụ giả lập đã duyệt để kiểm E3; rà tám góp ý T-008 về quyền, case, policy/roster, override, arrival và correction.
 - Kiểm chuỗi mở app → camera → xác minh → ghi attempt/check-in hoặc review → xem kết quả trên thiết bị/emulator được nêu tên; ghi nguồn dữ liệu/weight, cấu hình, kết quả và giới hạn.
 - Không commit ảnh khuôn mặt, danh tính cá nhân, embedding, weight, mật khẩu hoặc file môi trường. Dữ liệu thử nghiệp vụ dùng fixture giả lập; nguồn AI và file ngoài Git theo [external-assets](../00-project/external-assets.md).

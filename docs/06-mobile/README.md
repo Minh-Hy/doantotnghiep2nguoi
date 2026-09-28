@@ -1,6 +1,6 @@
 # Giai đoạn 06 — ứng dụng mobile
 
-[D-004](../00-project/decisions/T-018-D-004-chon-stack-app-tham-chieu.md) ghi lựa chọn Flutter + Django REST Framework + PostgreSQL và B0 của Quốc An cho app tham chiếu. [T-018](T-018-app-reference.md) ghi luồng, ranh giới AI/nghiệp vụ và các điều kiện còn mở. Nơi chạy AI (on-device/server) vẫn phải được quyết định theo thiết bị và yêu cầu vận hành, không suy từ stack backend.
+[D-004](../00-project/decisions/T-018-D-004-chon-stack-app-tham-chieu.md) ghi lựa chọn Flutter + Django REST Framework + PostgreSQL và B0 của Quốc An cho app tham chiếu. [D-005](../00-project/decisions/T-018-D-005-pham-vi-android-ai-tren-may.md) chọn Android trước, AI trên điện thoại và ca thi học phần giả lập; cần đo B0 trên thiết bị đích. [T-018](T-018-app-reference.md) ghi luồng, ranh giới AI/nghiệp vụ và các điều kiện còn mở.
 
 [DECISION_LOGIC.md](DECISION_LOGIC.md) nối yêu cầu nghiệp vụ với mốc triển khai hiện tại. Cách chạy lõi nằm ở [backend](../../backend/README.md) và [Flutter](../../mobile/README.md).
 

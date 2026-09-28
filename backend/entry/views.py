@@ -1,16 +1,23 @@
+from django.contrib.auth import authenticate
+from django.db import DatabaseError, connection
+from django.db.models import Prefetch
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
+from rest_framework.authtoken.models import Token
 
-from .models import Attempt, IntakeContext
-from .serializers import AttemptSerializer, ContextSerializer, StartAttemptSerializer
+from .models import Attempt, ContextAccess, IntakeContext
+from .serializers import AttemptSerializer, ContextSerializer, LoginSerializer, StartAttemptSerializer
 from .services import ContextAccessDenied, ContextNotOpen, IdempotencyConflict, start_attempt
 
 
 def visible_contexts(user):
-    contexts = IntakeContext.objects.select_related("session", "room")
+    contexts = IntakeContext.objects.select_related("session", "room").prefetch_related(
+        Prefetch("access_grants", queryset=ContextAccess.objects.filter(user=user), to_attr="current_user_grants")
+    )
     if user.is_superuser:
         return contexts
     return contexts.filter(access_grants__user=user).distinct()
@@ -24,9 +31,46 @@ class HealthView(APIView):
         return Response({"status": "ok", "service": "exam-entry-api"})
 
 
+class ReadinessView(APIView):
+    permission_classes = [AllowAny]
+    authentication_classes = []
+
+    def get(self, request):
+        try:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT 1")
+                cursor.fetchone()
+        except DatabaseError:
+            return Response({"status": "unavailable"}, status=status.HTTP_503_SERVICE_UNAVAILABLE)
+        return Response({"status": "ready"})
+
+
+class LoginView(APIView):
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "auth-login"
+
+    def post(self, request):
+        input_serializer = LoginSerializer(data=request.data)
+        input_serializer.is_valid(raise_exception=True)
+        user = authenticate(request, **input_serializer.validated_data)
+        if user is None or not user.is_active:
+            return Response({"code": "INVALID_CREDENTIALS"}, status=status.HTTP_401_UNAUTHORIZED)
+        token, _ = Token.objects.get_or_create(user=user)
+        return Response({"token": token.key, "username": user.get_username()})
+
+
+class LogoutView(APIView):
+    def post(self, request):
+        if isinstance(request.auth, Token):
+            request.auth.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
 class ContextListView(APIView):
     def get(self, request):
-        return Response(ContextSerializer(visible_contexts(request.user), many=True).data)
+        return Response(ContextSerializer(visible_contexts(request.user), many=True, context={"request": request}).data)
 
 
 class AttemptListCreateView(APIView):

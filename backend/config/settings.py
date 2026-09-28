@@ -11,7 +11,11 @@ if not SECRET_KEY:
     raise ImproperlyConfigured("Set APP_SECRET_KEY outside Git before running the server.")
 
 DEBUG = os.getenv("APP_DEBUG", "0") == "1"
-ALLOWED_HOSTS = [host.strip() for host in os.getenv("APP_ALLOWED_HOSTS", "localhost,127.0.0.1").split(",") if host.strip()]
+ALLOWED_HOSTS = [
+    host.strip()
+    for host in os.getenv("APP_ALLOWED_HOSTS", "localhost,127.0.0.1,10.0.2.2").split(",")
+    if host.strip()
+]
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -81,6 +85,7 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.IsAuthenticated"],
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
+    "DEFAULT_THROTTLE_RATES": {"auth-login": "10/minute"},
 }
 
 LANGUAGE_CODE = "vi"

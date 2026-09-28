@@ -24,3 +24,5 @@ Chọn B0 cho **app tham chiếu** để xây và kiểm luồng Flutter ↔ bac
 - Quốc An review lựa chọn stack và ranh giới B0 trong PR của T-018. Nếu review đổi phạm vi, cập nhật quyết định và tài liệu T-018 có liên kết hai chiều.
 
 **Tài liệu triển khai:** [T-018 app tham chiếu](../../06-mobile/T-018-app-reference.md).
+
+**Cập nhật ngày 2026-09-28:** [D-005](T-018-D-005-pham-vi-android-ai-tren-may.md) đã chọn AI chạy trên điện thoại Android cho bản đầu. Mục “chưa quyết định nơi chạy AI” phía trên phản ánh trạng thái tại thời điểm D-004 được ghi; việc đo thiết bị và thiết kế mất mạng vẫn còn mở.

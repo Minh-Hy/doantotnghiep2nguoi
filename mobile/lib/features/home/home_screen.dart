@@ -1,18 +1,25 @@
 import 'package:flutter/material.dart';
 
-import '../../core/health/health_repository.dart';
+import '../../core/api/exam_api.dart';
+import '../../core/readiness/readiness_repository.dart';
+import '../auth/sign_in_screen.dart';
 
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.healthRepository});
+  const HomeScreen({
+    super.key,
+    required this.readinessRepository,
+    required this.api,
+  });
 
-  final HealthRepository healthRepository;
+  final ReadinessRepository readinessRepository;
+  final ExamApi api;
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  bool? _serverAvailable;
+  bool? _serverReady;
 
   @override
   void initState() {
@@ -21,18 +28,18 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _refreshStatus() async {
-    setState(() => _serverAvailable = null);
-    final available = await widget.healthRepository.isAvailable();
-    if (mounted) setState(() => _serverAvailable = available);
+    setState(() => _serverReady = null);
+    final ready = await widget.readinessRepository.isReady();
+    if (mounted) setState(() => _serverReady = ready);
   }
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    final statusText = switch (_serverAvailable) {
+    final statusText = switch (_serverReady) {
       null => 'Đang kiểm tra kết nối',
-      true => 'Máy chủ đã kết nối',
-      false => 'Chưa kết nối máy chủ',
+      true => 'Hệ thống đã sẵn sàng',
+      false => 'Chưa kết nối được dữ liệu',
     };
 
     return Scaffold(
@@ -62,10 +69,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Row(
                       children: [
                         Icon(
-                          _serverAvailable == true
+                          _serverReady == true
                               ? Icons.cloud_done_outlined
                               : Icons.cloud_off_outlined,
-                          color: _serverAvailable == true
+                          color: _serverReady == true
                               ? colors.primary
                               : colors.error,
                         ),
@@ -109,13 +116,20 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                         const SizedBox(height: 20),
                         FilledButton.icon(
-                          onPressed: null,
+                          onPressed: _serverReady == true
+                              ? () => Navigator.of(context).push(
+                                  MaterialPageRoute<void>(
+                                    builder: (_) =>
+                                        SignInScreen(api: widget.api),
+                                  ),
+                                )
+                              : null,
                           icon: Icon(Icons.arrow_forward),
-                          label: Text('Bắt đầu lượt'),
+                          label: Text('Đăng nhập'),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Chưa mở tiếp nhận. Người phụ trách cần chuẩn bị ca, quyền và thiết bị.',
+                          'Đăng nhập để xem ca/phòng được phân quyền. Chức năng tạo lượt sẽ mở ở mốc tiếp theo.',
                           style: Theme.of(context).textTheme.bodySmall,
                         ),
                       ],

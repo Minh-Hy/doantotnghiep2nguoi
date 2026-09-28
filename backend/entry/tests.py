@@ -1,7 +1,9 @@
 import uuid
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
-from django.db import IntegrityError, transaction
+from django.core.management import call_command
+from django.db import DatabaseError, IntegrityError, transaction
 from django.test import TestCase
 from django.utils import timezone
 from rest_framework.authtoken.models import Token
@@ -130,8 +132,35 @@ class AttemptApiTests(TestCase):
     def test_unauthenticated_can_only_read_health(self):
         self.client.credentials()
         self.assertEqual(self.client.get("/api/v1/health/").status_code, 200)
+        self.assertEqual(self.client.get("/api/v1/ready/").status_code, 200)
+        self.assertEqual(self.client.get("/api/v1/ready/", HTTP_HOST="10.0.2.2:8000").status_code, 200)
         self.assertEqual(self.client.get("/api/v1/contexts/").status_code, 401)
         self.assertEqual(self.post_attempt("TS-001").status_code, 401)
+
+    def test_readiness_reports_database_failure_without_details(self):
+        self.client.credentials()
+        with patch("entry.views.connection.cursor", side_effect=DatabaseError("secret connection detail")):
+            response = self.client.get("/api/v1/ready/")
+        self.assertEqual(response.status_code, 503)
+        self.assertEqual(response.data, {"status": "unavailable"})
+
+    def test_login_context_roles_and_logout(self):
+        self.client.credentials()
+        bad = self.client.post("/api/v1/auth/login/", {"username": "operator", "password": "wrong"}, format="json")
+        self.assertEqual(bad.status_code, 401)
+        missing = self.client.post("/api/v1/auth/login/", {"username": "operator"}, format="json")
+        self.assertEqual(missing.status_code, 400)
+        login = self.client.post(
+            "/api/v1/auth/login/", {"username": "operator", "password": "test-password"}, format="json"
+        )
+        self.assertEqual(login.status_code, 200)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Token {login.data['token']}")
+        contexts = self.client.get("/api/v1/contexts/")
+        self.assertEqual(contexts.status_code, 200)
+        self.assertEqual(len(contexts.data), 1)
+        self.assertEqual(contexts.data[0]["roles"], ["OPERATOR"])
+        self.assertEqual(self.client.post("/api/v1/auth/logout/").status_code, 204)
+        self.assertEqual(self.client.get("/api/v1/contexts/").status_code, 401)
 
     def test_database_rejects_open_context_without_approved_references(self):
         other_session = ExamSession.objects.create(code="EXAM-B", name="Kỳ thi khác")
@@ -157,3 +186,13 @@ class AttemptApiTests(TestCase):
                     attempt=Attempt.objects.get(pk=second.data["id"]),
                     recorded_by=self.user,
                 )
+
+    def test_demo_seed_is_repeatable_and_keeps_context_closed(self):
+        call_command("seed_demo", operator=self.user.username, verbosity=0)
+        call_command("seed_demo", operator=self.user.username, verbosity=0)
+        context = IntakeContext.objects.get(session__code="DEMO-T018-HOC-PHAN")
+        self.assertEqual(context.status, IntakeContext.Status.SETUP)
+        self.assertEqual(
+            Registration.objects.filter(session=context.session, roster_version="demo-v1").count(), 2
+        )
+        self.assertEqual(CheckIn.objects.count(), 0)
