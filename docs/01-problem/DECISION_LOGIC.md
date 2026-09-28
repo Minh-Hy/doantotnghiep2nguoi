@@ -37,3 +37,13 @@ Xác minh khuôn mặt **không tự trả lời** đúng phòng, đúng ca, đ�
 5. Với dữ liệu công khai cho thị giác và hồ sơ giả lập cho nghiệp vụ, kết luận nào chỉ là benchmark/prototype, kết luận nào cần pilot thực địa?
 
 **Vì sao có 02:** các câu hỏi trên xác định output và rủi ro của từng bước. Survey phải suy ra stage requirements, data/technical requirements, candidate và experiment từ chúng; không bắt đầu bằng một dataset/model đã có. Các giả định còn mở tiếp tục ở [questions.md](../00-project/questions.md) cho tới khi có nguồn và quyết định.
+
+## T-008 → generic business baseline → câu hỏi kỹ thuật
+
+**Context / Question.** D-001 chọn bối cảnh cửa phòng thi, nhưng nhóm chưa chọn kỳ thi hay quy chế cụ thể. [T-008](T-008-requirements.md) định nghĩa workflow tham chiếu: hệ thống cần phục vụ nghiệp vụ nào trước khi đánh giá cách thực hiện?
+
+**Requirements / Alternatives.** Từ BP-001–BP-004, T-008 suy ra sáu Core Decisions, các bước P-001–P-012, ngoại lệ SC-001–SC-024, BR-001–BR-017 và FR-001–FR-019. Tách cấu trúc nghiệp vụ dùng chung, policy cấu hình theo kỳ thi và triển khai kỹ thuật. Thiết bị chỉ tự kết luận trong quyền được duyệt; không chắc hoặc thiếu quyền thì chuyển review/giữ unresolved. Attempt, check-in, entry authorization và attendance có nghĩa riêng.
+
+**Evidence / Review status.** Đây là thiết kế generic theo yêu cầu refactor ngày 2026-09-26 và [D-003](../00-project/decisions/T-008-D-003-chap-nhan-baseline-nghien-cuu.md) ghi nhận chấp nhận làm mốc nghiên cứu ngày 2026-09-28. Nó chưa phải quy trình As-Is của một tổ chức hay profile ứng dụng đã duyệt. Tám góp ý review chi tiết của Minh Hy được chuyển sang phần application; các thay đổi policy/case/authority chỉ kéo theo rà lại AI nếu đổi đầu vào, đối tượng hoặc output xác minh. Thiếu As-Is thực địa chỉ giới hạn tuyên bố giảm nhân sự.
+
+**Why / Next.** T-008 đi từ scenario → BR → FR/capability → TQ-001–TQ-008. T-009 audit mức khả dụng và phù hợp của candidate T-005/T-007 với capability liên quan; T-010 đặt profile, câu hỏi, metric và tiêu chí chấp nhận trước thử; T-011 tạo evidence; T-012 phân tích lỗi. Survey chọn candidate đáng thử, chưa chốt giải pháp cuối. D-001/D-002 là hướng nhóm đã chọn, không biến lựa chọn kỹ thuật cũ thành business fact. Nguyên tắc Business decision / System decision / Human-authorized decision / Technical implementation được duy trì trong [workflow](../00-project/workflow.md).
