@@ -35,6 +35,8 @@ Từ E2, R50 ít FA/FR hơn MBF trên cặp hợp lệ, nhưng chưa biết giá
 
 Quốc An định hướng chuyển trọng tâm sang **pipeline gốc → lỗi/ưu nhược → optimization → so sánh đóng góp**, thay vì tiếp tục mở nhiều tổ hợp model. Vì thế [B0](T-012-B0-pipeline-choice.md) chọn SCRFD-500MF + A0 một mặt + MBF, dùng XQLFW làm tập chính cho pipeline thị giác và WIDER làm phép đo detection riêng. Chọn B0 vì nhánh này đã chạy lại được trong T-011/X-012-F, có mốc coverage/lỗi và chi phí gọn; không phải tuyên bố tốt nhất hoặc chọn cấu hình triển khai. Bước sau phải cải thiện một bottleneck có nhãn và đo được trên cùng protocol với B0.
 
+Để biết nhánh detector nhanh có được lợi từ encoder mạnh và khép bảng so sánh mà không mở thêm model, [X-012-G](T-012-X-012-G-four-combination-protocol.md) khóa trước run đúng một tổ hợp còn thiếu: YuNet+R50. [Run 36377073461](runs/T-012-X-012-G-four-combinations.md) tái lập ba ô cũ; trên giao 3.666 cặp, R50 giảm FA/FR dưới cả SCRFD và YuNet, còn SCRFD nhỉnh hơn YuNet khi giữ cùng encoder. Quyết định tiếp theo vẫn là giữ B0 làm mốc gốc và dừng chọn tổ hợp; kết quả cặp web chưa đủ để chọn cấu hình phòng thi.
+
 ## Quy tắc giữ nhất quán
 
 - Không gộp AP E1, FMR/FNMR E2, coverage S4 và pass/fail E3 thành một accuracy hệ thống.

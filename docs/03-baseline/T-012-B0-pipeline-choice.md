@@ -30,3 +30,5 @@
 4. **Chạy B0 và bản cải thiện trên cùng dữ liệu/split/điều kiện.** Báo coverage/unresolved trên toàn bộ mẫu, FA/FR và mẫu số trên phần được chấm, thời gian/tài nguyên trên cùng runner. So với B0 **và** đối chứng mạnh phù hợp khi cần; nêu rõ thay đổi nào tạo cải thiện, đổi lấy chi phí gì, trường hợp nào vẫn thất bại.
 
 Đây là điểm dừng của bước chọn model/dataset. Quyết định sau baseline là **optimization nào có thể kiểm chứng thành đóng góp**, không phải tìm thêm model có điểm công bố cao nhất.
+
+**Kiểm đúng một tổ hợp còn thiếu:** [X-012-G](runs/T-012-X-012-G-four-combinations.md) đã chạy YuNet + R50 cùng ba nhánh cũ trên XQLFW. Trên giao 3.666 cặp, SCRFD+R50 ít FA/FR nhất (`61/59`), YuNet+R50 là `67/63`, B0 SCRFD+MBF là `114/108`. R50 giúp cả hai detector nhưng chậm/lớn hơn MBF theo M2; YuNet có 160 cặp ít score hơn SCRFD theo A0. Kết quả này **không đổi vai trò B0** và khép phần chọn tổ hợp để đi sang optimization; chưa có phép đo bốn pipeline trên cùng thiết bị.

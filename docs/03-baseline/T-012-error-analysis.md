@@ -1,6 +1,6 @@
 # T-012 — Phân tích lỗi baseline và câu hỏi thí nghiệm tiếp theo
 
-**Ngày:** 2026-09-27. **Trạng thái:** phân tích hoàn tất trong phạm vi E1/E2/M1/M2 và X-012-F tham chiếu; PR #8 chờ review sau PR #7. E3/app, thiết bị đích và đánh giá gần miền cửa phòng chưa có kết quả. **Phạm vi bằng chứng:** E1 detection trên WIDER validation, E2 verification và X-012-F interface detector–encoder trên cặp XQLFW, M1 detection timing và M2 encoder timing ở các CPU runner tham chiếu; không phải đánh giá toàn hệ thống.
+**Ngày:** 2026-09-27–28. **Trạng thái:** phân tích hoàn tất trong phạm vi E1/E2/M1/M2, X-012-F và X-012-G tham chiếu; PR #8 chờ review sau PR #7. E3/app, thiết bị đích và đánh giá gần miền cửa phòng chưa có kết quả. **Phạm vi bằng chứng:** E1 detection trên WIDER validation, E2 verification và phép so detector–encoder trên cặp XQLFW, M1 detection timing và M2 encoder timing ở các CPU runner tham chiếu; không phải đánh giá toàn hệ thống.
 
 ## 1. Vì sao T-012 tồn tại
 
@@ -21,6 +21,7 @@ Mức khẳng định dùng trong tài liệu: **OBSERVED** = số liệu/run ho
 | M1 / vận hành | [Run M1 tham chiếu](runs/T-011-M1-reference-detection.md): 60 ảnh WIDER, 180 calls/candidate trong cùng CPU runner | Median/p95 của `adapter.detect` cho ba detector trong điều kiện runner này | Encoder, attempt đầu-cuối, RAM riêng, thiết bị đích, tải đến, hàng chờ, công sức và khả năng giảm người |
 | M2 / chi phí xác minh | [Run M2 tham chiếu](runs/T-012-M2-reference-encoder.md): cùng 60 crop XQLFW đã căn chỉnh, 180 calls/encoder trong một CPU runner | Median/p95 `get_feat` và kích thước ONNX của MBF/R50 | Pipeline/attempt đầu-cuối, RAM đỉnh, thiết bị đích, acceptance vận hành; M1 và M2 là hai run khác nhau |
 | X-012-F / ranh S3→S7 | [Run YuNet/SCRFD + cùng MBF](runs/T-012-X-012-F-detector-encoder-interface.md): 6.000 cặp XQLFW, 3.666 cặp giao cùng có score | Coverage một mặt và lỗi xác minh có điều kiện khi đổi detector+landmark | S4 chọn người đưa mã, tách lỗi bbox/landmark, miền cửa phòng, latency toàn lượt |
+| X-012-G / khép ứng viên | [Bốn tổ hợp](runs/T-012-X-012-G-four-combinations.md): thêm YuNet+R50, ba ô cũ tái lập; cùng giao 3.666 cặp | Encoder R50 giảm FA/FR dưới cả hai detector; SCRFD ít lỗi hơn YuNet trên giao | Tốc độ bốn pipeline cùng thiết bị, S4 người đưa mã và miền cửa phòng |
 
 Không cộng AP, FMR/FNMR, tỷ lệ cặp được chấm và số fixture thành một “accuracy hệ thống”. E1/E2 dùng dữ liệu khác miền và khác đơn vị; chúng chưa tạo được xác suất lỗi đầu-cuối ở cửa phòng.
 
