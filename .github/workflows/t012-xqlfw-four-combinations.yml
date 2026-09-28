@@ -1,0 +1,66 @@
+name: T-012 X-012-G XQLFW four combinations
+
+on:
+  push:
+    branches:
+      - codex/T-012-error-analysis
+    paths:
+      - ".github/workflows/t012-xqlfw-four-combinations.yml"
+      - "scripts/t012_xqlfw_four_combinations.py"
+      - "docs/03-baseline/T-012-X-012-G-four-combination-protocol.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  four-combinations:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      OPENCV_FORCE_DNN_ENGINE: "4"
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install pinned E2 and YuNet runtime
+        run: python -m pip install numpy==2.2.6 opencv-contrib-python==5.0.0.93 insightface==0.7.3 onnxruntime==1.20.1 scikit-learn==1.7.1
+      - name: Check script and shared pair/landmark tests
+        run: |
+          python -m py_compile scripts/t012_xqlfw_four_combinations.py
+          python -m unittest tests/test_t012_xqlfw_detector_encoder_interface.py
+      - name: Download pinned public inputs to temporary storage
+        run: |
+          mkdir -p "${RUNNER_TEMP}/t012-x012g"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/Martlgap/xqlfw/releases/download/1.0/xqlfw.zip" \
+            --output "${RUNNER_TEMP}/t012-x012g/xqlfw.zip"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/Martlgap/xqlfw/releases/download/1.0/xqlfw_pairs.txt" \
+            --output "${RUNNER_TEMP}/t012-x012g/xqlfw_pairs.txt"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/deepinsight/insightface/releases/download/model-zoo/buffalo_sc.zip" \
+            --output "${RUNNER_TEMP}/t012-x012g/buffalo_sc.zip"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/deepinsight/insightface/releases/download/model-zoo/buffalo_l.zip" \
+            --output "${RUNNER_TEMP}/t012-x012g/buffalo_l.zip"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/opencv/opencv_zoo/raw/refs/heads/main/models/face_detection_yunet/face_detection_yunet_2026may.onnx" \
+            --output "${RUNNER_TEMP}/t012-x012g/yunet.onnx"
+      - name: Close SCRFD/YuNet x MBF/R50 component matrix
+        run: |
+          python scripts/t012_xqlfw_four_combinations.py \
+            --images "${RUNNER_TEMP}/t012-x012g/xqlfw.zip" \
+            --pairs "${RUNNER_TEMP}/t012-x012g/xqlfw_pairs.txt" \
+            --sc-model "${RUNNER_TEMP}/t012-x012g/buffalo_sc.zip" \
+            --r50-model "${RUNNER_TEMP}/t012-x012g/buffalo_l.zip" \
+            --yunet "${RUNNER_TEMP}/t012-x012g/yunet.onnx" \
+            --cache "${RUNNER_TEMP}/t012-x012g/cache" \
+            --output "${RUNNER_TEMP}/t012-x012g/summary.json"
+      - name: Remove temporary biometric data, embeddings and weights
+        if: always()
+        run: rm -rf "${RUNNER_TEMP}/t012-x012g"

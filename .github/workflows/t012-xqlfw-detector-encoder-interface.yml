@@ -1,0 +1,61 @@
+name: T-012 X-012-F XQLFW detector to MBF interface
+
+on:
+  push:
+    branches:
+      - codex/T-012-error-analysis
+    paths:
+      - ".github/workflows/t012-xqlfw-detector-encoder-interface.yml"
+      - "scripts/t012_xqlfw_detector_encoder_interface.py"
+      - "tests/test_t012_xqlfw_detector_encoder_interface.py"
+      - "docs/03-baseline/T-012-X-012-F-detector-encoder-interface-protocol.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  detector-encoder-interface:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    env:
+      OPENCV_FORCE_DNN_ENGINE: "4"
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install pinned E2 and YuNet runtime
+        run: python -m pip install numpy==2.2.6 opencv-contrib-python==5.0.0.93 insightface==0.7.3 onnxruntime==1.20.1 scikit-learn==1.7.1
+      - name: Check pair-set and landmark parsing
+        run: python -m unittest tests/test_t012_xqlfw_detector_encoder_interface.py
+      - name: Download pinned public inputs to temporary storage
+        run: |
+          mkdir -p "${RUNNER_TEMP}/t012-x012f"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/Martlgap/xqlfw/releases/download/1.0/xqlfw.zip" \
+            --output "${RUNNER_TEMP}/t012-x012f/xqlfw.zip"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/Martlgap/xqlfw/releases/download/1.0/xqlfw_pairs.txt" \
+            --output "${RUNNER_TEMP}/t012-x012f/xqlfw_pairs.txt"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/deepinsight/insightface/releases/download/model-zoo/buffalo_sc.zip" \
+            --output "${RUNNER_TEMP}/t012-x012f/buffalo_sc.zip"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/opencv/opencv_zoo/raw/refs/heads/main/models/face_detection_yunet/face_detection_yunet_2026may.onnx" \
+            --output "${RUNNER_TEMP}/t012-x012f/yunet.onnx"
+      - name: Compare SCRFD and YuNet with the same MBF encoder
+        run: |
+          python scripts/t012_xqlfw_detector_encoder_interface.py \
+            --images "${RUNNER_TEMP}/t012-x012f/xqlfw.zip" \
+            --pairs "${RUNNER_TEMP}/t012-x012f/xqlfw_pairs.txt" \
+            --sc-model "${RUNNER_TEMP}/t012-x012f/buffalo_sc.zip" \
+            --yunet "${RUNNER_TEMP}/t012-x012f/yunet.onnx" \
+            --cache "${RUNNER_TEMP}/t012-x012f/cache" \
+            --output "${RUNNER_TEMP}/t012-x012f/summary.json"
+      - name: Remove temporary biometric data, embeddings and weights
+        if: always()
+        run: rm -rf "${RUNNER_TEMP}/t012-x012f"
