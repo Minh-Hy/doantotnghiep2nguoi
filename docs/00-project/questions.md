@@ -7,7 +7,7 @@ Giữ câu hỏi ở đây đến khi có bằng chứng trả lời và quyết
 3. Thành phần nào là bottleneck theo baseline và error analysis, search space/objective function phù hợp là gì?
 4. Operating point, acceptance criteria, metric chính, split và giao thức đánh giá cần chốt theo hậu quả false accept/false reject thế nào?
 5. Dataset/weight công khai nào có quyền và tệp dùng được cho đồ án? Domain gap cửa phòng thi được đánh giá hoặc giới hạn kết luận ra sao? Dữ liệu người thật chỉ được xét khi có quyền phù hợp.
-6. Mobile chạy Android/iOS, on-device/server, offline/online; thiết bị đo và tiêu chí demo tối thiểu là gì?
+6. [D-004](decisions/T-018-D-004-chon-stack-app-tham-chieu.md) đã chọn Flutter + Django REST Framework + PostgreSQL cho app tham chiếu. App nhắm Android/iOS hay cả hai; AI chạy on-device/server, offline/online; thiết bị đo và tiêu chí demo tối thiểu là gì?
 7. Mốc nộp, lịch gặp và hình thức báo cáo được yêu cầu là gì?
 8. Ai có quyền xử lý ngoại lệ, sửa lượt ghi nhận; quy tắc muộn, nhầm phòng, trùng lượt và “chưa đến” của kỳ thi mục tiêu là gì?
 

@@ -1,6 +1,6 @@
 # Quyết định chính thức
 
-Mỗi quyết định quan trọng có một file `T-004-D-001-ten-ngan.md` khi phát sinh từ task T-004; không sửa mất lịch sử. Quyết định mới thay thế mục cũ bằng liên kết hai chiều. Đã ghi [D-001 — chọn bài toán cửa phòng thi](T-004-D-001-chon-bai-toan-cua-phong-thi.md) và [D-002 — dùng T-005 làm hướng khảo sát](T-007-D-002-chon-huong-khao-sat-t005.md) theo xác nhận của Quốc An về lựa chọn nhóm. D-002 là survey decision, chưa phải quyết định kỹ thuật cuối; chưa ghi nhận thầy xác nhận hai quyết định này.
+Mỗi quyết định quan trọng có một file `T-004-D-001-ten-ngan.md` khi phát sinh từ task T-004; không sửa mất lịch sử. Quyết định mới thay thế mục cũ bằng liên kết hai chiều. Đã ghi [D-001 — chọn bài toán cửa phòng thi](T-004-D-001-chon-bai-toan-cua-phong-thi.md), [D-002 — dùng T-005 làm hướng khảo sát](T-007-D-002-chon-huong-khao-sat-t005.md), [D-003 — chấp nhận T-008 làm mốc nghiên cứu](T-008-D-003-chap-nhan-baseline-nghien-cuu.md) và [D-004 — stack/app AI tham chiếu T-018](T-018-D-004-chon-stack-app-tham-chieu.md). D-002 là survey decision; D-004 chỉ chốt stack và B0 cho app tham chiếu, chưa là quyết định model triển khai cuối.
 
 Mẫu:
 
