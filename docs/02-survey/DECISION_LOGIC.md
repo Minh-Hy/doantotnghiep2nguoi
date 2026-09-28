@@ -34,6 +34,8 @@ File này là **xương sống suy luận** của bộ T-005: vì sao một stag
 
 **Survey decision hiện có:** T-007 chọn hướng T-005 vì khớp bài toán cửa phòng thi 1:1 ([bản so sánh](T-007-selection.md)). Shortlist trong T-005 là candidate *đáng thử*, có điều kiện kiểm tra file/weight, license, schema, protocol và runtime; chưa chốt dataset/model/pipeline cuối và không được biện minh ngược bằng kết quả thí nghiệm tương lai.
 
+**T-009 kiểm tra bước kế tiếp vì shortlist chưa đủ để chạy:** [audit nguồn, dữ liệu và trọng số](T-009-candidate-audit.md) đối chiếu nguồn chính thức và chạy thử một số weight trên đầu vào tổng hợp. YuNet, BlazeFace, SCRFD-500MF và MobileFaceNet trong `buffalo_sc` đã qua kiểm tra file/runtime tối thiểu trên máy hiện tại; các dataset ảnh chưa kiểm đầy đủ file/nhãn; quyền đã đối chiếu được một phần theo từng nguồn, XQLFW được tác giả công bố để đánh giá học thuật, còn điều khoản phân phối lại ảnh chưa rõ. T-010/PR #6 kiểm thêm archive/path XQLFW nhưng chưa xác nhận quyền phân phối lại ảnh hoặc chọn main test. Vì vậy quyết định T-009 chỉ là **ứng viên đủ cơ sở để chuẩn bị phép thử có điều kiện**. Nó không thay quyết định chọn main test, protocol, model thắng hoặc configuration triển khai. T-008 ở [PR riêng đang review](https://github.com/quocanwyf/doantotnghiep2nguoi/pull/3); nếu baseline nghiệp vụ đổi, đối chiếu lại mapping trước khi khóa thí nghiệm.
+
 ## 4. Survey uncertainty → experiment → final technical decision
 
 [Thiết kế thí nghiệm](T-005-quoc-an-experiments.md) phát sinh từ những điểm còn chưa chắc:

@@ -1,7 +1,7 @@
 # Trạng thái dự án
 
-- Cập nhật: 2026-09-27
-- Giai đoạn: phạm vi bài toán 01 đã được nhóm chọn; khảo sát 02 đã chọn hướng; baseline nghiên cứu T-011 có E1/E2/M1 tham chiếu trong PR #7; phân tích lỗi T-012 hoàn tất phạm vi hiện tại trong PR #8.
+- Cập nhật: 2026-09-28
+- Giai đoạn: phạm vi bài toán 01 đã được nhóm chọn; khảo sát 02 đã chọn hướng; T-009/T-010/T-011/T-012 có audit, giao thức, baseline B0 và phân tích lỗi làm mốc cho stage tiếp theo.
 - Thành viên: Quốc An (TV-A), Minh Hy (TV-B).
 
 ## Đã làm và đã chọn
@@ -20,14 +20,17 @@
 - [D1 đường đi P1](../03-baseline/runs/T-012-S4-ltft-path-diagnostic.md) là chẩn đoán hậu nghiệm: 41/1.024 cửa sổ từng chọn sai ID ở frame giữa, 38 còn sai cuối. Cả 41 lần sai đầu khi annotation không có box target hợp lệ; đây là rủi ro mất dấu trong **proxy**, chưa là đo người vắng hay lỗi check-in.
 - [D2 kiểm nhãn thô](../03-baseline/runs/T-012-S4-ltft-faceflag-audit.md) tách 41 lần sai đầu: 0 còn target ID với `face=0`, 41 không có target ID trong dòng gốc. Nguyên nhân thiếu ID và cách tránh chọn nhầm trong ứng dụng vẫn chưa được kiểm.
 - **Điểm dừng X-012-A:** các nguồn đã rà chưa có bộ được kiểm đủ claim–actor và nhãn nhiều người theo lượt; [readiness S4](../03-baseline/T-012-S4-experiment-readiness.md) ghi rõ từng gap. Không tiếp tục vòng tìm kiếm/lặp proxy khi không có nguồn mới phù hợp; T-011/T-012 vẫn hoàn tất đúng phạm vi nghiên cứu, không tuyên bố hoàn tất ứng dụng.
+- **Mốc pipeline gốc B0:** [quyết định chọn mốc](../03-baseline/T-012-B0-pipeline-choice.md) giữ SCRFD-500MF + quy tắc A0 một mặt + MobileFaceNet để có một pipeline đã chạy và có thể phân tích theo stage. [Chẩn đoán](../03-baseline/T-012-B0-freeze-and-stage-diagnosis.md) chỉ ra giới hạn coverage, lỗi có score và chi phí thành phần; không gọi B0 là cấu hình triển khai tốt nhất. [X-012-I](../03-baseline/runs/T-012-X-012-I-conditional-embedding.md) thử tính embedding có điều kiện trên cùng dữ liệu/cấu hình, giữ nguyên số cặp được chấm và lỗi FA/FR trong phép thử, giảm thời gian inference trên runner tham chiếu. Đây là ứng viên cải thiện thực thi, chưa là bằng chứng tốc độ thiết bị đích hoặc giải quyết S4.
 
 ## Chưa có bằng chứng để chốt kỹ thuật cuối
 
-T-005 **hoàn thiện phần phân tích/survey**. Quốc An xác nhận T-008 đủ mốc bài toán cho nghiên cứu và T-009/T-010 hoàn tất phạm vi hiện tại; góp ý nghiệp vụ chi tiết của T-008 để khi xây app. T-011 đã bổ sung kiểm nguồn/file, pin cấu hình, E1/E2 và M1 tham chiếu; vẫn chưa có main test phù hợp miền cửa phòng thi, phép đo trên thiết bị đích, kiểm E3/app hoặc phân tích bottleneck đủ để chốt kỹ thuật. Shortlist dataset/model, threshold, hướng tối ưu và mobile stack vẫn là candidate/câu hỏi. Chưa có pilot để tuyên bố giảm nhân sự; dữ liệu công khai và fixture giả lập không thay thế đánh giá tại kỳ thi thật.
+T-005 **hoàn thiện phần phân tích/survey**. Quốc An xác nhận T-008 đủ mốc bài toán cho nghiên cứu và T-009/T-010 hoàn tất phạm vi hiện tại; góp ý nghiệp vụ chi tiết của T-008 để khi xây app. T-011/T-012 đã kiểm nguồn/file, pin cấu hình, chạy E1/E2/M1 tham chiếu, chọn B0 và chẩn đoán lỗi; vẫn chưa có main test phù hợp miền cửa phòng thi, phép đo trên thiết bị đích hoặc kiểm E3/app để chốt kỹ thuật cuối. Model/dataset triển khai, threshold và mobile stack vẫn là câu hỏi giai đoạn sau. Chưa có pilot để tuyên bố giảm nhân sự; dữ liệu công khai và fixture giả lập không thay thế đánh giá tại kỳ thi thật.
+
+[T-009 audit candidate](../02-survey/T-009-candidate-audit.md) đã đối chiếu nguồn công bố và kiểm file/runtime tối thiểu cho một số weight trên đầu vào tổng hợp. Phạm vi và quyền dùng từng nguồn được ghi theo mức bằng chứng; chưa chọn main test hoặc model cuối. T-008 generic business baseline đang được Minh Hy review ở [PR riêng](https://github.com/quocanwyf/doantotnghiep2nguoi/pull/3); nếu baseline nghiệp vụ thay đổi, cần rà lại trace từ capability sang các phép thử.
 
 ## Bước tiếp theo theo thứ tự
 
-1. **Ưu tiên nghiên cứu S4:** giữ một lượt khai báo hồ sơ gắn với đúng người đứng quét; so pipeline/candidate trong điều kiện một mặt và nhiều mặt trên cùng giao thức. Khi không xác định được người mục tiêu, trả `unresolved` để retry/manual. [Kế hoạch T-012](../03-baseline/T-012-S4-one-vs-multi-comparison-plan.md) đã có kết quả detection theo nhóm ảnh và cỡ mặt trên WIDER; bước sau cần chọn nguồn đánh giá sẵn có phù hợp miền và đúng loại nhãn trước khi thử tiếp. Chỉ chấm chọn đúng người theo lượt X-012-A khi có nhãn claim–actor độc lập, split và mức rủi ro được duyệt.
+1. **Stage tiếp theo từ B0:** giữ pipeline gốc làm đối chứng, chọn một lỗi/chi phí cụ thể từ [chẩn đoán T-012](../03-baseline/T-012-B0-freeze-and-stage-diagnosis.md), đặt phép thử trên cùng dữ liệu/split/metric/điều kiện, rồi mới so cải thiện và giải thích nguyên nhân. S4 nhiều mặt vẫn là ưu tiên nghiên cứu; các proxy hiện có không được gọi là phép chấm người khai báo theo lượt X-012-A.
 2. **Bằng chứng triển khai còn thiếu:** main test xác minh gần miền cửa phòng, thiết bị đích để đo encoder/attempt, E3/app logic theo policy sau và As-Is thực địa nếu muốn tuyên bố giảm công sức. Không lấy timing GitHub runner làm kết luận triển khai.
 3. **Experiment rồi mới chốt kỹ thuật:** từ uncertainty và rủi ro T-012, đặt điều kiện kiểm và acceptance criteria trước experiment; dùng kết quả đó để cân nhắc candidate/configuration, threshold và kiến trúc app.
 
