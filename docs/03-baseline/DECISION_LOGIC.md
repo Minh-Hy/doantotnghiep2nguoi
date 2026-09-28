@@ -37,6 +37,8 @@ Quốc An định hướng chuyển trọng tâm sang **pipeline gốc → lỗi
 
 Để biết nhánh detector nhanh có được lợi từ encoder mạnh và khép bảng so sánh mà không mở thêm model, [X-012-G](T-012-X-012-G-four-combination-protocol.md) khóa trước run đúng một tổ hợp còn thiếu: YuNet+R50. [Run 36377073461](runs/T-012-X-012-G-four-combinations.md) tái lập ba ô cũ; trên giao 3.666 cặp, R50 giảm FA/FR dưới cả SCRFD và YuNet, còn SCRFD nhỉnh hơn YuNet khi giữ cùng encoder. Quyết định tiếp theo vẫn là giữ B0 làm mốc gốc và dừng chọn tổ hợp; kết quả cặp web chưa đủ để chọn cấu hình phòng thi.
 
+[Khóa mốc và chẩn đoán B0](T-012-B0-freeze-and-stage-diagnosis.md) nối kết quả E2/E1/M1/M2 với câu hỏi can thiệp: 1.785 cặp XQLFW `unresolved` do ranh S3/S4, FA/FR còn trên 4.215 cặp có score, WIDER có nhóm mặt nhỏ dễ bỏ sót, còn timing hiện chưa đủ để gọi stage chậm nhất. Vì thế ưu tiên nghiên cứu S4 xuất phát từ nghiệp vụ, nhưng chọn optimization cụ thể phải chờ câu hỏi, nhãn/metric và đối chứng phù hợp được nhóm duyệt; không sửa B0 theo một lỗi chỉ mới suy đoán.
+
 ## Quy tắc giữ nhất quán
 
 - Không gộp AP E1, FMR/FNMR E2, coverage S4 và pass/fail E3 thành một accuracy hệ thống.
