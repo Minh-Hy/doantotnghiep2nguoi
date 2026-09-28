@@ -1,0 +1,27 @@
+name: T-011 E1 protocol checks
+
+on:
+  push:
+    branches:
+      - codex/T-011-exploratory-baseline
+  pull_request:
+    paths:
+      - "scripts/t011_widerface_evaluate.py"
+      - "scripts/t011_widerface_predict.py"
+      - "tests/test_t011_widerface_evaluator.py"
+      - "tests/test_t011_widerface_predict_adapter.py"
+      - ".github/workflows/t011-e1-protocol.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  evaluator:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Run synthetic evaluator and adapter tests
+        run: python -m unittest discover -s tests -p "test_t011_widerface*.py" -v

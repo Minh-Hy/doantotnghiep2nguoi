@@ -1,6 +1,6 @@
 # T-008 — Generic Exam Entry Business Baseline
 
-**Trạng thái:** DRAFT FOR REVIEW — chưa freeze thành baseline đã duyệt.
+**Trạng thái:** Được Quốc An chấp nhận làm generic baseline cho phạm vi nghiên cứu ngày 2026-09-28, sau khi Quốc An thông báo Minh Hy đã review và đồng ý. Các chi tiết policy/authority/case/correction cho application chưa chốt; xem [D-003](../00-project/decisions/T-008-D-003-chap-nhan-baseline-nghien-cuu.md).
 **Phụ trách:** Quốc An; Minh Hy review theo Sheet.
 **Nguồn:** yêu cầu refactor T-008 của Quốc An; [T-002](T-002-quoc-an-proposal.md), [T-007](../02-survey/T-007-selection.md), [D-001](../00-project/decisions/T-004-D-001-chon-bai-toan-cua-phong-thi.md), [D-002](../00-project/decisions/T-007-D-002-chon-huong-khao-sat-t005.md).
 
@@ -9,7 +9,7 @@
 Tài liệu thiết kế bộ nghiệp vụ dùng chung khi chưa chọn kỳ thi cụ thể, làm business baseline cho nghiên cứu và business contract/reference cho application sau này. BA là phương pháp suy luận; đầu ra là workflow, rule, lifecycle, policy và capability cần phục vụ.
 
 - **CONFIRMED:** có nguồn trực tiếp; xác nhận mục tiêu không phải bằng chứng hiệu quả thực địa.
-- **ASSUMPTION:** giả định thiết kế/đề xuất cho baseline đang chờ nhóm review, không phải fact về tổ chức cụ thể.
+- **ASSUMPTION:** giả định thiết kế/đề xuất của kịch bản generic, không phải fact về tổ chức cụ thể hay policy đã duyệt cho app.
 - **OPEN QUESTION:** vấn đề còn cần review, cấu hình hoặc chuyển nghiên cứu, giữ ID OQ-xxx.
 - **TBD:** giá trị hoặc lựa chọn chưa quyết định.
 
@@ -616,9 +616,9 @@ Technical question thuộc rule/data/business logic không tự tạo nhu cầu 
 
 Ví dụ trace: SC-007 → BR-005/BR-008 → FR-006/FR-009 → TQ-003 → T-010 thiết kế phép thử unavailable/review → T-011 ghi kết quả → T-012 phân tích → nhóm xem xét quyết định tiếp. T-008 không điền kết quả hoặc chọn kỹ thuật thay task sau.
 
-### Ready for Review — điều kiện freeze Generic Exam Entry Business Baseline
+### Mốc nghiên cứu và điều kiện chốt contract cho application
 
-**Hiện tại: chưa freeze vì nhóm chưa review bản refactor.** Nhóm cần duyệt:
+Theo [D-003](../00-project/decisions/T-008-D-003-chap-nhan-baseline-nghien-cuu.md), cấu trúc generic được dùng làm đầu vào nghiên cứu T-009–T-012 và stage tiếp theo. Review GitHub ngày 2026-09-26 của Minh Hy còn tám góp ý chi tiết; xác nhận mới của Quốc An cho phép merge mốc nghiên cứu, **không đồng nghĩa tám góp ý đã được sửa hay profile kỳ thi/app đã duyệt**. Khi chốt contract application, nhóm cần kiểm:
 
 1. Generic workflow từ chuẩn bị tới đóng/đối soát/correction rõ và nhất quán.
 2. Actor và authority boundaries rõ ở mức role, không cấp quyền bằng output kỹ thuật.
@@ -631,7 +631,7 @@ Ví dụ trace: SC-007 → BR-005/BR-008 → FR-006/FR-009 → TQ-003 → T-010 
 9. TQ/traceability tạo được đầu vào đúng nhiệm vụ T-009/T-010/T-011/T-012.
 10. Remaining unknowns được phân loại: generic cần review, policy cấu hình, triển khai hoặc nghiên cứu/validation sau.
 
-Khi nhóm duyệt, ghi ngày, người, nguồn và phiên bản/commit baseline theo workflow. Không cần chọn một kỳ thi, hoàn tất khảo sát As-Is, đặt mọi policy value, chọn kỹ thuật hay chứng minh giảm nhân sự để freeze cấu trúc generic. Profile dùng cho experiment/app vẫn phải được xác định trước khi thực hiện phần phụ thuộc.
+Khi duyệt profile kỳ thi/application, ghi ngày, người, nguồn và phiên bản baseline theo workflow. Không cần hoàn tất khảo sát As-Is để dùng baseline nghiên cứu; profile dùng cho experiment/app vẫn phải được xác định trước khi thực hiện phần phụ thuộc.
 
 > This baseline defines a generic research/application scenario and does not demonstrate measured improvement over a specific real-world exam process.
 
@@ -645,7 +645,7 @@ Khi nhóm duyệt, ghi ngày, người, nguồn và phiên bản/commit baseline
 | Technical boundary | Không chọn model/data/algorithm/threshold/stack; hướng T-005 được dẫn đúng vai trò survey, không làm business fact. |
 | Future app | 19 FR được phân Core/Policy/Optional; có policy profile, lifecycle, evidence, failure/review/correction. Implementation để task sau. |
 | Downstream research | Traceability nối mỗi FR tới TQ; T-009 audit, T-010 thiết kế/khóa protocol, T-011 tạo evidence, T-012 phân tích. Final decision sau evidence/review. |
-| Freeze | Chưa freeze/merge; As-Is chỉ là limitation về validation thực địa, không là blocker của generic baseline. |
+| Mốc sử dụng | Cấu trúc generic được chấp nhận cho nghiên cứu theo D-003; tám góp ý review và profile kỳ thi/application còn phải xử lý đúng giai đoạn. As-Is chỉ giới hạn validation thực địa. |
 | ID/reference | Giữ các ID cũ, chỉ thêm TQ để nối contract; ý nghĩa sửa như BR-007/FR-008 đã thống nhất chống trùng check-in và attendance. |
 | Giới hạn fallback | Có đường xử lý và trạng thái chờ khi thiếu cả automation/nguồn/người có quyền; không hứa mọi lượt đều hoàn tất trong sự cố. |
 | Phạm vi policy | Đổi value trong policy đã hỗ trợ không đổi core; trường hợp ngoài concept baseline cần review mở rộng, không tuyên bố cấu hình bao phủ mọi kỳ thi. |

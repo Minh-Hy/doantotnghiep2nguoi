@@ -1,0 +1,101 @@
+name: T-011 E1 remaining detectors full validation
+
+on:
+  push:
+    branches:
+      - codex/T-011-exploratory-baseline
+    paths:
+      - ".github/workflows/t011-e1-remaining-full.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  detector-full:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        candidate: [blazeface, scrfd]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install BlazeFace runtime
+        if: matrix.candidate == 'blazeface'
+        run: python -m pip install numpy==2.2.6 mediapipe==1.0.0
+      - name: Install SCRFD runtime
+        if: matrix.candidate == 'scrfd'
+        run: python -m pip install numpy==2.2.6 insightface==0.7.3 onnxruntime==1.20.1
+      - name: Download pinned WIDER inputs to temporary runner storage
+        run: |
+          mkdir -p "${RUNNER_TEMP}/t011-e1"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://huggingface.co/datasets/CUHK-CSE/wider_face/resolve/main/data/WIDER_val.zip" \
+            --output "${RUNNER_TEMP}/t011-e1/WIDER_val.zip"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://huggingface.co/datasets/CUHK-CSE/wider_face/resolve/main/data/wider_face_split.zip" \
+            --output "${RUNNER_TEMP}/t011-e1/wider_face_split.zip"
+      - name: Download pinned BlazeFace weight
+        if: matrix.candidate == 'blazeface'
+        run: |
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://storage.googleapis.com/mediapipe-models/face_detector/blaze_face_full_range/float16/latest/blaze_face_full_range.tflite" \
+            --output "${RUNNER_TEMP}/t011-e1/model"
+      - name: Download and extract pinned SCRFD detector
+        if: matrix.candidate == 'scrfd'
+        run: |
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/deepinsight/insightface/releases/download/model-zoo/buffalo_sc.zip" \
+            --output "${RUNNER_TEMP}/t011-e1/buffalo_sc.zip"
+          python - <<'PY'
+          import hashlib
+          import os
+          from pathlib import Path
+          from zipfile import ZipFile
+
+          root = Path(os.environ["RUNNER_TEMP"]) / "t011-e1"
+          archive = root / "buffalo_sc.zip"
+          assert hashlib.sha256(archive.read_bytes()).hexdigest() == "57d31b56b6ffa911c8a73cfc1707c73cab76efe7f13b675a05223bf42de47c72"
+          with ZipFile(archive) as source:
+              matches = [name for name in source.namelist() if Path(name).name == "det_500m.onnx"]
+              assert len(matches) == 1
+              content = source.read(matches[0])
+          assert hashlib.sha256(content).hexdigest() == "5e4447f50245bbd7966bd6c0fa52938c61474a04ec7def48753668a9d8b4ea3a"
+          (root / "det_500m.onnx").write_bytes(content)
+          print("Pinned SCRFD detector extracted and hashed")
+          PY
+      - name: Validate GT and image manifest
+        run: |
+          python scripts/t011_widerface_evaluate.py \
+            --images "${RUNNER_TEMP}/t011-e1/WIDER_val.zip" \
+            --annotations "${RUNNER_TEMP}/t011-e1/wider_face_split.zip" \
+            --preflight-only
+      - name: Produce candidate predictions outside Git
+        run: |
+          if [ "${{ matrix.candidate }}" = "scrfd" ]; then
+            MODEL_PATH="${RUNNER_TEMP}/t011-e1/det_500m.onnx"
+          else
+            MODEL_PATH="${RUNNER_TEMP}/t011-e1/model"
+          fi
+          python scripts/t011_widerface_predict.py \
+            --candidate "${{ matrix.candidate }}" \
+            --model "${MODEL_PATH}" \
+            --images "${RUNNER_TEMP}/t011-e1/WIDER_val.zip" \
+            --annotations "${RUNNER_TEMP}/t011-e1/wider_face_split.zip" \
+            --output "${RUNNER_TEMP}/t011-e1/predictions.json"
+      - name: Evaluate project AP and print aggregate only
+        run: |
+          python scripts/t011_widerface_evaluate.py \
+            --images "${RUNNER_TEMP}/t011-e1/WIDER_val.zip" \
+            --annotations "${RUNNER_TEMP}/t011-e1/wider_face_split.zip" \
+            --predictions "${RUNNER_TEMP}/t011-e1/predictions.json" \
+            --output "${RUNNER_TEMP}/t011-e1/summary.json"
+      - name: Remove temporary predictions and summary
+        if: always()
+        run: |
+          rm -f "${RUNNER_TEMP}/t011-e1/predictions.json"
+          rm -f "${RUNNER_TEMP}/t011-e1/summary.json"

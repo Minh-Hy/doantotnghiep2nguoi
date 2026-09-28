@@ -2,6 +2,8 @@
 
 > **Ghi chú cập nhật 2026-09-26:** đây là bàn giao lịch sử của bản BA trước refactor. [T-008 hiện tại](../01-problem/T-008-requirements.md) đã chuyển thành Generic Exam Entry Business Baseline; G9/GI/GO và yêu cầu có As-Is để freeze bên dưới không còn là kế hoạch hiện hành. Bước tiếp theo là Quốc An và Minh Hy review cấu trúc generic, authority, policy/state và downstream contract ở mục 20; task vẫn chưa freeze.
 
+> **Cập nhật 2026-09-28:** [D-003](../00-project/decisions/T-008-D-003-chap-nhan-baseline-nghien-cuu.md) chấp nhận T-008 làm mốc generic cho nghiên cứu theo xác nhận của Quốc An rằng Minh Hy đã review và đồng ý. Tám góp ý trong review GitHub cũ chưa được sửa; phần policy/case/authority/correction chuyển sang nhánh app của Minh Hy và trước E3 theo profile. Các dòng bên dưới giữ nguyên như lịch sử bàn giao ngày 26/09, không phải trạng thái hiện tại.
+
 - **Ngày / người làm:** 2026-09-26, Quốc An với AI hỗ trợ; Minh Hy là người review theo Sheet.
 - **Trạng thái:** bàn giao phần cập nhật tài liệu để nhóm review; chưa hoàn tất/freeze T-008.
 - **Nguồn:** bản phân tích 20 mục đã thảo luận và phản hồi BA của Quốc An trong chat: giữ nền tảng, bổ sung Core Decisions, As-Is và gates, không viết lại từ đầu để chọn công nghệ.

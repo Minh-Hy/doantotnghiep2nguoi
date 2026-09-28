@@ -15,4 +15,4 @@ Khi giải quyết câu hỏi, dẫn đến biên bản/nguồn và tạo file q
 
 ## Câu hỏi còn mở của generic baseline T-008
 
-OQ-001–OQ-023 được quản lý tại [T-008, mục 18](../01-problem/T-008-requirements.md#18-open-questions--deferred-policies). Nhóm cần review semantics của workflow/authority/roster để freeze cấu trúc; giá trị policy theo kỳ thi, điều kiện triển khai và câu hỏi nghiên cứu có thể tiếp tục mở theo đúng phạm vi. T-009 audit candidate với giả định/gap được ghi rõ; T-010 khóa profile và protocol trước phép thử. Chưa có xác minh As-Is thực địa và chưa thể tuyên bố giảm nhân sự.
+OQ-001–OQ-023 được quản lý tại [T-008, mục 18](../01-problem/T-008-requirements.md#18-open-questions--deferred-policies). [D-003](decisions/T-008-D-003-chap-nhan-baseline-nghien-cuu.md) chấp nhận cấu trúc generic làm mốc nghiên cứu; Minh Hy xử lý semantics chi tiết về policy/authority/roster/correction khi thiết kế app và trước phép thử E3 phụ thuộc profile. Giá trị policy theo kỳ thi, điều kiện triển khai và câu hỏi nghiên cứu tiếp tục mở theo đúng phạm vi. Chưa có xác minh As-Is thực địa và chưa thể tuyên bố giảm nhân sự.

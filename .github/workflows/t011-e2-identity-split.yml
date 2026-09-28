@@ -1,0 +1,82 @@
+name: T-011 E2 custom identity-disjoint XQLFW check
+
+on:
+  push:
+    branches:
+      - codex/T-011-exploratory-baseline
+    paths:
+      - ".github/workflows/t011-e2-identity-split.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  identity-split:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    env:
+      OMP_NUM_THREADS: "1"
+      OPENBLAS_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+      - name: Install pinned E2 runtime
+        run: python -m pip install numpy==2.2.6 opencv-contrib-python==5.0.0.93 insightface==0.7.3 onnxruntime==1.20.1 scikit-learn==1.7.1
+      - name: Preflight custom split scoring with synthetic pairs
+        run: |
+          python - <<'PY'
+          import sys
+          import numpy as np
+          sys.path.insert(0, "scripts")
+          from t011_xqlfw_r50_comparison import evaluate_identity_split
+
+          scores = np.array([0.9, 0.1, 0.8, 0.2])
+          labels = np.array([True, False, True, False])
+          groups = np.array([0, 0, 1, 1])
+          result = evaluate_identity_split(scores, labels, groups)
+          assert result["aggregate"]["genuine"] == 2
+          assert result["aggregate"]["impostor"] == 2
+          assert result["aggregate"]["false_reject"] == 1
+          assert result["aggregate"]["false_accept"] == 0
+          assert result["groups"][0]["threshold"] == 0.8
+          assert result["groups"][1]["threshold"] == 0.9
+          print("Custom split scoring preflight passed")
+          PY
+      - name: Download XQLFW and model packs into temporary storage
+        run: |
+          mkdir -p "${RUNNER_TEMP}/t011-e2"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/Martlgap/xqlfw/releases/download/1.0/xqlfw.zip" \
+            --output "${RUNNER_TEMP}/t011-e2/xqlfw.zip"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/Martlgap/xqlfw/releases/download/1.0/xqlfw_pairs.txt" \
+            --output "${RUNNER_TEMP}/t011-e2/xqlfw_pairs.txt"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/deepinsight/insightface/releases/download/model-zoo/buffalo_sc.zip" \
+            --output "${RUNNER_TEMP}/t011-e2/buffalo_sc.zip"
+          curl --fail --location --retry 3 --retry-delay 3 \
+            "https://github.com/deepinsight/insightface/releases/download/model-zoo/buffalo_l.zip" \
+            --output "${RUNNER_TEMP}/t011-e2/buffalo_l.zip"
+      - name: Audit fixed identity split before image scoring
+        run: |
+          python scripts/t011_xqlfw_identity_split_audit.py \
+            --pairs "${RUNNER_TEMP}/t011-e2/xqlfw_pairs.txt"
+      - name: Run matched MBF and R50 identity-disjoint evaluation
+        run: |
+          python scripts/t011_xqlfw_r50_comparison.py \
+            --images "${RUNNER_TEMP}/t011-e2/xqlfw.zip" \
+            --pairs "${RUNNER_TEMP}/t011-e2/xqlfw_pairs.txt" \
+            --sc-model "${RUNNER_TEMP}/t011-e2/buffalo_sc.zip" \
+            --r50-model "${RUNNER_TEMP}/t011-e2/buffalo_l.zip" \
+            --cache "${RUNNER_TEMP}/t011-e2/cache" \
+            --checkpoint-dir "${RUNNER_TEMP}/t011-e2/checkpoints" \
+            --chunk-size 100 \
+            --identity-disjoint \
+            --output "${RUNNER_TEMP}/t011-e2/summary.json"
+      - name: Remove temporary data and embeddings
+        if: always()
+        run: rm -rf "${RUNNER_TEMP}/t011-e2"
