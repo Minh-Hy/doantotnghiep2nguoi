@@ -27,3 +27,5 @@ Các tên EdgeFace XS và AdaFace R18 trong [T-005](../02-survey/T-005-quoc-an-m
 3. **Uncertainty vận hành:** M1 và M2 là hai run và hai tập ảnh khác nhau; không cộng median/p95 thành latency lượt. Sau X-012-F, chỉ vài cấu hình có lý do mới được đo cùng toàn pipeline trên cùng thiết bị/profile, gồm nhánh chưa kết luận/review. Chưa có thiết bị hoặc mục tiêu nghiệp vụ để gọi ứng viên “đạt”.
 
 **Ranh giới quyết định:** ở T-012 có thể giữ/hoãn candidate cho phép thử, **chưa thể quyết định detector + tracker + encoder cuối**. Dataset WIDER/XQLFW/LTFT phục vụ nhãn từng stage, không tự động trở thành tập kiểm end-to-end cửa phòng. Một final technical decision sau này phải nêu rõ cả lỗi chọn người, false accept/reject, unresolved và chi phí trên điều kiện áp dụng, truy ngược về T-008.
+
+**Cấu hình đi tiếp:** [B0 SCRFD-500MF + A0 + MBF](T-012-B0-pipeline-choice.md) được chọn làm mốc **pipeline thị giác gốc** để phân tích và tối ưu. Đây là chọn một đường thực nghiệm có thể chạy, không nâng bằng chứng trên XQLFW thành quyết định triển khai hoặc yêu cầu phải thử hết các tổ hợp ứng viên.

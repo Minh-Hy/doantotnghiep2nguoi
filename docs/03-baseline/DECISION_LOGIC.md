@@ -33,6 +33,8 @@ Từ E2, R50 ít FA/FR hơn MBF trên cặp hợp lệ, nhưng chưa biết giá
 
 [Ma trận bằng chứng T-012](T-012-candidate-evidence-matrix.md) đặt các kết quả vào đúng stage và phạm vi nguồn: YuNet/SCRFD còn đáng thử cho S3; MBF/R50 còn đáng thử cho S7–S8; A0/P1 là đối chứng/candidate S4 với nhãn khác loại. Từ đó xuất hiện câu hỏi interface **S3→S7**: E2 chỉ có SCRFD, nên [X-012-F](runs/T-012-X-012-F-detector-encoder-interface.md) giữ MBF và 6.000 cặp XQLFW cố định khi thay YuNet/SCRFD. SCRFD tái lập E2, chấm được 4.215 cặp so YuNet 4.055; trên giao 3.666 cặp, SCRFD ít hơn 8 FR và 7 FA. Điều này trả lời phần coverage và lỗi có điều kiện trên cặp web, nhưng không chấm chọn người giữa nhiều mặt hoặc tách lỗi bbox khỏi landmark. Giữ cả hai detector ở mức ứng viên vì kết quả WIDER và XQLFW khác điều kiện; chưa có quyết định cấu hình cuối.
 
+Quốc An định hướng chuyển trọng tâm sang **pipeline gốc → lỗi/ưu nhược → optimization → so sánh đóng góp**, thay vì tiếp tục mở nhiều tổ hợp model. Vì thế [B0](T-012-B0-pipeline-choice.md) chọn SCRFD-500MF + A0 một mặt + MBF, dùng XQLFW làm tập chính cho pipeline thị giác và WIDER làm phép đo detection riêng. Chọn B0 vì nhánh này đã chạy lại được trong T-011/X-012-F, có mốc coverage/lỗi và chi phí gọn; không phải tuyên bố tốt nhất hoặc chọn cấu hình triển khai. Bước sau phải cải thiện một bottleneck có nhãn và đo được trên cùng protocol với B0.
+
 ## Quy tắc giữ nhất quán
 
 - Không gộp AP E1, FMR/FNMR E2, coverage S4 và pass/fail E3 thành một accuracy hệ thống.
