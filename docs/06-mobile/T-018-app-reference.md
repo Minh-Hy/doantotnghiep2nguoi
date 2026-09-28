@@ -3,6 +3,7 @@
 - **Trạng thái:** đã có lõi Django/Flutter ở nhánh T-018 để review; PostgreSQL, AI, camera và luồng check-in chưa được kiểm tích hợp.
 - **Quyết định:** [D-004](../00-project/decisions/T-018-D-004-chon-stack-app-tham-chieu.md).
 - **Người thực hiện/review:** Minh Hy / Quốc An theo Sheet.
+- **Lộ trình:** [kế hoạch triển khai T-018](T-018-ke-hoach-trien-khai-app.md).
 
 ## Kiến trúc dự kiến
 

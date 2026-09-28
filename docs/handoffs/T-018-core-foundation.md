@@ -8,3 +8,5 @@
 - **Quyết định/giả định:** theo [D-004](../00-project/decisions/T-018-D-004-chon-stack-app-tham-chieu.md); B0 là pipeline AI tham chiếu, chưa phải quyết định model triển khai cuối. Các chuỗi `fixture-*` trong test là dữ liệu giả lập, không phải policy được phê duyệt.
 - **Còn mở:** Quốc An review PR; cần profile nghiệp vụ và phân quyền được thống nhất, PostgreSQL thật, thiết bị đích, nơi chạy AI, tích hợp camera/B0, xác minh và quy trình ghi check-in/review/correction. Không gọi mốc này là E3 hoàn thành.
 - **File ngoài Git:** không có file mới cần trao; weight/dữ liệu mặt theo [external-assets](../00-project/external-assets.md), chưa được đưa vào app.
+
+**Bổ sung 2026-09-28:** [kế hoạch triển khai T-018](../06-mobile/T-018-ke-hoach-trien-khai-app.md) ghi thứ tự M0–M8, đầu ra, điều kiện qua mốc và các câu hỏi phải chốt. Kế hoạch chờ Quốc An review cùng PR #9; không thay trạng thái các mốc chưa có bằng chứng.
