@@ -39,6 +39,8 @@ Quốc An định hướng chuyển trọng tâm sang **pipeline gốc → lỗi
 
 [Khóa mốc và chẩn đoán B0](T-012-B0-freeze-and-stage-diagnosis.md) nối kết quả E2/E1/M1/M2 với câu hỏi can thiệp: 1.785 cặp XQLFW `unresolved` do ranh S3/S4, FA/FR còn trên 4.215 cặp có score, WIDER có nhóm mặt nhỏ dễ bỏ sót, còn timing hiện chưa đủ để gọi stage chậm nhất. Vì thế ưu tiên nghiên cứu S4 xuất phát từ nghiệp vụ, nhưng chọn optimization cụ thể phải chờ câu hỏi, nhãn/metric và đối chứng phù hợp được nhóm duyệt; không sửa B0 theo một lỗi chỉ mới suy đoán.
 
+Quốc An cho bắt đầu bước S4 sau B1+B2. [Protocol X-012-H](T-012-X-012-H-s4-overlap-gate-protocol.md) lấy đúng lỗi D1/D2 — P1 có thể nối sang ID khác khi target không có record — để thử một gate IoU bảo thủ, mượn điểm tham chiếu từ SORT chứ không chọn threshold theo LTFT. [Run proxy](runs/T-012-X-012-H-s4-overlap-gate.md) cho P1→P2 đúng `758→755`, sai `38→3`, chưa kết luận `228→266` trên cùng 1.024 cửa sổ–ID; vì vậy candidate **giảm sai bằng abstention** trong dữ liệu box oracle. Bước tiếp vẫn tồn tại vì chưa có claim–actor, frame khớp nhãn hoặc phép so B0/proposed trên cùng transaction; không chuyển kết quả proxy thành quyết định triển khai.
+
 ## Quy tắc giữ nhất quán
 
 - Không gộp AP E1, FMR/FNMR E2, coverage S4 và pass/fail E3 thành một accuracy hệ thống.

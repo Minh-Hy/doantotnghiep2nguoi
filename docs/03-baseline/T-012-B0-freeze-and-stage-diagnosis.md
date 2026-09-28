@@ -38,3 +38,5 @@
 **Điểm xin nhóm duyệt trước bước tiếp:** xác nhận B0 và ba outcome/mẫu số ở mục 1–2 làm mốc; xác nhận S4 nhiều mặt là câu hỏi đóng góp ưu tiên, còn phép thử transaction thực chỉ được claim khi có nhãn claim–actor phù hợp từ nguồn sẵn có; xác nhận sẽ chọn **một** can thiệp sau khi nêu giả thuyết, nhãn/metric kiểm được và đối chứng công bằng. Nếu chưa có nhãn S4 phù hợp, nghiên cứu component/proxy riêng hoặc chuyển sang bottleneck S3/S7 có dữ liệu chấm, không đổi tên proxy thành check-in.
 
 **Giới hạn của mốc B0:** XQLFW đã tham gia khảo sát ứng viên và có pair-fold chia sẻ người/ảnh; WIDER validation đã dùng phát triển; pretrain overlap chưa kiểm, không có camera/thiết bị đích. Do đó baseline này đủ làm mốc **nghiên cứu trước–sau có điều kiện**, chưa đủ chứng minh hiệu quả ở cửa phòng thi hoặc lựa chọn triển khai cuối.
+
+**Sau khi Quốc An cho bắt đầu bước can thiệp:** [X-012-H](runs/T-012-X-012-H-s4-overlap-gate.md) thử gate IoU bảo thủ cho association nhiều mặt trên cùng proxy LTFT. Kết quả hỗ trợ giữ candidate S4, nhưng **không phải** so trước–sau với B0 trên XQLFW vì dữ liệu và đơn vị đo khác nhau; B0 vẫn giữ nguyên.
