@@ -7,20 +7,45 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.utils import timezone
 
-from .models import Attempt, AuditEvent, ContextAssignment, ExamContext, Registration
+from .models import (
+    Attempt, AuditEvent, ContextAssignment, Exam, ExamContext, ExamSession,
+    PolicyVersion, Registration, Room, RosterBatch,
+)
 
 
 class FoundationApiTests(TestCase):
     def setUp(self):
         self.operator = get_user_model().objects.create_user(username='operator-test', password='only-for-test')
+        exam = Exam.objects.create(key='EXAM-SIM-01', title='Kỳ thi giả lập')
+        session = ExamSession.objects.create(exam=exam, key='SESSION-SIM-01')
+        room = Room.objects.create(key='ROOM-SIM-01')
         self.context = ExamContext.objects.create(
             key='CTX-SIM-01', exam_key='EXAM-SIM-01', session_key='SESSION-SIM-01',
             room_key='ROOM-SIM-01', roster_version='R-SIM-001-draft',
-            policy_version='P-SIM-001-draft',
+            policy_version='P-SIM-001-draft', session=session, room=room,
         )
+        self.context.active_roster = RosterBatch.objects.create(
+            context=self.context, version=self.context.roster_version,
+        )
+        self.context.active_policy = PolicyVersion.objects.create(
+            context=self.context, version=self.context.policy_version,
+        )
+        self.context.save(update_fields=['active_roster', 'active_policy'])
         ContextAssignment.objects.create(
             context=self.context, user=self.operator, role=ContextAssignment.Role.OPERATOR,
         )
+
+    def _open_context(self):
+        self.context.status = ExamContext.Status.OPEN
+        self.context.policy_approved_at = timezone.now()
+        self.context.policy_approved_by = self.operator
+        self.context.save()
+        self.context.active_roster.status = RosterBatch.Status.ACTIVE
+        self.context.active_roster.save(update_fields=['status'])
+        self.context.active_policy.status = PolicyVersion.Status.APPROVED
+        self.context.active_policy.approved_at = self.context.policy_approved_at
+        self.context.active_policy.approved_by = self.operator
+        self.context.active_policy.save(update_fields=['status', 'approved_at', 'approved_by'])
 
     def _post_attempt(self, *, key='request-0001', code='SIM001'):
         return self.client.post(
@@ -67,10 +92,7 @@ class FoundationApiTests(TestCase):
         self.assertFalse(Attempt.objects.exists())
 
     def test_idempotent_attempt_keeps_one_audit_event(self):
-        self.context.status = ExamContext.Status.OPEN
-        self.context.policy_approved_at = timezone.now()
-        self.context.policy_approved_by = self.operator
-        self.context.save()
+        self._open_context()
         self.client.force_login(self.operator)
 
         first = self._post_attempt()
@@ -87,10 +109,7 @@ class FoundationApiTests(TestCase):
 
     def test_reviewer_cannot_create_attempt(self):
         ContextAssignment.objects.filter(user=self.operator).update(role=ContextAssignment.Role.REVIEWER)
-        self.context.status = ExamContext.Status.OPEN
-        self.context.policy_approved_at = timezone.now()
-        self.context.policy_approved_by = self.operator
-        self.context.save()
+        self._open_context()
         self.client.force_login(self.operator)
         self.assertEqual(self._post_attempt().status_code, 403)
         self.assertFalse(Attempt.objects.exists())

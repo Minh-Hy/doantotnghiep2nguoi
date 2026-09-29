@@ -1,6 +1,6 @@
 # Backend T-018 — mốc M1 có thể chạy
 
-Backend dùng Python 3.12, Django 5.2, Django REST Framework, Psycopg và PostgreSQL 18. Các bảng mới ở schema `exam_entry_app` của database `exam_entry`; schema `public` từ lần thử trước không được dùng bởi mã mới.
+Backend dùng Python 3.12, Django 5.2, Django REST Framework, Psycopg và PostgreSQL 18. Các bảng mới ở schema `exam_entry_app` của database `exam_entry`; schema `public` từ lần thử trước không được dùng bởi mã mới. [Thiết kế DB T-018](../docs/06-mobile/T-018-thiet-ke-co-so-du-lieu.md) mô tả 24 bảng nghiệp vụ, ràng buộc và chức năng nào chưa bật.
 
 ## Chạy trên máy Minh Hy
 
@@ -16,14 +16,14 @@ File `.env` đã được chuẩn bị cục bộ, bị Git bỏ qua. Không đ�
 
 Bản xem thử Flutter trên Edge chạy ở `http://127.0.0.1:7357`; khi `APP_DEBUG=true`, backend chỉ cho origin local này (và `localhost:7357`) gọi `/api/` từ trình duyệt. Android không cần CORS. Giữ cổng 7357 theo [hướng dẫn VS Code](../docs/06-mobile/T-018-vscode-local-setup.md).
 
-Để thử đăng nhập/ca giả lập, dừng server bằng `Ctrl+C` rồi tạo tài khoản **một lần** và seed fixture:
+Để thử đăng nhập/ca giả lập, dừng server bằng `Ctrl+C`. Chỉ chạy `createsuperuser` **nếu chưa có tài khoản Django của bạn**; sau đó seed fixture cho đúng username:
 
 ```powershell
 uv run --env-file .env python manage.py createsuperuser
 uv run --env-file .env python manage.py seed_demo --operator TEN_DANG_NHAP
 ```
 
-`TEN_DANG_NHAP` là username vừa nhập khi chạy `createsuperuser`, không phải username PostgreSQL. Sau đó chạy lại `runserver`. `seed_demo` tạo `CTX-SIM-01` cùng hai mã `SIM001`, `SIM002` và gán operator; ca vẫn ở `SETUP`, policy chưa được duyệt. Có thể chạy lại lệnh seed mà không nhân đôi fixture.
+`TEN_DANG_NHAP` là username Django của bạn, không phải username PostgreSQL. Sau đó chạy lại `runserver`. `seed_demo` tạo môn/kỳ thi/ca/phòng, roster/policy nháp, `CTX-SIM-01` cùng hai mã `SIM001`, `SIM002` và gán operator; ca vẫn ở `SETUP`, policy chưa được duyệt. Có thể chạy lại lệnh seed mà không nhân đôi fixture.
 
 Sau khi server báo đang chạy, mở:
 
@@ -56,4 +56,4 @@ uv run --env-file .env python manage.py test --settings=config.test_settings
 uv run --env-file .env python manage.py showmigrations foundation
 ```
 
-Kiểm thử tự động dùng SQLite trong bộ nhớ để kiểm quyền, precondition và idempotency. Migration/readiness được kiểm riêng với PostgreSQL cục bộ. Đọc [kế hoạch T-018](../docs/06-mobile/T-018-ke-hoach-trien-khai-app.md) để biết phần còn lại.
+Kiểm thử tự động dùng SQLite trong bộ nhớ để kiểm quyền, precondition, idempotency và ràng buộc schema. Migration/readiness được kiểm riêng với PostgreSQL cục bộ. Đọc [kế hoạch T-018](../docs/06-mobile/T-018-ke-hoach-trien-khai-app.md) để biết phần còn lại. Các bảng check-in/entry/attendance đã có cấu trúc nhưng chưa có API ghi hoặc policy được duyệt.

@@ -97,4 +97,8 @@ flutter build web
 flutter build apk --debug
 ```
 
-Ngày 2026-09-29: backend có 8 test đạt, Django check đạt, migration PostgreSQL thật đạt; Flutter analyze, 3 widget test và 1 test HTTP đạt, web/APK debug build thành công. `flutter run -d edge` đã khởi động, trang web/API/CORS local phản hồi đúng. Truy vấn DB hiện thấy 1 tài khoản Django và fixture ca giả; nếu đó là tài khoản bạn đã tạo, **bỏ qua** `createsuperuser`, dùng đúng username khi cần chạy lại `seed_demo` và đăng nhập. Chưa thử đăng nhập thật vì không có mật khẩu tài khoản hiện có. Chưa có Android device/emulator trên máy để thử trực tiếp. Đây là bằng chứng cho **mốc kết nối**, không phải kiểm thử camera/AI/check-in.
+Ngày 2026-09-29: backend có 12 test đạt, Django check đạt, migration PostgreSQL `0002`–`0007` và backfill dữ liệu cũ đạt; Flutter analyze, 3 widget test và 1 test HTTP đạt, web/APK debug build thành công ở mốc trước. `flutter run -d edge` đã khởi động, trang web/API/CORS local phản hồi đúng. Truy vấn DB hiện thấy 1 tài khoản Django và fixture ca giả; nếu đó là tài khoản bạn đã tạo, **bỏ qua** `createsuperuser`, dùng đúng username khi cần chạy lại `seed_demo` và đăng nhập. Chưa thử đăng nhập thật vì không có mật khẩu tài khoản hiện có. Chưa có Android device/emulator trên máy để thử trực tiếp. Đây là bằng chứng cho **mốc kết nối/schema**, không phải kiểm thử camera/AI/check-in.
+
+## 6. Xem DB trong pgAdmin
+
+Backend kết nối database `exam_entry` trên `127.0.0.1:5432`, schema `exam_entry_app`. Trong pgAdmin, nhấp phải **Databases → Refresh**; mở **exam_entry → Schemas → exam_entry_app → Tables**. Nếu vẫn chỉ thấy `postgres`, mở **Properties → Connection** của server đã đăng ký, đối chiếu host/port với `127.0.0.1:5432`. [Thiết kế DB](T-018-thiet-ke-co-so-du-lieu.md) liệt kê 24 bảng nghiệp vụ và các bảng chưa bật chức năng.

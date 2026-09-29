@@ -22,6 +22,7 @@ artifacts/*
 __pycache__/
 *.py[cod]
 .venv/
+.local/
 .ipynb_checkpoints/
 
 # Builds and local IDE files

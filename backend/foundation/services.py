@@ -1,6 +1,6 @@
 from django.db import transaction
 
-from .models import Attempt, AuditEvent, ContextAssignment, ExamContext
+from .models import Attempt, AuditEvent, ContextAssignment, ExamContext, PolicyVersion, RosterBatch
 
 
 class AttemptConflict(Exception):
@@ -24,7 +24,16 @@ def start_attempt(*, actor, context: ExamContext, declared_code: str, idempotenc
             user=actor, context=context, role=ContextAssignment.Role.OPERATOR,
         ).exists():
             raise AttemptConflict('OPERATOR_REQUIRED')
-        if context.status != ExamContext.Status.OPEN or context.policy_approved_at is None:
+        if (
+            context.status != ExamContext.Status.OPEN
+            or context.policy_approved_at is None
+            or context.active_policy_id is None
+            or context.active_policy.status != PolicyVersion.Status.APPROVED
+            or context.active_policy.version != context.policy_version
+            or context.active_roster_id is None
+            or context.active_roster.status != RosterBatch.Status.ACTIVE
+            or context.active_roster.version != context.roster_version
+        ):
             raise AttemptConflict('CONTEXT_NOT_READY')
 
         attempt = Attempt.objects.create(

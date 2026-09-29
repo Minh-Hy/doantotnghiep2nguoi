@@ -9,3 +9,5 @@
 [Profile ca thi học phần giả lập T-018](T-018-profile-ca-thi-gia-lap.md) là bản nháp M0 để Minh Hy và Quốc An review trước khi dùng làm nguồn expected outcome E3; chưa là quy chế kỳ thi thật hay profile được phê duyệt.
 
 **Mốc hiện có:** API health/readiness/login/logout/context/attempt và Flutter kiểm kết nối, đăng nhập, xem ca được gán. Có bản xem thử trên Edge cho máy yếu; Android vẫn là đích chính. Chưa có camera, AI hoặc check-in. **Kiểm thử đích:** mở app → camera → xác minh 1:1 → check-in hoặc review → xem kết quả theo quyền.
+
+[Thiết kế cơ sở dữ liệu T-018](T-018-thiet-ke-co-so-du-lieu.md) ghi sơ đồ 24 bảng nghiệp vụ, migration và ranh giới giữa bảng đã chuẩn bị với chức năng được phép chạy; [D-007](../00-project/decisions/T-018-D-007-pham-vi-du-lieu-app.md) ghi năm lựa chọn của Minh Hy.

@@ -30,7 +30,11 @@ class ReadyView(APIView):
         try:
             with connection.cursor() as cursor:
                 cursor.execute('SELECT 1')
-            migrated = 'foundation_examcontext' in connection.introspection.table_names()
+            tables = set(connection.introspection.table_names())
+            migrated = {
+                'foundation_examcontext', 'foundation_rosterbatch',
+                'foundation_checkin', 'foundation_syncsubmission',
+            }.issubset(tables)
         except Exception:
             migrated = False
         if not migrated:
