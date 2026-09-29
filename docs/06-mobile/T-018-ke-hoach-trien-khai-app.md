@@ -31,7 +31,7 @@ flowchart LR
 | Mốc | Công việc và đầu ra cần thấy | Điều kiện để qua mốc |
 |---|---|---|
 | **M0 — Khóa hợp đồng cho app tham chiếu** | Rà 8 góp ý còn mở của T-008; lập profile **giả lập** gồm ca/phòng, roster, policy, vai trò, outcome và đường fallback. Ghi người/ngày/phiên bản phê duyệt profile, phạm vi entry/attendance, thiết bị và Android/iOS mục tiêu. Chốt API/state contract v1 trước khi mở check-in. | Quốc An và Minh Hy review; policy cần cho từng nhánh có nguồn, quyền và expected outcome. Điểm chưa thống nhất ở `questions.md`, không âm thầm biến thành default. |
-| **M1 — Nền tảng mã nguồn** | Backend chia model/service/API/test; Flutter chia app/feature/core; schema ban đầu, health, context, tạo/đọc attempt, case tra cứu, audit, idempotency; hướng dẫn chạy. **Đã có trong PR #9.** | Test unit/API và build Flutter đạt. Phần PostgreSQL thật được kiểm ở M2, nên M1 hiện chỉ hoàn thành ở mức code scaffold. |
+| **M1 — Nền tảng mã nguồn** | Backend chia model/service/API/test; Flutter chia app/feature/core; schema ban đầu, health, context, tạo/đọc attempt, case tra cứu, audit, idempotency; hướng dẫn chạy. Minh Hy sẽ tự dựng lại từ đầu. | Test unit/API và build Flutter đạt trên mã dựng lại; migration PostgreSQL thật được kiểm ở M2. |
 | **M2 — Môi trường và dữ liệu thử** | Chạy migration trên PostgreSQL sạch; seed roster/ca/phòng giả lập có version; đăng nhập nhân sự, quyền theo context; Flutter chọn ca/phòng được cấp; health/readiness phân biệt API sống với DB sẵn sàng. | Có kịch bản cài mới và chạy lại; thử quyền sai, context đóng, roster thiếu, migration và dữ liệu version; không có dữ liệu cá nhân/bí mật trong repo. |
 | **M3 — Lượt tại cửa chưa dùng AI** | Flutter nhập mã và hiện bước tiếp; API tạo attempt trước lookup, kiểm ca/phòng, thời gian và kết quả trước theo profile; retry/mất phản hồi dùng idempotency; case thiếu/mơ hồ/sai phòng có người nhận. | Chạy được một luồng mã hợp lệ và các nhánh bất thường với fixture; không tạo check-in từ việc chỉ tìm thấy hồ sơ; audit và trạng thái khớp contract. |
 | **M4 — Xác minh B0** | Đo khả năng chạy B0 trên thiết bị Android đích, tích hợp camera và adapter B0 1:1 trên máy; liên kết người đang làm lượt với registration; trả bốn outcome, mã lỗi, phiên bản pipeline; hướng dẫn thử lại/review. | Kiểm không mặt, nhiều mặt, mất camera/AI, retry và người không khớp; không xem cosine hoặc `unresolved` là quyền vào. Ghi nguồn weight, thiết bị, thời gian và giới hạn; không commit ảnh/embedding/weight. Nếu không đạt, trình nhóm quyết định thay đổi. |
@@ -52,7 +52,7 @@ flowchart LR
 | Kết quả | Hiển thị check-in/review riêng với quyền vào/attendance | Policy evaluator, transaction ghi kết quả, quyền reviewer | Check-in, quyết định/case, ràng buộc chống trùng |
 | Cuối ca | Danh sách tồn đọng và màn hình đối soát/correction theo quyền | Tổng hợp nguồn, phát hành phiên bản, giữ lịch sử sửa | Audit, reconciliation, correction và report version |
 
-Bảng này là **thiết kế đích**, không mô tả các màn hình/API đã có. M1 hiện chỉ có màn hình kết nối và API health/context/attempt.
+Bảng này là **thiết kế đích**, không mô tả màn hình/API đã có. Mã thử nghiệm M1/M2 được gỡ ngày 2026-09-29 theo yêu cầu của Minh Hy; xem [hướng dẫn làm thủ công](T-018-huong-dan-lam-thu-cong.md).
 
 ## 4. Hợp đồng tối thiểu cần giữ nhất quán
 

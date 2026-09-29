@@ -24,12 +24,12 @@ docs/meetings/         Một file mỗi buổi gặp
 docs/progress/         Một file mỗi tuần cho cả hai
 docs/handoffs/         Một file bàn giao cho mỗi task hoàn thành
 docs/sources/          Bản Word gốc để hai thành viên đối chiếu
-backend/               API Django REST Framework và schema PostgreSQL tham chiếu T-018
-mobile/                Ứng dụng Flutter tham chiếu T-018
+backend/               Sẽ do Minh Hy dựng thủ công theo kế hoạch T-018
+mobile/                Sẽ do Minh Hy dựng thủ công bằng Flutter
 data/                  Dữ liệu cục bộ; nội dung nhạy cảm không lên Git
 artifacts/             Checkpoint, log và đầu ra lớn cục bộ
 ```
 
 Giai đoạn 01 và 02 đang làm có DECISION_LOGIC.md để ghi vì sao bước tiếp theo tồn tại và được suy ra từ bước trước. Khi bắt đầu giai đoạn sau, tạo và cập nhật file tương tự song song với công việc thực tế; không tạo trước tài liệu rỗng hoặc chốt kỹ thuật quá sớm.
 
-Mốc lõi T-018 và giới hạn hiện tại được ghi tại [giai đoạn 06](docs/06-mobile/README.md); cách chạy trong [backend](backend/README.md) và [Flutter](mobile/README.md).
+Lộ trình T-018 và giới hạn hiện tại được ghi tại [giai đoạn 06](docs/06-mobile/README.md); [hướng dẫn làm thủ công](docs/06-mobile/T-018-huong-dan-lam-thu-cong.md) bắt đầu từ mốc đầu tiên.

@@ -1,6 +1,6 @@
 # T-018 — App cửa phòng thi tham chiếu
 
-- **Trạng thái:** đã có lõi Django/Flutter ở nhánh T-018 để review; PostgreSQL, AI, camera và luồng check-in chưa được kiểm tích hợp.
+- **Trạng thái:** mã Django/Flutter thử nghiệm đã được gỡ ngày 2026-09-29 để Minh Hy tự dựng lại; PostgreSQL cục bộ vẫn còn, AI/camera/check-in chưa được kiểm tích hợp.
 - **Quyết định:** [D-004](../00-project/decisions/T-018-D-004-chon-stack-app-tham-chieu.md).
 - **Phạm vi bản đầu:** [D-005](../00-project/decisions/T-018-D-005-pham-vi-android-ai-tren-may.md) chọn Android, AI trên điện thoại, check-in do nhân sự xác nhận.
 - **Người thực hiện/review:** Minh Hy / Quốc An theo Sheet.
@@ -23,16 +23,9 @@ Pipeline AI tham chiếu là [B0 T-012](../03-baseline/T-012-B0-pipeline-choice.
 
 Giao diện Flutter ưu tiên chữ/trạng thái dễ đọc, thao tác chính rõ ràng, phản hồi lỗi và bước tiếp theo cụ thể. Màn hình tại cửa chỉ hiển thị thông tin tối thiểu theo quyền. Thiết kế chi tiết UX, thiết bị, cách build và kết quả thử sẽ bổ sung cùng mã T-018.
 
-## Mốc 1 — lõi có thể mở rộng
+## Trạng thái triển khai
 
-- [Backend](../../backend/README.md): mô hình ca/phòng/context, quyền operator/reviewer, roster theo phiên bản, attempt, review case, check-in và audit; API v1 mới cho health, danh sách context, tạo/đọc attempt.
-- [Flutter](../../mobile/README.md): Material 3, màn hình trạng thái kết nối và khung thao tác tiếp nhận; nút bắt đầu còn khóa trong khi chưa có đăng nhập, context và camera.
-- Lượt tra cứu đúng hồ sơ chỉ ở `IN_PROGRESS`; trường hợp thiếu/mơ hồ/sai phòng vào `REVIEW_PENDING`. Chưa ghi check-in, không suy ra quyền vào phòng hoặc attendance.
-- Test tự động backend dùng SQLite trong bộ nhớ; PostgreSQL thật đã được kiểm migration/readiness ở M2. Chuỗi end-to-end vẫn cần thiết bị/emulator.
-
-## Mốc 2 — đang triển khai
-
-API đã có kiểm tra kết nối DB, đăng nhập/đăng xuất và danh sách context theo vai trò; Flutter đã có màn hình tương ứng. Lệnh `seed_demo` tạo ca thi học phần giả lập ở `SETUP`, không tự phê duyệt policy. PostgreSQL 18 cục bộ đã có role/database `exam_entry`, chạy migration và readiness đạt; tài khoản Django, seed demo và kiểm trên Android thật vẫn cần thực hiện nên M2 chưa hoàn thành. Xem [bàn giao mốc này](../handoffs/T-018-auth-context.md).
+Mã M1/M2 trước đây đã có test và migration cục bộ, được ghi trong [bàn giao M1](../handoffs/T-018-core-foundation.md) và [bàn giao M2](../handoffs/T-018-auth-context.md). Theo yêu cầu ngày 2026-09-29, hai thư mục mã đã được gỡ khỏi nhánh để Minh Hy tự làm lại theo [hướng dẫn thủ công](T-018-huong-dan-lam-thu-cong.md). Các kết quả kiểm trước đây không xác nhận mã mới; PostgreSQL `exam_entry` trên máy Minh Hy chưa bị xóa.
 
 ## Điều kiện trước khi gọi là chạy được
 
