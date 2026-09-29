@@ -12,7 +12,7 @@
 
 ## Bước 1 — M0: ghi hợp đồng giả lập trước khi viết luồng nghiệp vụ
 
-Đọc [T-008](../01-problem/T-008-requirements.md), [E3](../03-baseline/T-010-E3-fixture-contract.md), [D-005](../00-project/decisions/T-018-D-005-pham-vi-android-ai-tren-may.md) và [câu hỏi mở](../00-project/questions.md). Tự tạo tài liệu task `docs/06-mobile/T-018-profile-ca-thi-gia-lap.md`, ghi rõ:
+Đọc [T-008](../01-problem/T-008-requirements.md), [E3](../03-baseline/T-010-E3-fixture-contract.md), [D-005](../00-project/decisions/T-018-D-005-pham-vi-android-ai-tren-may.md) và [câu hỏi mở](../00-project/questions.md). [Profile ca thi giả lập T-018](T-018-profile-ca-thi-gia-lap.md) đã được soạn thành bản nháp để bạn rà lại; kiểm từng mục sau:
 
 - Một ca học phần giả lập, một phòng, roster và mã giả; version của roster/policy, vai trò nhân sự tại cửa và người review.
 - Các trạng thái attempt, bốn outcome AI, trường hợp không có/nhiều mặt, một lần thử lại rồi chuyển review.

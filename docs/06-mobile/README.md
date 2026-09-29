@@ -6,4 +6,6 @@
 
 [Kế hoạch T-018](T-018-ke-hoach-trien-khai-app.md) chia các mốc FE/BE/DB/AI, phụ thuộc và điều kiện kiểm tra; đây là kế hoạch để nhóm review, không đặt policy hoặc deadline khi chưa được chốt.
 
+[Profile ca thi học phần giả lập T-018](T-018-profile-ca-thi-gia-lap.md) là bản nháp M0 để Minh Hy và Quốc An review trước khi dùng làm nguồn expected outcome E3; chưa là quy chế kỳ thi thật hay profile được phê duyệt.
+
 **Kiểm thử tối thiểu dự kiến:** mở app → camera hoạt động → xác minh 1:1 → ghi attempt/check-in hoặc chuyển review → xem kết quả. Khi có mã, bổ sung hướng dẫn build, thiết bị đã thử và giới hạn thực tế.
