@@ -31,7 +31,7 @@ flowchart LR
 | Mốc | Công việc và đầu ra cần thấy | Điều kiện để qua mốc |
 |---|---|---|
 | **M0 — Khóa hợp đồng cho app tham chiếu** | Rà 8 góp ý còn mở của T-008; lập profile **giả lập** gồm ca/phòng, roster, policy, vai trò, outcome và đường fallback. Ghi người/ngày/phiên bản phê duyệt profile, phạm vi entry/attendance, thiết bị và Android/iOS mục tiêu. Chốt API/state contract v1 trước khi mở check-in. | Quốc An và Minh Hy review; policy cần cho từng nhánh có nguồn, quyền và expected outcome. Điểm chưa thống nhất ở `questions.md`, không âm thầm biến thành default. |
-| **M1 — Nền tảng mã nguồn** | Backend chia model/service/API/test; Flutter chia app/feature/core; schema ban đầu, health, context, tạo/đọc attempt, case tra cứu, audit, idempotency; hướng dẫn chạy. Minh Hy sẽ tự dựng lại từ đầu. | Test unit/API và build Flutter đạt trên mã dựng lại; migration PostgreSQL thật được kiểm ở M2. |
+| **M1 — Nền tảng mã nguồn** | Backend chia model/service/API/test; Flutter chia app/feature/core; schema ban đầu, health, context, tạo/đọc attempt, case tra cứu, audit, idempotency; hướng dẫn chạy. Mã đang được dựng lại trong PR #9 theo yêu cầu mới của Minh Hy. | Test unit/API và build Flutter đạt trên mã dựng lại; migration PostgreSQL thật được kiểm ở M2. |
 | **M2 — Môi trường và dữ liệu thử** | Chạy migration trên PostgreSQL sạch; seed roster/ca/phòng giả lập có version; đăng nhập nhân sự, quyền theo context; Flutter chọn ca/phòng được cấp; health/readiness phân biệt API sống với DB sẵn sàng. | Có kịch bản cài mới và chạy lại; thử quyền sai, context đóng, roster thiếu, migration và dữ liệu version; không có dữ liệu cá nhân/bí mật trong repo. |
 | **M3 — Lượt tại cửa chưa dùng AI** | Flutter nhập mã và hiện bước tiếp; API tạo attempt trước lookup, kiểm ca/phòng, thời gian và kết quả trước theo profile; retry/mất phản hồi dùng idempotency; case thiếu/mơ hồ/sai phòng có người nhận. | Chạy được một luồng mã hợp lệ và các nhánh bất thường với fixture; không tạo check-in từ việc chỉ tìm thấy hồ sơ; audit và trạng thái khớp contract. |
 | **M4 — Xác minh B0** | Đo khả năng chạy B0 trên thiết bị Android đích, tích hợp camera và adapter B0 1:1 trên máy; liên kết người đang làm lượt với registration; trả bốn outcome, mã lỗi, phiên bản pipeline; hướng dẫn thử lại/review. | Kiểm không mặt, nhiều mặt, mất camera/AI, retry và người không khớp; không xem cosine hoặc `unresolved` là quyền vào. Ghi nguồn weight, thiết bị, thời gian và giới hạn; không commit ảnh/embedding/weight. Nếu không đạt, trình nhóm quyết định thay đổi. |
@@ -52,7 +52,7 @@ flowchart LR
 | Kết quả | Hiển thị check-in/review riêng với quyền vào/attendance | Policy evaluator, transaction ghi kết quả, quyền reviewer | Check-in, quyết định/case, ràng buộc chống trùng |
 | Cuối ca | Danh sách tồn đọng và màn hình đối soát/correction theo quyền | Tổng hợp nguồn, phát hành phiên bản, giữ lịch sử sửa | Audit, reconciliation, correction và report version |
 
-Bảng này là **thiết kế đích**, không mô tả màn hình/API đã có. Mã thử nghiệm M1/M2 được gỡ ngày 2026-09-29 theo yêu cầu của Minh Hy; xem [hướng dẫn làm thủ công](T-018-huong-dan-lam-thu-cong.md).
+Bảng này là **thiết kế đích**, không mô tả toàn bộ màn hình/API đã có. Mã thử nghiệm cũ được gỡ ngày 2026-09-29; mốc kết nối đang được dựng lại. Xem tiến độ thực tế ở cuối tài liệu và [hướng dẫn VS Code](T-018-vscode-local-setup.md).
 
 ## 4. Hợp đồng tối thiểu cần giữ nhất quán
 
@@ -70,3 +70,29 @@ Bảng này là **thiết kế đích**, không mô tả màn hình/API đã có
 **Cần nhóm trả lời trước khi mở các nhánh phụ thuộc:** tên kỳ thi thật/profile và authority; thiết bị Android đích; thiết kế hàng đợi/đồng bộ khi mất mạng; nguồn roster và quy tắc hiệu lực; quyền xem/sửa/review/override; arrival/late/fallback; retention và dữ liệu nào được phép thu. Các câu hỏi này đang ở [questions.md](../00-project/questions.md) và T-008; kế hoạch không tự chọn giá trị.
 
 **Cách quản lý:** một mốc chỉ được đánh dấu xong khi có đầu ra và bằng chứng kiểm tra. Phạm vi/decision thay đổi phải cập nhật D-004 hoặc quyết định mới và liên kết từ tài liệu này; task, người phụ trách, trạng thái, deadline vẫn quản lý trên Sheet, không sao chép bảng task vào repo.
+
+## 6. Tiến độ thực tế — cập nhật 2026-09-29
+
+| Mốc | Trạng thái có bằng chứng | Còn thiếu để qua mốc |
+|---|---|---|
+| M0 | [Profile ca thi giả lập `0.1-draft`](T-018-profile-ca-thi-gia-lap.md) đã viết, có nhánh và câu hỏi mở. | Minh Hy và Quốc An review/ghi phiên bản, người/ngày phê duyệt; arrival, quyền reviewer, fallback/retention và hợp đồng E3 phụ thuộc. **Chưa hoàn tất.** |
+| M1 | Đã dựng backend/Flutter mới; API health/readiness/login/logout/context/attempt, schema lõi, quyền theo context, khóa idempotency và UI trạng thái/đăng nhập/danh sách ca. 7 test backend, 4 test Flutter, Flutter analyze/APK debug đạt. | Chưa có API lookup/case và test contract đầy đủ cho M1. **Đang làm, không đánh dấu xong.** |
+| M2 | Migration Django và foundation đã chạy trên schema PostgreSQL `exam_entry_app` riêng; readiness HTTP 200. Schema `public` cũ được giữ nguyên. Đã viết lệnh `seed_demo` có thể chạy lại; Flutter có màn hình xem ca được gán. | Minh Hy chưa tạo user Django và chưa chạy seed trên DB local; chưa thử đăng nhập/UI trên Android thật hoặc emulator. **Mới đạt phần mã/DB.** |
+| M3–M8 | Chưa triển khai trên mã mới. | Chờ cổng và bằng chứng theo bảng mốc ở mục 3. |
+
+### Thành phần đã tạo trong lượt này và lý do
+
+| Vị trí | Lý do |
+|---|---|
+| `backend/pyproject.toml`, `backend/uv.lock`, `backend/.python-version` | Khóa Python 3.12 và các thư viện backend để máy khác tái lập. |
+| `backend/.env.example`, `backend/config/settings.py`, `backend/config/test_settings.py` | Cấu hình PostgreSQL từ biến môi trường, cô lập schema mới và test nhanh trong bộ nhớ. `backend/.env` chứa secret chỉ ở máy Minh Hy, bị Git ignore. |
+| `backend/foundation/models.py`, `backend/foundation/migrations/0001_initial.py` | Khung dữ liệu context, quyền, roster, attempt, review case và audit; chưa có bảng check-in. |
+| `backend/foundation/services.py`, `serializers.py`, `views.py`, `urls.py`, `tests.py`, `admin.py` | Tách nghiệp vụ khỏi API, chặn attempt khi profile chưa duyệt, chống retry tạo trùng, kiểm quyền và thử được bằng test. |
+| `backend/foundation/management/commands/seed_demo.py` | Tạo ca/phòng và roster giả có version, gán operator cho tài khoản Django do Minh Hy tạo; giữ ca ở `SETUP` để thử an toàn. |
+| `mobile/android/`, `mobile/pubspec.*`, `mobile/lib/main.dart`, `app.dart` | Khung Flutter chỉ cho Android và điểm khởi động giao diện Material 3. |
+| `mobile/lib/core/api/system_status.dart`, `mobile/lib/features/status/status_screen.dart`, `mobile/test/widget_test.dart`, `mobile/test/system_status_test.dart` | Gọi API health/readiness, hiện trạng thái mạng/DB và kiểm UI/HTTP không tự mở tiếp nhận. |
+| `mobile/lib/core/api/exam_api.dart`, `mobile/lib/features/auth/sign_in_screen.dart`, `mobile/lib/features/contexts/context_screen.dart` | Đăng nhập, giữ token trong phiên app, đọc ca được gán và hiển thị rõ trạng thái `SETUP`; không mở nút tiếp nhận. |
+| `mobile/android/app/src/debug/AndroidManifest.xml` | Cho bản debug gọi HTTP tới Django local khi thử trên emulator/điện thoại; không áp dụng cho bản phát hành. |
+| `backend/README.md`, `mobile/README.md`, [hướng dẫn VS Code](T-018-vscode-local-setup.md) | Lệnh chạy, URL, cách thử và giới hạn hiện tại cho Minh Hy. |
+
+**Bằng chứng đã chạy:** `manage.py check`; 7 test backend trên SQLite trong bộ nhớ; migration mới hoàn tất trên PostgreSQL 18 schema `exam_entry_app`; HTTP `/api/v1/health/` và `/api/v1/ready/` trả 200; `flutter analyze`, 3 widget test, 1 test HTTP và `flutter build apk --debug` đạt. Chưa có thiết bị/emulator Android kết nối nên **chưa thử chạy app trên Android hoặc tích hợp camera/AI**. Không dùng kết quả này để chấm E3 hoặc tuyên bố check-in hoạt động.

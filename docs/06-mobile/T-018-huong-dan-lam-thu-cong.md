@@ -1,5 +1,7 @@
 # T-018 — Tự dựng lại ứng dụng từng bước
 
+**Cập nhật 2026-09-29:** Minh Hy đã yêu cầu AI xây mốc mã mới và báo cáo từng phần; tài liệu này giữ lịch sử hướng dẫn tự dựng. Để **chạy và thử mã hiện tại** trong VS Code, dùng [hướng dẫn setup mới](T-018-vscode-local-setup.md). Đừng chạy lại lệnh tạo project bên dưới trên `backend/` và `mobile/` đã có.
+
 **Ngày:** 2026-09-29. **Người làm:** Minh Hy; Quốc An review theo task T-018 trên Sheet. Đây là hướng dẫn thao tác cho Minh Hy, đi cùng [kế hoạch M0–M8](T-018-ke-hoach-trien-khai-app.md), [D-004](../00-project/decisions/T-018-D-004-chon-stack-app-tham-chieu.md) và [D-005](../00-project/decisions/T-018-D-005-pham-vi-android-ai-tren-may.md). Mã `backend/` và `mobile/` thử nghiệm đã gỡ theo yêu cầu; các commit cũ trong PR #9 vẫn có thể xem lại. Không coi test của mã cũ là kết quả của mã tự dựng.
 
 ## Trước khi bắt đầu

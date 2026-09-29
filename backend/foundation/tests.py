@@ -1,0 +1,108 @@
+import json
+from io import StringIO
+
+from django.contrib.auth import get_user_model
+from django.core.management import call_command
+from django.test import TestCase
+from django.utils import timezone
+
+from .models import Attempt, AuditEvent, ContextAssignment, ExamContext, Registration
+
+
+class FoundationApiTests(TestCase):
+    def setUp(self):
+        self.operator = get_user_model().objects.create_user(username='operator-test', password='only-for-test')
+        self.context = ExamContext.objects.create(
+            key='CTX-SIM-01', exam_key='EXAM-SIM-01', session_key='SESSION-SIM-01',
+            room_key='ROOM-SIM-01', roster_version='R-SIM-001-draft',
+            policy_version='P-SIM-001-draft',
+        )
+        ContextAssignment.objects.create(
+            context=self.context, user=self.operator, role=ContextAssignment.Role.OPERATOR,
+        )
+
+    def _post_attempt(self, *, key='request-0001', code='SIM001'):
+        return self.client.post(
+            '/api/v1/attempts/',
+            data=json.dumps({'context_key': self.context.key, 'declared_code': code}),
+            content_type='application/json',
+            HTTP_IDEMPOTENCY_KEY=key,
+        )
+
+    def test_public_health_and_database_readiness(self):
+        self.assertEqual(self.client.get('/api/v1/health/').json()['status'], 'ok')
+        self.assertEqual(self.client.get('/api/v1/ready/').json()['status'], 'ready')
+
+    def test_context_list_requires_login_and_assignment(self):
+        self.assertIn(self.client.get('/api/v1/contexts/').status_code, (401, 403))
+        outsider = get_user_model().objects.create_user(username='outsider-test', password='only-for-test')
+        self.client.force_login(outsider)
+        self.assertEqual(self.client.get('/api/v1/contexts/').json(), [])
+        self.client.force_login(self.operator)
+        self.assertEqual(self.client.get('/api/v1/contexts/').json()[0]['key'], self.context.key)
+
+    def test_draft_policy_blocks_attempt(self):
+        self.client.force_login(self.operator)
+        response = self._post_attempt()
+        self.assertEqual(response.status_code, 409)
+        self.assertEqual(response.json()['code'], 'CONTEXT_NOT_READY')
+        self.assertFalse(Attempt.objects.exists())
+
+    def test_idempotent_attempt_keeps_one_audit_event(self):
+        self.context.status = ExamContext.Status.OPEN
+        self.context.policy_approved_at = timezone.now()
+        self.context.policy_approved_by = self.operator
+        self.context.save()
+        self.client.force_login(self.operator)
+
+        first = self._post_attempt()
+        self.context.status = ExamContext.Status.CLOSED
+        self.context.save(update_fields=['status'])
+        retry = self._post_attempt()
+        conflict = self._post_attempt(code='SIM002')
+
+        self.assertEqual((first.status_code, retry.status_code, conflict.status_code), (201, 200, 409))
+        self.assertEqual(first.json()['id'], retry.json()['id'])
+        self.assertEqual(first.json()['roster_version'], 'R-SIM-001-draft')
+        self.assertEqual(Attempt.objects.count(), 1)
+        self.assertEqual(AuditEvent.objects.filter(action='ATTEMPT_STARTED').count(), 1)
+
+    def test_reviewer_cannot_create_attempt(self):
+        ContextAssignment.objects.filter(user=self.operator).update(role=ContextAssignment.Role.REVIEWER)
+        self.context.status = ExamContext.Status.OPEN
+        self.context.policy_approved_at = timezone.now()
+        self.context.policy_approved_by = self.operator
+        self.context.save()
+        self.client.force_login(self.operator)
+        self.assertEqual(self._post_attempt().status_code, 403)
+        self.assertFalse(Attempt.objects.exists())
+
+    def test_login_context_and_logout(self):
+        login = self.client.post(
+            '/api/v1/auth/login/',
+            data=json.dumps({'username': 'operator-test', 'password': 'only-for-test'}),
+            content_type='application/json',
+        )
+        self.assertEqual(login.status_code, 200)
+        token = login.json()['token']
+        contexts = self.client.get('/api/v1/contexts/', HTTP_AUTHORIZATION=f'Token {token}')
+        self.assertEqual(contexts.status_code, 200)
+        self.assertEqual(contexts.json()[0]['status'], 'SETUP')
+        self.assertFalse(contexts.json()[0]['policy_approved'])
+        self.assertEqual(
+            self.client.post('/api/v1/auth/logout/', HTTP_AUTHORIZATION=f'Token {token}').status_code,
+            204,
+        )
+        self.assertIn(
+            self.client.get('/api/v1/contexts/', HTTP_AUTHORIZATION=f'Token {token}').status_code,
+            (401, 403),
+        )
+
+    def test_seed_demo_is_repeatable_and_does_not_approve_policy(self):
+        output = StringIO()
+        call_command('seed_demo', operator='operator-test', stdout=output)
+        call_command('seed_demo', operator='operator-test', stdout=output)
+        context = ExamContext.objects.get(key='CTX-SIM-01')
+        self.assertEqual(context.status, ExamContext.Status.SETUP)
+        self.assertIsNone(context.policy_approved_at)
+        self.assertEqual(Registration.objects.filter(context=context).count(), 2)

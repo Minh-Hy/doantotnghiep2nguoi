@@ -1,6 +1,6 @@
 # T-018 — App cửa phòng thi tham chiếu
 
-- **Trạng thái:** mã Django/Flutter thử nghiệm đã được gỡ ngày 2026-09-29 để Minh Hy tự dựng lại; PostgreSQL cục bộ vẫn còn, AI/camera/check-in chưa được kiểm tích hợp.
+- **Trạng thái:** mã thử nghiệm cũ đã gỡ; mốc mới có Django API/schema PostgreSQL riêng và Flutter kiểm kết nối, theo [tiến độ thực tế](T-018-ke-hoach-trien-khai-app.md#6-tiến-độ-thực-tế--cập-nhật-2026-09-29). Camera/AI/check-in chưa được triển khai hoặc kiểm tích hợp.
 - **Quyết định:** [D-004](../00-project/decisions/T-018-D-004-chon-stack-app-tham-chieu.md).
 - **Phạm vi bản đầu:** [D-005](../00-project/decisions/T-018-D-005-pham-vi-android-ai-tren-may.md) chọn Android, AI trên điện thoại, check-in do nhân sự xác nhận.
 - **Người thực hiện/review:** Minh Hy / Quốc An theo Sheet.
@@ -26,6 +26,8 @@ Giao diện Flutter ưu tiên chữ/trạng thái dễ đọc, thao tác chính 
 ## Trạng thái triển khai
 
 Mã M1/M2 trước đây đã có test và migration cục bộ, được ghi trong [bàn giao M1](../handoffs/T-018-core-foundation.md) và [bàn giao M2](../handoffs/T-018-auth-context.md). Theo yêu cầu ngày 2026-09-29, hai thư mục mã đã được gỡ khỏi nhánh để Minh Hy tự làm lại theo [hướng dẫn thủ công](T-018-huong-dan-lam-thu-cong.md). Các kết quả kiểm trước đây không xác nhận mã mới; PostgreSQL `exam_entry` trên máy Minh Hy chưa bị xóa.
+
+Theo yêu cầu tiếp theo của Minh Hy, mốc chạy thử đã được dựng mới với bảng trong schema `exam_entry_app`, API health/readiness/login/logout/context/attempt, lệnh seed fixture giả và Flutter trạng thái/đăng nhập/xem ca. [Hướng dẫn VS Code](T-018-vscode-local-setup.md) có lệnh và URL kiểm; nút tiếp nhận còn khóa trong khi M0 chưa được duyệt. Mốc M1/M2 chưa hoàn tất.
 
 ## Điều kiện trước khi gọi là chạy được
 

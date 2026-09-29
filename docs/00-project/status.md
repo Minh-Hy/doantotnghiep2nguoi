@@ -1,6 +1,6 @@
 # Trạng thái dự án
 
-- Cập nhật: 2026-09-28
+- Cập nhật: 2026-09-29
 - Giai đoạn: phạm vi bài toán 01 đã được nhóm chọn; khảo sát 02 đã chọn hướng; T-009/T-010/T-011/T-012 có audit, giao thức, baseline B0 và phân tích lỗi làm mốc cho stage tiếp theo.
 - Thành viên: Quốc An (TV-A), Minh Hy (TV-B).
 
@@ -25,6 +25,8 @@
 ## Chưa có bằng chứng để chốt kỹ thuật cuối
 
 T-005 **hoàn thiện phần phân tích/survey**. Quốc An xác nhận T-008 đủ mốc bài toán cho nghiên cứu và T-009/T-010 hoàn tất phạm vi hiện tại; góp ý nghiệp vụ chi tiết của T-008 để khi xây app. T-011/T-012 đã kiểm nguồn/file, pin cấu hình, chạy E1/E2/M1 tham chiếu, chọn B0 và chẩn đoán lỗi; vẫn chưa có main test phù hợp miền cửa phòng thi, phép đo trên thiết bị đích hoặc kiểm E3/app để chốt kỹ thuật cuối. [D-004](decisions/T-018-D-004-chon-stack-app-tham-chieu.md) ghi Minh Hy chọn Flutter + Django REST Framework + PostgreSQL và B0 cho app tham chiếu T-018; [D-005](decisions/T-018-D-005-pham-vi-android-ai-tren-may.md) chọn Android trước, AI trên điện thoại và ca học phần giả lập, với check-in chỉ có hiệu lực sau đồng bộ/xác nhận của nhân sự. Ngày 2026-09-29, mã `backend/` và `mobile/` của PR #9 được gỡ theo yêu cầu Minh Hy để tự dựng lại; [hướng dẫn](../06-mobile/T-018-huong-dan-lam-thu-cong.md) và kế hoạch còn để Quốc An review. Model/dataset triển khai cuối, threshold, thiết bị đo và policy kỳ thi thật vẫn là câu hỏi giai đoạn sau. Chưa có pilot để tuyên bố giảm nhân sự; dữ liệu công khai và fixture giả lập không thay thế đánh giá tại kỳ thi thật.
+
+**Cập nhật T-018 sau reset:** theo yêu cầu tiếp theo của Minh Hy, mốc Django/Flutter mới đã dựng lại. API health/readiness/login/context, lệnh seed demo và Flutter trạng thái/đăng nhập/xem ca đã có test; migration trong schema PostgreSQL riêng đạt. Xem [tiến độ M0–M8](../06-mobile/T-018-ke-hoach-trien-khai-app.md#6-tiến-độ-thực-tế--cập-nhật-2026-09-29) và [hướng dẫn VS Code](../06-mobile/T-018-vscode-local-setup.md). M0 profile còn nháp, M1/M2 chưa hoàn tất, Android thật/emulator chưa được kiểm.
 
 [T-009 audit candidate](../02-survey/T-009-candidate-audit.md) đã đối chiếu nguồn công bố và kiểm file/runtime tối thiểu cho một số weight trên đầu vào tổng hợp. Phạm vi và quyền dùng từng nguồn được ghi theo mức bằng chứng; chưa chọn main test hoặc model cuối. Nếu T-008 đổi capability cốt lõi liên quan đầu vào/đối tượng/output xác minh, cần rà lại trace từ capability sang các phép thử; thay đổi policy app không mặc định mở lại kết quả AI.
 
