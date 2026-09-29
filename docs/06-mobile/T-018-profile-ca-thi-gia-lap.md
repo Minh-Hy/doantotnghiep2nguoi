@@ -1,6 +1,6 @@
 # T-018 — Profile ca thi học phần giả lập
 
-**Phiên bản tài liệu:** `0.1-draft`, ngày 2026-09-29. **Trạng thái:** đề xuất để Minh Hy và Quốc An review; **chưa được phê duyệt để chấm E3 hoặc vận hành**. **Task:** T-018 trên [Sheet chung](https://docs.google.com/spreadsheets/d/14BQCQ_LbGkZS15Grfi4AZNWBX15h479XjoyQvP9jHcU/edit?gid=0#gid=0), Minh Hy phụ trách, Quốc An review. **Người/ngày phê duyệt profile:** `TBD`.
+**Phiên bản tài liệu:** `0.2-dev`, ngày 2026-09-29. **Trạng thái:** Minh Hy đã chọn phương án này làm fixture phát triển theo [D-006](../00-project/decisions/T-018-D-006-profile-gia-lap-cho-phat-trien.md); Quốc An còn review. **Chưa được phê duyệt để chấm E3 hoặc vận hành/check-in.** **Task:** T-018 trên [Sheet chung](https://docs.google.com/spreadsheets/d/14BQCQ_LbGkZS15Grfi4AZNWBX15h479XjoyQvP9jHcU/edit?gid=0#gid=0), Minh Hy phụ trách, Quốc An review. **Người/ngày chọn fixture phát triển:** Minh Hy, 2026-09-29. **Người/ngày phê duyệt profile cho E3:** `TBD`.
 
 ## 1. Nguồn, phạm vi và cách đọc
 
@@ -9,7 +9,7 @@
 - [D-005](../00-project/decisions/T-018-D-005-pham-vi-android-ai-tren-may.md) đã chọn Android trước, B0 trên điện thoại, một ca học phần giả lập, check-in sau đồng bộ và xác nhận của nhân sự. Không thấy mặt, nhiều mặt hoặc AI lỗi được thử lại một lần rồi chuyển người xử lý.
 - [Câu hỏi mở](../00-project/questions.md) và OQ-001–OQ-023 của T-008 vẫn giữ nguyên. Tài liệu này chỉ đề xuất **fixture mô phỏng** để nhóm duyệt; không mô tả một trường, môn, kỳ thi hay quy chế thật.
 
-Quy ước: **ĐÃ CHỌN** là nội dung của D-005; **ĐỀ XUẤT** là giá trị mô phỏng cần nhóm review; **TBD** là phần chưa thể coi là policy. Thiếu policy/quyền cần thiết thì giữ `unresolved`/review, không tự điền giá trị mặc định. Chỉ khi hai thành viên ghi người, ngày và phiên bản đồng ý ở mục 10 mới được dùng profile này để chấm E3.
+Quy ước: **ĐÃ CHỌN** là nội dung của D-005; các dòng **ĐỀ XUẤT** đã được Minh Hy chọn để xây fixture theo D-006 nhưng còn chờ Quốc An review trước E3; **TBD** là phần chưa thể coi là policy. Thiếu policy/quyền cần thiết thì giữ `unresolved`/review, không tự điền giá trị mặc định. Chỉ khi hai thành viên ghi người, ngày và phiên bản đồng ý ở mục 8 mới được dùng profile này để chấm E3.
 
 ## 2. Context và roster mô phỏng
 
@@ -112,4 +112,4 @@ E3-F02/F03/F05/F06/F07/F08/F09/F12 có invariant generic để thiết kế test
 
 ## 8. Duyệt profile và quản lý thay đổi
 
-Trước run E3, Minh Hy và Quốc An cần ghi: phiên bản profile được duyệt, ngày, người và phạm vi duyệt; version roster/policy fixture, điều kiện/thiết bị/nguồn dữ liệu, các nhánh không áp dụng, expected outcome cụ thể cho từng case. Mọi thay đổi sau đó tạo revision mới, nêu fixture bị ảnh hưởng và chạy lại; không sửa expected outcome sau khi xem kết quả để biến fail thành pass. Tài liệu này hiện **chưa** có xác nhận của Quốc An và không là policy của một cơ sở đào tạo.
+Trước run E3, Minh Hy và Quốc An cần ghi: phiên bản profile được duyệt, ngày, người và phạm vi duyệt; version roster/policy fixture, điều kiện/thiết bị/nguồn dữ liệu, các nhánh không áp dụng, expected outcome cụ thể cho từng case. Mọi thay đổi sau đó tạo revision mới, nêu fixture bị ảnh hưởng và chạy lại; không sửa expected outcome sau khi xem kết quả để biến fail thành pass. Minh Hy đã chọn phương án để phát triển theo D-006; tài liệu này hiện **chưa** có xác nhận của Quốc An cho E3 và không là policy của một cơ sở đào tạo.
