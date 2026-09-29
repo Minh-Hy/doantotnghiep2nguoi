@@ -4,6 +4,7 @@ from io import StringIO
 from django.contrib.auth import get_user_model
 from django.core.management import call_command
 from django.test import TestCase
+from django.test.utils import override_settings
 from django.utils import timezone
 
 from .models import Attempt, AuditEvent, ContextAssignment, ExamContext, Registration
@@ -32,6 +33,23 @@ class FoundationApiTests(TestCase):
     def test_public_health_and_database_readiness(self):
         self.assertEqual(self.client.get('/api/v1/health/').json()['status'], 'ok')
         self.assertEqual(self.client.get('/api/v1/ready/').json()['status'], 'ready')
+
+    @override_settings(CORS_ALLOWED_ORIGINS=['http://127.0.0.1:7357'])
+    def test_edge_preview_origin_is_allowed_only_on_local_port(self):
+        response = self.client.options(
+            '/api/v1/auth/login/',
+            HTTP_ORIGIN='http://127.0.0.1:7357',
+            HTTP_ACCESS_CONTROL_REQUEST_METHOD='POST',
+            HTTP_ACCESS_CONTROL_REQUEST_HEADERS='content-type',
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response['Access-Control-Allow-Origin'], 'http://127.0.0.1:7357')
+        other = self.client.options(
+            '/api/v1/auth/login/',
+            HTTP_ORIGIN='http://example.test',
+            HTTP_ACCESS_CONTROL_REQUEST_METHOD='POST',
+        )
+        self.assertNotIn('Access-Control-Allow-Origin', other)
 
     def test_context_list_requires_login_and_assignment(self):
         self.assertIn(self.client.get('/api/v1/contexts/').status_code, (401, 403))

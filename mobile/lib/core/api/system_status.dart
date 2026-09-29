@@ -1,5 +1,6 @@
 import 'dart:convert';
-import 'dart:io';
+
+import 'package:http/http.dart' as http;
 
 class SystemStatus {
   const SystemStatus({required this.apiOnline, required this.databaseReady});
@@ -18,22 +19,22 @@ class HttpStatusRepository implements StatusRepository {
   final String baseUrl;
 
   Future<({int code, Map<String, dynamic> body})> _get(
-    HttpClient client,
+    http.Client client,
     String path,
   ) async {
     final root = baseUrl.replaceFirst(RegExp(r'/$'), '');
-    final request = await client.getUrl(Uri.parse('$root/api/v1/$path'));
-    final response = await request.close().timeout(const Duration(seconds: 6));
-    final body = await utf8.decoder.bind(response).join();
+    final response = await client
+        .get(Uri.parse('$root/api/v1/$path'))
+        .timeout(const Duration(seconds: 6));
     return (
       code: response.statusCode,
-      body: jsonDecode(body) as Map<String, dynamic>,
+      body: jsonDecode(utf8.decode(response.bodyBytes)) as Map<String, dynamic>,
     );
   }
 
   @override
   Future<SystemStatus> check() async {
-    final client = HttpClient()..connectionTimeout = const Duration(seconds: 6);
+    final client = http.Client();
     try {
       final health = await _get(client, 'health/');
       if (health.code != 200 || health.body['status'] != 'ok') {
@@ -51,7 +52,7 @@ class HttpStatusRepository implements StatusRepository {
     } catch (_) {
       return const SystemStatus(apiOnline: false, databaseReady: false);
     } finally {
-      client.close(force: true);
+      client.close();
     }
   }
 }

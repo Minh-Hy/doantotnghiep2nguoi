@@ -25,7 +25,7 @@ docs/progress/         Một file mỗi tuần cho cả hai
 docs/handoffs/         Một file bàn giao cho mỗi task hoàn thành
 docs/sources/          Bản Word gốc để hai thành viên đối chiếu
 backend/               Django REST Framework: API và schema PostgreSQL T-018
-mobile/                Flutter Android: trạng thái, đăng nhập, danh sách ca T-018
+mobile/                Flutter Android và bản xem thử Edge: trạng thái, đăng nhập, ca T-018
 data/                  Dữ liệu cục bộ; nội dung nhạy cảm không lên Git
 artifacts/             Checkpoint, log và đầu ra lớn cục bộ
 ```

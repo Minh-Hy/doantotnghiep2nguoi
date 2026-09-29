@@ -1,5 +1,7 @@
+import 'dart:async';
 import 'dart:convert';
-import 'dart:io';
+
+import 'package:http/http.dart' as http;
 
 class ExamApiException implements Exception {
   const ExamApiException(this.code);
@@ -57,30 +59,32 @@ class HttpExamRepository implements ExamRepository {
     String? token,
     Object? body,
   }) async {
-    final client = HttpClient()..connectionTimeout = const Duration(seconds: 6);
+    final client = http.Client();
     try {
       final root = baseUrl.replaceFirst(RegExp(r'/$'), '');
-      final request = await client.openUrl(
-        method,
-        Uri.parse('$root/api/v1/$path'),
-      );
-      request.headers.contentType = ContentType.json;
-      if (token != null) request.headers.set('Authorization', 'Token $token');
-      if (body != null) request.write(jsonEncode(body));
-      final response = await request.close().timeout(
-        const Duration(seconds: 8),
-      );
-      final raw = await utf8.decoder.bind(response).join();
+      final uri = Uri.parse('$root/api/v1/$path');
+      final headers = <String, String>{'Content-Type': 'application/json'};
+      if (token != null) headers['Authorization'] = 'Token $token';
+      final response =
+          await (method == 'POST'
+                  ? client.post(
+                      uri,
+                      headers: headers,
+                      body: body == null ? null : jsonEncode(body),
+                    )
+                  : client.get(uri, headers: headers))
+              .timeout(const Duration(seconds: 8));
+      final raw = utf8.decode(response.bodyBytes);
       return (
         status: response.statusCode,
         body: raw.isEmpty ? null : jsonDecode(raw),
       );
-    } on SocketException {
+    } on http.ClientException {
       throw const ExamApiException('NETWORK_ERROR');
-    } on HttpException {
+    } on TimeoutException {
       throw const ExamApiException('NETWORK_ERROR');
     } finally {
-      client.close(force: true);
+      client.close();
     }
   }
 

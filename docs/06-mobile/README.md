@@ -8,4 +8,4 @@
 
 [Profile ca thi học phần giả lập T-018](T-018-profile-ca-thi-gia-lap.md) là bản nháp M0 để Minh Hy và Quốc An review trước khi dùng làm nguồn expected outcome E3; chưa là quy chế kỳ thi thật hay profile được phê duyệt.
 
-**Mốc hiện có:** API health/readiness/login/logout/context/attempt và Flutter kiểm kết nối, đăng nhập, xem ca được gán; chưa có camera, AI hoặc check-in. **Kiểm thử đích:** mở app → camera → xác minh 1:1 → check-in hoặc review → xem kết quả theo quyền.
+**Mốc hiện có:** API health/readiness/login/logout/context/attempt và Flutter kiểm kết nối, đăng nhập, xem ca được gán. Có bản xem thử trên Edge cho máy yếu; Android vẫn là đích chính. Chưa có camera, AI hoặc check-in. **Kiểm thử đích:** mở app → camera → xác minh 1:1 → check-in hoặc review → xem kết quả theo quyền.

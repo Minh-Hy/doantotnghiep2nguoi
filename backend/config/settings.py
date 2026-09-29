@@ -41,10 +41,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
+    'corsheaders',
     'foundation',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -53,6 +55,13 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
+# Edge/Flutter web preview only; native Android does not use browser CORS.
+CORS_ALLOWED_ORIGINS = [
+    'http://127.0.0.1:7357',
+    'http://localhost:7357',
+] if DEBUG else []
+CORS_URLS_REGEX = r'^/api/'
 
 ROOT_URLCONF = 'config.urls'
 

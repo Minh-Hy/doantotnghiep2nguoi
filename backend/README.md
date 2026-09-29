@@ -14,6 +14,8 @@ uv run --env-file .env python manage.py runserver 0.0.0.0:8000
 
 File `.env` đã được chuẩn bị cục bộ, bị Git bỏ qua. Không đưa mật khẩu hoặc nội dung file này lên Git/ảnh chụp màn hình. Với máy khác, sao chép `.env.example` thành `.env`, tự điền giá trị rồi tạo schema PostgreSQL `exam_entry_app` bằng tài khoản có quyền `CREATE` trước khi migrate. Không chạy migration vào schema `public` cũ.
 
+Bản xem thử Flutter trên Edge chạy ở `http://127.0.0.1:7357`; khi `APP_DEBUG=true`, backend chỉ cho origin local này (và `localhost:7357`) gọi `/api/` từ trình duyệt. Android không cần CORS. Giữ cổng 7357 theo [hướng dẫn VS Code](../docs/06-mobile/T-018-vscode-local-setup.md).
+
 Để thử đăng nhập/ca giả lập, dừng server bằng `Ctrl+C` rồi tạo tài khoản **một lần** và seed fixture:
 
 ```powershell

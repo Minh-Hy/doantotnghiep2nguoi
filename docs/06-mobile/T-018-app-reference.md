@@ -1,6 +1,6 @@
 # T-018 — App cửa phòng thi tham chiếu
 
-- **Trạng thái:** mã thử nghiệm cũ đã gỡ; mốc mới có Django API/schema PostgreSQL riêng và Flutter kiểm kết nối, theo [tiến độ thực tế](T-018-ke-hoach-trien-khai-app.md#6-tiến-độ-thực-tế--cập-nhật-2026-09-29). Camera/AI/check-in chưa được triển khai hoặc kiểm tích hợp.
+- **Trạng thái:** mã thử nghiệm cũ đã gỡ; mốc mới có Django API/schema PostgreSQL riêng và Flutter xem kết nối/đăng nhập/ca với bản chạy thử Edge, theo [tiến độ thực tế](T-018-ke-hoach-trien-khai-app.md#6-tiến-độ-thực-tế--cập-nhật-2026-09-29). Android vẫn là đích chính; camera/AI/check-in chưa được triển khai hoặc kiểm tích hợp.
 - **Quyết định:** [D-004](../00-project/decisions/T-018-D-004-chon-stack-app-tham-chieu.md).
 - **Phạm vi bản đầu:** [D-005](../00-project/decisions/T-018-D-005-pham-vi-android-ai-tren-may.md) chọn Android, AI trên điện thoại, check-in do nhân sự xác nhận.
 - **Người thực hiện/review:** Minh Hy / Quốc An theo Sheet.

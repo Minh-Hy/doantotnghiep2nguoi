@@ -1,19 +1,19 @@
 # T-018 — Chạy mốc hiện tại trong VS Code trên Windows
 
-**Ngày kiểm:** 2026-09-29. **Mốc hiện có:** API Django + schema PostgreSQL + Flutter kiểm kết nối/đăng nhập/xem ca. Profile giả lập M0 vẫn là bản nháp; chưa có camera/AI/check-in. Chỉ dùng fixture giả, không đưa ảnh mặt, mật khẩu hoặc file `.env` vào Git.
+**Ngày kiểm:** 2026-09-29. **Mốc hiện có:** API Django + schema PostgreSQL + Flutter kiểm kết nối/đăng nhập/xem ca. Có thể chạy giao diện bằng Edge trên máy yếu; Android vẫn là đích chính của sản phẩm. Profile giả lập M0 vẫn là bản nháp; chưa có camera/AI/check-in. Chỉ dùng fixture giả, không đưa ảnh mặt, mật khẩu hoặc file `.env` vào Git.
 
-## 1. Chuẩn bị VS Code và Android
+## 1. Chuẩn bị VS Code
 
 Máy Minh Hy đã có `uv 0.11.15`, Python 3.12 qua uv, Flutter 3.44.0, Android SDK 36.1.0 và PostgreSQL 18. Trong VS Code, cài extension **Flutter** của Dart Code ở `Ctrl+Shift+X` (Dart sẽ được cài kèm). Extension Python đã có. Cảnh báo Visual Studio C++ trong `flutter doctor` chỉ liên quan bản Windows desktop.
 
 Mở `D:\WorkSpace\doantotnghiep2nguoi` bằng **File → Open Folder**. Mở hai PowerShell terminal trong VS Code (**Terminal → New Terminal**). Các lệnh dưới đây chạy từ thư mục gốc này.
 
-Để chạy Android, phải có **một** trong hai lựa chọn:
+**Bạn có thể thử ngay trên Edge, không cần Android Emulator.** `flutter devices` phải hiển thị `Edge (web)`; nếu chưa thấy, cài/mở Microsoft Edge và kiểm lại. Muốn thử Android về sau thì dùng **một** trong hai lựa chọn:
 
 - Android Emulator: trong Android Studio mở **Device Manager → Create Virtual Device**, tạo/chạy một máy ảo rồi xác nhận `flutter devices` có dòng `android`.
 - Điện thoại thật: bật Developer options và USB debugging, cắm USB, chấp nhận hộp thoại tin cậy máy tính, rồi xác nhận `flutter devices` có dòng `android`. Nếu dùng Wi-Fi để gọi backend, điện thoại và máy Windows cần cùng mạng.
 
-Hiện `flutter devices` trên máy này chỉ liệt kê Windows/Chrome/Edge và `flutter emulators` chưa có máy ảo. Bạn có thể chạy test/build mã trước; để **nhìn app trên Android** cần hoàn tất một lựa chọn trên.
+Trước khi thêm web preview, `flutter devices` trên máy này liệt kê Windows/Chrome/Edge và `flutter emulators` chưa có máy ảo. Edge đủ để xem luồng hiện tại; để kiểm camera/AI trên thiết bị Android về sau cần một lựa chọn trên.
 
 ## 2. Terminal A — backend
 
@@ -27,10 +27,15 @@ Nếu chưa có tài khoản Django trên schema mới, tạo **một lần** tr
 
 ```powershell
 uv run --env-file .env python manage.py createsuperuser
+```
+
+Lệnh hỏi **username Django bạn tự chọn**, email (có thể để trống) và mật khẩu. Khi gõ mật khẩu, terminal không hiện ký tự; đây là bình thường. Đây là tài khoản của app, **khác** tài khoản PostgreSQL. Chưa có tài khoản thì phải hoàn thành lệnh này trước khi đăng nhập Flutter. Sau đó thay `TEN_DANG_NHAP` bằng đúng username vừa chọn:
+
+```powershell
 uv run --env-file .env python manage.py seed_demo --operator TEN_DANG_NHAP
 ```
 
-Thay `TEN_DANG_NHAP` bằng **username vừa nhập ở bước createsuperuser**, không phải tên đăng nhập PostgreSQL. Nhập mật khẩu khi terminal hỏi; không dán mật khẩu vào chat hoặc tài liệu. Nếu đã có user, bỏ qua `createsuperuser` và chỉ chạy seed. Lệnh seed tạo ca/phòng giả và hai mã `SIM001`, `SIM002`, gán operator, nhưng **không** duyệt policy hoặc mở tiếp nhận. Sau đó chạy server:
+Nếu đã có user Django, bỏ qua `createsuperuser` và chỉ chạy seed. Lệnh seed tạo ca/phòng giả và hai mã `SIM001`, `SIM002`, gán operator, nhưng **không** duyệt policy hoặc mở tiếp nhận. Sau đó chạy server:
 
 ```powershell
 uv run --env-file .env python manage.py runserver 0.0.0.0:8000
@@ -43,7 +48,20 @@ uv run --env-file .env python manage.py runserver 0.0.0.0:8000
 
 Nếu `/ready/` trả 503, kiểm PostgreSQL đang chạy, tên schema trong `.env`, rồi chạy lại `migrate`. Nhấn `Ctrl+C` ở terminal A để dừng server.
 
-## 3. Terminal B — Flutter
+## 3. Terminal B — Flutter trên Edge (khuyên dùng cho máy này)
+
+```powershell
+Set-Location D:\WorkSpace\doantotnghiep2nguoi\mobile
+flutter pub get
+flutter devices
+flutter run -d edge --web-hostname 127.0.0.1 --web-port 7357
+```
+
+Flutter sẽ mở Edge tại `http://127.0.0.1:7357` và mặc định gọi Django tại `http://127.0.0.1:8000`. **Giữ cả hai terminal mở.** Màn hình đầu phải hiện **Máy chủ: Đã kết nối** và **Cơ sở dữ liệu: Sẵn sàng**. Bấm **Đăng nhập nhân sự**, nhập username/mật khẩu Django vừa tạo; màn hình sau phải hiện `CTX-SIM-01` và **Đang chuẩn bị — chưa tiếp nhận**. Nếu bạn chưa chạy `seed_demo`, đăng nhập sẽ thành công nhưng danh sách ca trống. Nút tiếp nhận vẫn khóa vì policy chưa được duyệt.
+
+Nếu Edge báo không kết nối, kiểm hai URL health/ready ở mục 2, chắc chắn backend còn chạy và Flutter dùng đúng cổng `7357`. Chế độ Edge chỉ để thử giao diện/API; các bước camera, AI chạy trên điện thoại Android sau này không được xác nhận bằng Edge.
+
+## 4. Tùy chọn: Flutter trên Android
 
 **Android Emulator:**
 
@@ -60,7 +78,7 @@ flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000
 
 Nếu muốn bấm **F5** trong VS Code, mở riêng thư mục `mobile/` bằng **File → New Window → Open Folder**, chọn Android ở thanh trạng thái và chạy Debug. Lệnh `flutter run` trong terminal vẫn là cách trực tiếp nhất để xác nhận đường kết nối.
 
-## 4. Kiểm thử không cần Android
+## 5. Kiểm thử không cần Android
 
 Trong terminal backend (sau khi đã dừng `runserver` hoặc mở terminal mới):
 
@@ -75,7 +93,8 @@ Trong terminal `mobile/`:
 ```powershell
 flutter analyze
 flutter test
+flutter build web
 flutter build apk --debug
 ```
 
-Ngày 2026-09-29: backend có 7 test đạt, Django check đạt, migration PostgreSQL thật đạt; Flutter analyze, 3 widget test và 1 test HTTP đạt, APK debug build thành công. Chưa có Android device/emulator trên máy để thử trực tiếp. Đây là bằng chứng cho **mốc kết nối/đăng nhập/ca**, không phải kiểm thử camera/AI/check-in.
+Ngày 2026-09-29: backend có 8 test đạt, Django check đạt, migration PostgreSQL thật đạt; Flutter analyze, 3 widget test và 1 test HTTP đạt, web/APK debug build thành công. `flutter run -d edge` đã khởi động, trang web/API/CORS local phản hồi đúng; chưa thử đăng nhập thật vì Minh Hy chưa tạo tài khoản Django. Chưa có Android device/emulator trên máy để thử trực tiếp. Đây là bằng chứng cho **mốc kết nối**, không phải kiểm thử camera/AI/check-in.
