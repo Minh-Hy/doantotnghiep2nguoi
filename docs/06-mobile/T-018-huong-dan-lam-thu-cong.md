@@ -6,8 +6,9 @@
 
 1. Mở thư mục gốc `D:\WorkSpace\doantotnghiep2nguoi` trong VS Code, mở **Terminal → New Terminal** và chọn PowerShell. Mọi lệnh dưới đây bắt đầu từ thư mục gốc, trừ khi có `Set-Location`.
 2. Đóng cửa sổ Notepad đang mở `backend/README.md` và mọi terminal đứng trong `backend/`. Thư mục `backend/` rỗng có thể còn bị Windows khóa; sau khi đóng, xóa thư mục rỗng đó trong Explorer hoặc PowerShell: `Remove-Item -LiteralPath .\backend`. Không dùng `-Recurse` cho bước này.
-3. Kiểm tra công cụ: `uv --version`, `flutter --version`, `flutter doctor`, `flutter devices`. Nếu `flutter doctor` còn lỗi Android SDK/license, xử lý theo dòng báo lỗi trước khi build app.
-4. PostgreSQL 18 cục bộ, role/database `exam_entry` và schema từ lần thử trước **vẫn còn**. Chưa chạy migration của mã mới lên database này. File `.env.t018-backup` ở thư mục gốc là bản sao cấu hình cũ, bị Git bỏ qua; giữ kín, không gửi lên Git hoặc chụp màn hình nội dung. Khi đến M2, tạo database phát triển mới hoặc đối chiếu migration cũ rồi mới dùng lại database cũ.
+3. Kiểm tra công cụ: `uv --version`, `uv python find 3.12`, `flutter --version`, `flutter doctor`, `flutter devices`. Máy Minh Hy ngày 2026-09-29 đã có `uv 0.11.15`, Python 3.12 qua uv, Flutter 3.44.0, Android SDK 36.1.0 và PostgreSQL 18 đang chạy trên cổng 5432. Lệnh `python` toàn cục chưa trỏ đến bản cài phù hợp; dùng `uv run python` trong project backend. Cảnh báo Visual Studio C++ trong `flutter doctor` chỉ liên quan build ứng dụng Windows, không chặn Android.
+4. Trong VS Code mở Extensions (`Ctrl+Shift+X`), cài **Flutter** của Dart Code; extension này sẽ cài Dart. Python extension đã có trên máy. Trước khi chạy Flutter trên Android, tạo emulator trong Android Studio Device Manager **hoặc** kết nối điện thoại Android đã bật USB debugging. Ngày 2026-09-29 `flutter emulators` chưa có máy ảo và `flutter devices` chỉ thấy Windows/Chrome/Edge.
+5. PostgreSQL 18 cục bộ, role/database `exam_entry` và schema từ lần thử trước **vẫn còn**. Chưa chạy migration của mã mới lên database này. File `.env.t018-backup` ở thư mục gốc là bản sao cấu hình cũ, bị Git bỏ qua; giữ kín, không gửi lên Git hoặc chụp màn hình nội dung. Khi đến M2, tạo database phát triển mới hoặc đối chiếu migration cũ rồi mới dùng lại database cũ.
 
 ## Bước 1 — M0: ghi hợp đồng giả lập trước khi viết luồng nghiệp vụ
 
@@ -25,9 +26,9 @@
 Từ terminal ở thư mục gốc, gõ từng lệnh và xem kết quả sau mỗi lệnh:
 
 ```powershell
-uv init --bare --no-workspace backend
+uv init --bare --no-workspace --python 3.12 backend
 Set-Location backend
-uv add django djangorestframework "psycopg[binary]"
+uv add "django>=5.2,<5.3" "djangorestframework>=3.18,<3.19" "psycopg[binary]>=3.2,<4"
 uv run django-admin startproject config .
 uv run python manage.py startapp entry
 uv run python manage.py check
